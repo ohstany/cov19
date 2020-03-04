@@ -34,19 +34,11 @@ const MapContainer = ({ context, google }) => {
 			console.log("got", geo);
 
 			if (cpos.length) {
-				_state(
-					protocol === "https:"
-						? {
-								cpos,
-								zoom: 7,
-								latlng: [cpos.latitude, cpos.longitude]
-						  }
-						: {
-								cpos: cpos[0],
-								zoom: 7,
-								latlng: [cpos[0].latlng[0], cpos[0].latlng[1]]
-						  }
-				);
+				_state({
+					cpos: geo.country_code ? cpos : cpos[0],
+					zoom: 7,
+					latlng: [cpos[0].latlng[0], cpos[0].latlng[1]]
+				});
 			}
 		}
 	}, [geo]);

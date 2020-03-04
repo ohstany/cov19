@@ -4,7 +4,7 @@ import Pin from "./pin.svg";
 import { Skeleton1 } from "Templates/Skeleton";
 
 const protocol =
-	typeof window !== undefined ? window.location.protocol : "https:";
+	typeof window === "undefined" ? "https:" : window.location.protocol;
 const proxyUrl = "//cors-anywhere.herokuapp.com/";
 
 const News = ({ data }) => {

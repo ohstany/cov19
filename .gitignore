@@ -1,9 +1,15 @@
 # Standards
+node_modules
 package-lock.json
 yarn-lock.json
 yarn.lock
 #.next
+.next
 html
+.production
+.production
+.production_*
+.development_*
 
 ### OSX template
 .DS_STORE
@@ -14,6 +20,8 @@ html
 # Logs
 *.log
 logs
+src/api-config.json
+\Users\User\Desktop\lms\next-lms\src\api-config.json
 npm-debug.log
 *.log
 npm-debug.log*

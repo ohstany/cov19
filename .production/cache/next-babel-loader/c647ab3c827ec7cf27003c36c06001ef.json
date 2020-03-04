@@ -1,1 +1,0 @@
-{"ast":null,"code":"\"use strict\";\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.rootActions = void 0;\nconst rootActions = {\n  SET_ACTION: {\n    method: \"GET\",\n    action: \"\",\n    params: \"\"\n  }\n};\nexports.rootActions = rootActions;","map":null,"metadata":{},"sourceType":"script"}

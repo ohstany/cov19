@@ -32,9 +32,10 @@ const Home = props => {
 	const [setLocation, _setLocation] = useState(false);
 
 	const getLocationViaLat = () => {
-		const { lat, lng } =
-			localStorage.getItem("position") &&
-			JSON.parse(localStorage.getItem("position"));
+		const { lat = false, lng = false } =
+			(localStorage.getItem("position") &&
+				JSON.parse(localStorage.getItem("position"))) ||
+			{};
 
 		const lReq = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyA4zKpi3hRchkPewoFrU0h_V4a2ykGrohk`;
 		if (lat && lng) {
@@ -57,11 +58,12 @@ const Home = props => {
 
 	useEffect(() => {
 		if (navigator.geolocation) {
-			const pos =
-				localStorage.getItem("position") &&
-				JSON.parse(localStorage.getItem("position"));
+			const { lat = false, lng = false } =
+				(localStorage.getItem("position") &&
+					JSON.parse(localStorage.getItem("position"))) ||
+				{};
 
-			if (pos.lng >= 0) {
+			if (lat && lng) {
 				_setLocation(true);
 				// getLocationViaLat();
 			} else {

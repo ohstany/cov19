@@ -9,6 +9,7 @@ html
 .production
 .production
 .production_*
+.development
 .development_*
 
 ### OSX template

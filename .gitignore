@@ -3,7 +3,6 @@ package-lock.json
 yarn-lock.json
 yarn.lock
 #.next
-.next
 html
 
 ### OSX template

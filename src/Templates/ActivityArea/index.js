@@ -3,10 +3,6 @@ import xmlToJson from "Library/xmlToJson";
 import Pin from "./pin.svg";
 import { Skeleton1 } from "Templates/Skeleton";
 
-const protocol =
-	typeof window === "undefined" ? "https:" : window.location.protocol;
-const proxyUrl = "//cors-anywhere.herokuapp.com/";
-
 const News = ({ data }) => {
 	return (
 		<div className="author">
@@ -31,6 +27,7 @@ const News = ({ data }) => {
 
 export default ({ context }) => {
 	const {
+		proxy,
 		store: { index, markers, news = false, activity },
 		setStore
 	} = context || {};
@@ -48,7 +45,7 @@ export default ({ context }) => {
 	const getNews = () => {
 		console.log("newsstrted");
 		return;
-		fetch(protocol + proxyUrl + "https://gazeta.ua/rss")
+		fetch(proxy + "https://gazeta.ua/rss")
 			.then(blop => {
 				return blop.text();
 			})

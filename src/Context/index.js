@@ -56,6 +56,10 @@ const setStoreReducer = (state, data) => {
 	return { ...state, ...data };
 };
 
+const protocol =
+	typeof window === "undefined" ? "https:" : window.location.protocol;
+const proxy = protocol + "//cors-anywhere.herokuapp.com/";
+
 // Context as global app store
 export const RootProvider = withRouter(props => {
 	const { loginStatus, logout, children } = props;
@@ -156,7 +160,11 @@ export const RootProvider = withRouter(props => {
 				});
 			} else {
 				console.log("EXTERNAL");
-				fetch("http://www.geoplugin.net/json.gp")
+				fetch(
+					protocol === "https"
+						? "https://freegeoip.app/json"
+						: "http://www.geoplugin.net/json.gp"
+				)
 					.then(res => res.json())
 					.then(res => {
 						const geo = Object.keys(res).reduce(
@@ -166,6 +174,7 @@ export const RootProvider = withRouter(props => {
 								}),
 							{}
 						);
+
 						localStorage.setItem("geo", JSON.stringify(geo));
 						setStore({
 							geo
@@ -185,6 +194,8 @@ export const RootProvider = withRouter(props => {
 	return (
 		<RootContext.Provider
 			value={{
+				protocol,
+				proxy,
 				store,
 				actioner,
 				device,

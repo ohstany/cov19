@@ -9,6 +9,7 @@ const defsize = 25;
 
 const MapContainer = ({ context, google }) => {
 	const {
+		protocol,
 		store: { geo = false, markers = [], index },
 		setStore
 	} = context || {};
@@ -24,16 +25,24 @@ const MapContainer = ({ context, google }) => {
 
 	useEffect(() => {
 		if (geo && geo.countryCode) {
-			const gpos = countries.filter(
+			const cpos = countries.filter(
 				c => c.country_code === geo.countryCode
 			);
 
-			if (gpos.length) {
-				_state({
-					cpos: gpos[0],
-					zoom: 7,
-					latlng: [gpos[0].latlng[0], gpos[0].latlng[1]]
-				});
+			if (cpos.length) {
+				_state(
+					protocol === "https:"
+						? {
+								cpos,
+								zoom: 7,
+								latlng: [cpos.latitude, cpos.longitude]
+						  }
+						: {
+								cpos: cpos[0],
+								zoom: 7,
+								latlng: [cpos[0].latlng[0], cpos[0].latlng[1]]
+						  }
+				);
 			}
 		}
 	}, [geo]);

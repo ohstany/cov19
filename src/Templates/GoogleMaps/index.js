@@ -28,8 +28,10 @@ const MapContainer = ({ context, google }) => {
 	useEffect(() => {
 		if (geo && (geo.countryCode || geo.country_code)) {
 			const cpos = countries.filter(
-				c => c.country_code === geo.countryCode
+				c => c.country_code === (geo.countryCode || geo.country_code)
 			);
+
+			console.log("got", geo);
 
 			if (cpos.length) {
 				_state(

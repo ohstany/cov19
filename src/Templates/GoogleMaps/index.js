@@ -16,8 +16,8 @@ const MapContainer = ({ context, google }) => {
 
 	const [state, _state] = useReducer(reducer, {
 		cpos: false,
-		latlng: [49.037868, 31.904297],
-		zoom: 9,
+		latlng: [50.167003, 31.072426],
+		zoom: 4,
 		activeMarker: null
 	});
 

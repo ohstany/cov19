@@ -26,7 +26,7 @@ const MapContainer = ({ context, google }) => {
 	const { zoom, latlng } = state;
 
 	useEffect(() => {
-		if (geo && geo.countryCode) {
+		if (geo && (geo.countryCode || geo.country_code)) {
 			const cpos = countries.filter(
 				c => c.country_code === geo.countryCode
 			);

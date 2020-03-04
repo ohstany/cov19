@@ -47,6 +47,7 @@ export default ({ context }) => {
 
 	const getNews = () => {
 		console.log("newsstrted");
+		return;
 		fetch(protocol + proxyUrl + "https://gazeta.ua/rss")
 			.then(blop => {
 				return blop.text();

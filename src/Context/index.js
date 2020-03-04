@@ -139,12 +139,39 @@ export const RootProvider = withRouter(props => {
 		});
 	};
 
+	// set user's geo information
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			const dev = window.innerWidth > 768 ? "pc" : "mobile";
 			_device(dev);
 			document.body.classList.add(dev);
 			window.addEventListener("resize", getScreenState);
+
+			const geo = localStorage.getItem("geo");
+
+			if (geo) {
+				console.log("INTERNAL");
+				setStore({
+					geo: JSON.parse(geo)
+				});
+			} else {
+				console.log("EXTERNAL");
+				fetch("http://www.geoplugin.net/json.gp")
+					.then(res => res.json())
+					.then(res => {
+						const geo = Object.keys(res).reduce(
+							(p, n) =>
+								Object.assign({}, p, {
+									[n.replace("geoplugin_", "")]: res[n]
+								}),
+							{}
+						);
+						localStorage.setItem("geo", JSON.stringify(geo));
+						setStore({
+							geo
+						});
+					});
+			}
 		}
 	}, []);
 
@@ -160,8 +187,8 @@ export const RootProvider = withRouter(props => {
 			value={{
 				store,
 				actioner,
-            device,
-            setStore,
+				device,
+				setStore,
 				api
 			}}>
 			{children}

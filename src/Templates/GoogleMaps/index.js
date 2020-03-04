@@ -1,16 +1,42 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import markerImg from "./m.png";
+import styles from "./mapStyling.json";
+import countries from "Library/countries.json";
+import { reducer } from "Library";
+
+const defsize = 25;
 
 const MapContainer = ({ context, google }) => {
 	const {
-		store: { markers = [], index },
+		store: { geo = false, markers = [], index },
 		setStore
 	} = context || {};
 
-	const [state, _state] = useState({
+	const [state, _state] = useReducer(reducer, {
+		cpos: false,
+		latlng: ["49.037868", "31.904297"],
+		zoom: 9,
 		activeMarker: null
 	});
+
+	const { zoom, latlng } = state;
+
+	useEffect(() => {
+		if (geo && geo.countryCode) {
+			const gpos = countries.filter(
+				c => c.country_code === geo.countryCode
+			);
+
+			if (gpos.length) {
+				_state({
+					cpos: gpos[0],
+					zoom: 7,
+					latlng: [gpos[0].latlng[0], gpos[0].latlng[1]]
+				});
+			}
+		}
+	}, [geo]);
 
 	const markerSets = {
 		icon: {
@@ -26,15 +52,19 @@ const MapContainer = ({ context, google }) => {
 		// activeMarker.animating = true;
 		// console.log("pp, activeMarker,", pp, activeMarker);
 
+		_state({ zoom: 10 });
+
 		_state({
+			latlng: [pp.position.lat, pp.position.lng],
+			zoom: 11,
 			activeMarker
 		});
 	};
 
 	const onMapClicked = props => {
-		_state(e => ({
+		_state({
 			activeMarker: null
-		}));
+		});
 	};
 
 	const displayMarkers = useCallback(() => {
@@ -52,184 +82,15 @@ const MapContainer = ({ context, google }) => {
 
 	return (
 		<Map
+			{...styles}
 			google={google}
-			zoom={6.5}
-			style={{
-				width: "100%",
-				height: "100%"
-			}}
-			styles={styles}
-			initialCenter={{ lat: 49.037868, lng: 31.904297 }}
+			zoom={zoom}
+			center={{ lat: latlng[0], lng: latlng[1] }}
 			onClick={onMapClicked}>
 			{markers.length && displayMarkers()}
 		</Map>
 	);
 };
-
-const defsize = 25;
-
-const styles = [
-	{
-		featureType: "water",
-		elementType: "geometry",
-		stylers: [
-			{
-				color: "#cccccc"
-			},
-			{
-				lightness: 17
-			}
-		]
-	},
-	{
-		featureType: "landscape",
-		elementType: "geometry",
-		stylers: [
-			{
-				color: "#f5f5f5"
-			},
-			{
-				lightness: 20
-			}
-		]
-	},
-	{
-		featureType: "road.highway",
-		elementType: "geometry.fill",
-		stylers: [
-			{
-				color: "#ffffff"
-			},
-			{
-				lightness: 17
-			}
-		]
-	},
-	{
-		featureType: "road.highway",
-		elementType: "geometry.stroke",
-		stylers: [
-			{
-				color: "#ffffff"
-			},
-			{
-				lightness: 29
-			},
-			{
-				weight: 0.2
-			}
-		]
-	},
-	{
-		featureType: "road.arterial",
-		elementType: "geometry",
-		stylers: [
-			{
-				color: "#ffffff"
-			},
-			{
-				lightness: 18
-			}
-		]
-	},
-	{
-		featureType: "road.local",
-		elementType: "geometry",
-		stylers: [
-			{
-				color: "#ffffff"
-			},
-			{
-				lightness: 16
-			}
-		]
-	},
-	{
-		featureType: "poi",
-		elementType: "geometry",
-		stylers: [
-			{
-				color: "#f5f5f5"
-			},
-			{
-				lightness: 21
-			}
-		]
-	},
-	{
-		featureType: "poi.park",
-		elementType: "geometry",
-		stylers: [
-			{
-				color: "#dedede"
-			},
-			{
-				lightness: 21
-			}
-		]
-	},
-	{
-		elementType: "labels.text.fill",
-		stylers: [
-			{
-				saturation: 36
-			},
-			{
-				color: "#333333"
-			},
-			{
-				lightness: 40
-			}
-		]
-	},
-	{
-		elementType: "labels.icon",
-		stylers: [
-			{
-				visibility: "on"
-			}
-		]
-	},
-	{
-		featureType: "transit",
-		elementType: "geometry",
-		stylers: [
-			{
-				color: "#a1a1a1"
-			},
-			{
-				lightness: 19
-			}
-		]
-	},
-	{
-		featureType: "administrative",
-		elementType: "geometry.fill",
-		stylers: [
-			{
-				color: "#a1a1a1"
-			},
-			{
-				lightness: 20
-			}
-		]
-	},
-	{
-		featureType: "administrative",
-		elementType: "geometry.stroke",
-		stylers: [
-			{
-				color: "#bebebe"
-			},
-			{
-				lightness: 17
-			},
-			{
-				weight: 1.2
-			}
-		]
-	}
-];
 
 export default GoogleApiWrapper({
 	apiKey: "AIzaSyA4zKpi3hRchkPewoFrU0h_V4a2ykGrohk"

@@ -162,7 +162,7 @@ export const RootProvider = withRouter(props => {
 				console.log("EXTERNAL", protocol);
 				fetch(
 					protocol === "https:"
-						? "https://freegeoip.app/json"
+						? "https://freegeoip.app/json/"
 						: "http://www.geoplugin.net/json.gp"
 				)
 					.then(res => res.json())

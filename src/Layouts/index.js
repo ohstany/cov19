@@ -39,6 +39,7 @@ export const MainBlock = memo(
 		const { resizer, mainBlock } = refs || {};
 
 		const toggle = e => {
+
 			if (!dragging) {
 				e.stopPropagation();
 				if (device === "pc") {
@@ -90,7 +91,7 @@ export const MainBlock = memo(
 				document.onmousemove = dragAction;
 			}
 
-			document.onclick = toggle;
+			resizer.onclick = toggle;
 		};
 
 		const dragAction = e => {

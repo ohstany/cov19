@@ -1,7 +1,7 @@
-import React, { memo, useContext, useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import ReactGA from "react-ga";
 
-const initCode = ""; // "UA-151313804-1";
+const initCode = "UA-159930655-1";
 
 const domainEnable = ["https://cov19.online"];
 

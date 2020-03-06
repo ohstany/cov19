@@ -39,7 +39,6 @@ export const MainBlock = memo(
 		const { resizer, mainBlock } = refs || {};
 
 		const toggle = e => {
-			// console.log("dragging", dragging);
 			if (!dragging) {
 				e.stopPropagation();
 				if (device === "pc") {
@@ -81,7 +80,7 @@ export const MainBlock = memo(
 
 		const dragStart = e => {
 			e = e || window.event;
-			e.preventDefault();
+			// e.preventDefault();
 
 			mainBlock.classList.remove("shifting");
 			mapRef.classList.remove("shifting");
@@ -91,7 +90,7 @@ export const MainBlock = memo(
 				document.onmousemove = dragAction;
 			}
 
-			resizer.onclick = toggle;
+			document.onclick = toggle;
 		};
 
 		const dragAction = e => {
@@ -110,8 +109,6 @@ export const MainBlock = memo(
 				if (posFix > 10 && menuW - posFix > 20) {
 					dragging = true;
 				}
-
-				// console.log("menuW", menuW, posFix, dragging);
 
 				mainBlock.style.right = posFix > 0 ? `-${posFix + 1}px` : "";
 				mapRef.style.width =
@@ -153,13 +150,18 @@ export const MainBlock = memo(
 			} else {
 				const half = menuH / 2;
 
-				if ((posFix > 150 && posFix < half) || menuH - posFix < 150) {
-					slide("bottom");
-				} else if (
-					(posFix < half && posFix < 150) ||
-					(menuH - posFix > 150 && posFix > half)
-				) {
-					slide("top");
+				if (posFix < half) {
+					if (posFix > 100) {
+						slide("bottom");
+					} else {
+						slide("top");
+					}
+				} else if (posFix > half) {
+					if (menuH - posFix > 150) {
+						slide("top");
+					} else {
+						slide("bottom");
+					}
 				} else {
 					mainBlock.style.bottom = `-${posFix + 1}px`;
 				}

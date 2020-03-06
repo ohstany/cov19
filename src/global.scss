@@ -288,6 +288,7 @@ input:required {
 		color: white;
 		padding: 10px;
 		cursor: pointer;
+		z-index: 10;
 		&:after {
 			content: "";
 			position: fixed;
@@ -296,8 +297,29 @@ input:required {
 			margin-left: -54px;
 		}
 		@include md {
-			top: -36px;
+			top: -9px;
 			left: 0;
+			height: 18px;
+			border-radius: 50px;
+			width: 70px;
+			text-align: center;
+			padding: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			svg {
+				display: none;
+			}
+			&:before {
+				content: "";
+				border-top: 1px solid rgba(255, 255, 255, 0.4);
+				position: absolute;
+				top: 9px;
+				width: 60%;
+				left: 0;
+				right: 0;
+				margin: auto;
+			}
 			&:after {
 				height: 35px;
 				width: 100%;
@@ -333,6 +355,25 @@ input:required {
 				z-index: 10;
 				border: 0;
 			}
+		}
+	}
+	.makeMark-mb {
+		position: fixed;
+		right: 10px;
+		width: 40px;
+		top: 74px;
+		height: 40px;
+		border-radius: 50%;
+		z-index: 10;
+		color: white;
+		background: #ed1812;
+		border: 1px solid #e91e18;
+		display: flex;
+		padding: 6px;
+		box-shadow: 0 0 0 rgb(237, 24, 18);
+		animation: pulse 2s infinite;
+		svg {
+			width: 100%;
 		}
 	}
 	img {
@@ -513,6 +554,12 @@ input:required {
 					}
 				}
 			}
+			time {
+				font-size: 10px;
+				margin-top: 3px;
+				display: block;
+				color: #8e8e8e;
+			}
 		}
 		@include md {
 			border-top: 1px solid #d0d0d0;
@@ -691,6 +738,8 @@ input:required {
 				white-space: nowrap;
 				width: 100%;
 				padding: 10px;
+				padding-top: 20px;
+				border-top: 1px solid #e0e0e0;
 				a {
 					display: inline-block;
 					vertical-align: top;
@@ -703,7 +752,7 @@ input:required {
 		display: block;
 		width: 100%;
 		max-width: 100%;
-		height: 95%;
+		height: 100%;
 		bottom: 0;
 		top: auto;
 		position: fixed;
@@ -781,6 +830,27 @@ input:required {
 	border-top: 1px solid #7c7c7c;
 	padding-top: 10px;
 	font-weight: bold;
+}
+
+.contentCooking {
+	padding: 20px;
+	text-align: center;
+	font-weight: bold;
+	color: #848484;
+	position: relative;
+	filter: grayscale(100%);
+	img {
+		margin: 0;
+		max-width: 80px;
+	}
+	.txt {
+		font-size: 17px;
+		width: 100%;
+		bottom: 31px;
+		background: white;
+		left: 0;
+		padding: 10px 0;
+	}
 }
 
 @keyframes skeleton-loading {

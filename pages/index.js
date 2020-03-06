@@ -5,7 +5,7 @@ import ActivityArea from "Templates/ActivityArea";
 import Socials from "Templates/Socials";
 import GoogleAnalytics from "Library/GoogleAnalytics";
 import { MainBlock } from "Layouts";
-import { useState, memo } from "react";
+import { memo } from "react";
 import "global.scss";
 
 const Home = memo(
@@ -14,8 +14,6 @@ const Home = memo(
 			store: { settings: { cuser: { headers: { ucal } = {} } = {} } = {} }
 		}
 	}) => {
-		// console.log("props", ucal);
-
 		return (
 			<GoogleAnalytics>
 				<main>

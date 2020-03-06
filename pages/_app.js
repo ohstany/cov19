@@ -23,7 +23,7 @@ import { memoize } from "Library";
 import Head from "next/head";
 
 const siteMeta = {
-	title: "Коронавирус в Украине",
+	title: "Коронавирус",
 	description: "",
 	icon: "coronavirus2.png",
 	url:

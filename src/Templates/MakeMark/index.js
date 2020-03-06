@@ -1,9 +1,12 @@
 import React, { memo, useState, useContext, useCallback } from "react";
 import RootContext from "Context";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { faThermometerThreeQuarters } from "@fortawesome/fontawesome-free-solid";
 
 export default memo(
 	() => {
-		const { api } = useContext(RootContext);
+		const { api, device } = useContext(RootContext);
 
 		const [visible, _visible] = useState(false);
 
@@ -28,7 +31,7 @@ export default memo(
 			} else {
 				api({
 					method: "POST",
-					action: "marker",
+					action: "report",
 					data: state
 				}).then(res => {
 					console.log("res", res);
@@ -67,15 +70,27 @@ export default memo(
 
 		return (
 			<>
-				<div className="block makeMark">
-					<button onClick={togglePopup}>Сообщить о заражении</button>
-				</div>
+				{device === "pc" ? (
+					<div className="block makeMark">
+						<button onClick={togglePopup}>
+							Сообщить о заражении
+						</button>
+					</div>
+				) : (
+					<div className="makeMark-mb">
+						<FontAwesomeIcon
+							onClick={togglePopup}
+							icon={faThermometerThreeQuarters}
+						/>
+					</div>
+				)}
 
 				{visible && (
 					<div id="popup" className="popup" onClick={clickOut}>
 						<div id="form" className="form">
 							<h2>
-								Заполните форму ниже и нажмите кнопку отправить.
+								Сообщитe о заражении. Заполните форму ниже и
+								нажмите кнопку отправить.
 							</h2>
 
 							{done === "0" ? (

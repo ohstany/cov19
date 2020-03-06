@@ -35,7 +35,12 @@ const setRefs = (r, k) => {
 const MapCover = withScriptjs(
 	withGoogleMap(props => {
 		const {
-			store: { geo = false, markers = [], index },
+			api,
+			store: {
+				geo = false,
+				markers: { a: markers, loaded },
+				index
+			},
 			setStore
 		} = useContext(RootContext) || {};
 
@@ -68,6 +73,22 @@ const MapCover = withScriptjs(
 				}
 			}
 		}, [geo]);
+
+		useEffect(() => {
+			if (!loaded) {
+				api({
+					method: "GET",
+					action: "markers"
+				}).then(markers => {
+					setStore({
+						markers: {
+							a: markers || [],
+							loaded: true
+						}
+					});
+				});
+			}
+		}, []);
 
 		useEffect(() => {
 			if (refs.mapArea) {

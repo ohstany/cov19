@@ -1,18 +1,16 @@
 import { useEffect, useState, useCallback, useContext, memo } from "react";
-import xmlToJson from "Library/xmlToJson";
-import Pin from "./pin.svg";
+import Pin from "Assets/images/pin.svg";
 import { Skeleton1 } from "Templates/Skeleton";
+import NoContent from "Templates/NoContent";
 import RootContext from "Context";
 
 const News = memo(
-	({ data: { sc, scu, guid, title, enclosure, description } = {} }) => {
+	({
+		data: { sc, scu, guid, pubDate, title, enclosure, description } = {}
+	}) => {
 		const enc = enclosure["@attributes"].url;
 
 		const [sh, _sh] = useState(false);
-
-		// const content = description.replace(/(<([^>]+)>)/gi, "");
-
-		console.log("NEW", enc);
 
 		return (
 			<div className="author">
@@ -37,12 +35,6 @@ const News = memo(
 					<span
 						className={"showh"}
 						onClick={() => _sh(e => !e)}></span>
-
-					{/* <div dangerouslySetInnerHTML={(_html) => } />
-					{sh ? content : content.substring(0, 180) + "..."}
-					<span
-						className={"showh" + (sh ? " act" : "")}
-						onClick={() => _sh(e => !e)}></span> */}
 				</div>
 
 				{sc && (
@@ -53,6 +45,7 @@ const News = memo(
 						</a>
 					</div>
 				)}
+				<time datetime={pubDate}>{pubDate}</time>
 			</div>
 		);
 	},
@@ -63,8 +56,12 @@ export default memo(
 	() => {
 		const {
 			api,
-			proxy,
-			store: { index, markers, news = false, activity },
+			store: {
+				index,
+				markers: { a: markers, loaded: mLoaded },
+				news: { a: news, loaded: nLoaded },
+				activity
+			},
 			setStore
 		} = useContext(RootContext) || {};
 
@@ -83,7 +80,12 @@ export default memo(
 				method: "GET",
 				action: "news"
 			}).then(news => {
-				setStore({ news });
+				setStore({
+					news: {
+						a: news || [],
+						loaded: true
+					}
+				});
 			});
 		};
 
@@ -156,8 +158,6 @@ export default memo(
 			);
 		}, []);
 
-		console.log("news", news);
-
 		return (
 			<div className={"block activityArea " + nav}>
 				<nav>
@@ -177,6 +177,11 @@ export default memo(
 										"navi " + (m.id === nav ? "active" : "")
 									}
 									onClick={() => {
+										if (
+											m.id === "local" &&
+											index === undefined
+										)
+											return;
 										navigation(m.id);
 									}}>
 									{m.title}
@@ -188,19 +193,21 @@ export default memo(
 
 				<div className={"activity"}>
 					<div className="bb b1">
-						{/* <Slider /> */}
-
-						{markers.length ? (
-							markers.map((a, ax) => {
-								return (
-									<SingleItem
-										nav={nav}
-										key={ax}
-										a={a}
-										ax={ax}
-									/>
-								);
-							})
+						{mLoaded ? (
+							markers.length ? (
+								markers.map((a, ax) => {
+									return (
+										<SingleItem
+											nav={nav}
+											key={ax}
+											a={a}
+											ax={ax}
+										/>
+									);
+								})
+							) : (
+								<NoContent />
+							)
 						) : (
 							<Skeleton1 row={5} />
 						)}
@@ -239,10 +246,14 @@ export default memo(
 					</div>
 
 					<div className="bb b3">
-						{news.length ? (
-							news.map((a, ax) => {
-								return <News key={ax} data={a} ax={ax} />;
-							})
+						{nLoaded ? (
+							news.length ? (
+								news.map((a, ax) => {
+									return <News key={ax} data={a} ax={ax} />;
+								})
+							) : (
+								<NoContent />
+							)
 						) : (
 							<Skeleton1 row={5} />
 						)}

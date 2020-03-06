@@ -44,9 +44,8 @@ export default class MyApp extends App {
 
 		if (ctx.req && ctx.req.url) {
 			presets = await api({
-				action: "front",
-				method: "GET",
-				params: "source=settings"
+				action: "settings",
+				method: "GET"
 			});
 		}
 
@@ -85,7 +84,7 @@ export default class MyApp extends App {
 
 		return (
 			<RootProvider
-				{...presets}
+				presets={presets}
 				headers={headers}
 				siteMeta={siteMeta}
 				router={router}>

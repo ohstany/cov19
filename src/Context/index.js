@@ -58,11 +58,16 @@ const setStoreReducer = (state, data) => {
 
 const protocol =
 	typeof window === "undefined" ? "https:" : window.location.protocol;
+
 const proxy = protocol + "//cors-anywhere.herokuapp.com/";
+
+const origin = typeof window !== "undefined" ? window.location.origin : false;
 
 // Context as global app store
 export const RootProvider = withRouter(props => {
-	const { loginStatus, logout, children } = props;
+	const { presets, children, siteMeta } = props;
+
+	root_store_initial_state.settings = presets;
 
 	const [store, setStore] = useReducer(
 		setStoreReducer,
@@ -184,22 +189,35 @@ export const RootProvider = withRouter(props => {
 		}
 	}, []);
 
+	const logout = serverStatus => {
+		if (store.loginStatus === true && serverStatus === false) {
+			api({ action: "apilogout" });
+		}
+
+		setStore({
+			loginStatus: false
+		});
+	};
+
 	const api = (data, signal = false) => {
 		return bpis(data, signal, {
 			logout,
-			loginStatus: state.loginStatus
+			loginStatus: store.loginStatus
 		});
 	};
 
 	return (
 		<RootContext.Provider
 			value={{
+				siteMeta,
+				origin,
 				protocol,
 				proxy,
 				store,
 				actioner,
 				device,
 				setStore,
+				logout,
 				api
 			}}>
 			{children}

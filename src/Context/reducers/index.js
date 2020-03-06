@@ -38,9 +38,12 @@ export const root_store_reducer = (s, a, params = false) => {
  */
 
 export const root_store_initial_state = {
+	mapRef: null,
 	geo: false,
 	options: {},
 	index: undefined,
+   loginStatus: false,
+   settings: {},
 	activity: {
 		"0": [
 			{

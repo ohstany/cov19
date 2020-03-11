@@ -8,7 +8,7 @@ import React, {
 // import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import markerImg from "./m.png";
 import styles from "./mapStyling.json";
-import countries from "Library/countries.json";
+import locations from "Library/iso-3166-2-object.m.json";
 import { reducer } from "Library";
 import RootContext from "Context";
 import {
@@ -36,6 +36,7 @@ const MapCover = withScriptjs(
 	withGoogleMap(props => {
 		const {
 			api,
+			store,
 			store: {
 				geo = false,
 				markers: { a: markers, loaded },
@@ -44,7 +45,7 @@ const MapCover = withScriptjs(
 			setStore
 		} = useContext(RootContext) || {};
 
-		// console.log("index", index);
+		// console.log("store", store);
 
 		const [state, _state] = useReducer(reducer, {
 			cpos: false,
@@ -53,22 +54,30 @@ const MapCover = withScriptjs(
 			activeMarker: null
 		});
 
-		const { zoom, latlng } = state;
+		const { zoom, lat, lng } = state;
 
 		useEffect(() => {
 			if (geo && (geo.countryCode || geo.country_code)) {
-				const cpos = countries.filter(
-					c =>
-						c.country_code === (geo.countryCode || geo.country_code)
-				);
+				const c_code = geo.countryCode || geo.country_code;
+				const r_code = geo.regionCode || geo.region_code;
+				const cpos = locations[c_code];
 
-				// console.log("got", geo);
+				if (cpos) {
+					let zoom = 7;
+					let lngs = { lat: cpos.lat, lng: cpos.lng };
 
-				if (cpos.length) {
+					if (r_code && cpos.regions[r_code]) {
+						zoom = 9;
+						lngs = {
+							lat: cpos.regions[r_code].lat,
+							lng: cpos.regions[r_code].lng
+						};
+					}
+
 					_state({
-						cpos: geo.country_code ? cpos : cpos[0],
-						zoom: 7,
-						latlng: [cpos[0].latlng[0], cpos[0].latlng[1]]
+						cpos,
+						zoom,
+						...lngs
 					});
 				}
 			}
@@ -106,7 +115,8 @@ const MapCover = withScriptjs(
 
 				_state({ zoom: 10 });
 				_state({
-					latlng: [lat, lng],
+					lat,
+					lng,
 					zoom: 15
 				});
 			}
@@ -128,7 +138,12 @@ const MapCover = withScriptjs(
 				ref={r => setRefs(r, "map")}
 				defaultOptions={styles}
 				zoom={zoom}
-				center={{ lat: latlng[0], lng: latlng[1] }}>
+				onClick={e => {
+					let latitude = e.latLng.lat();
+					let longtitude = e.latLng.lng();
+					console.log("locl", latitude, longtitude, e);
+				}}
+				center={{ lat, lng }}>
 				<MarkerClusterer
 					clusterClass="marks"
 					styles={[

@@ -1,62 +1,99 @@
-import { useEffect, useState, useCallback, useContext, memo } from "react";
+import {
+	useEffect,
+	useState,
+	useCallback,
+	useContext,
+	memo,
+	useMemo
+} from "react";
 import Pin from "Assets/images/pin.svg";
+import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
 import RootContext from "Context";
+import countries from "Library/countries-array.json";
 
 const News = memo(
-	({
-		data: { sc, scu, guid, pubDate, title, enclosure, description } = {}
-	}) => {
+	({ data: { sc, scu, pubDate, title, enclosure, description } = {} }) => {
 		const enc = enclosure["@attributes"].url;
 
 		const [sh, _sh] = useState(false);
 
 		return (
-			<div className="author">
-				{enc && (
-					<div className="imgb">
-						<img src={enc} alt="" />
-					</div>
-				)}
-
+			<div className={"author" + (sh ? " shown" : "")}>
 				<h3 className={"atitle clickable"}>
-					<a href={guid} target="_blank">
+					<a
+						href="#"
+						target="_blank"
+						onClick={e => {
+							e.preventDefault();
+							e.stopPropagation();
+							_sh(e => !e);
+						}}>
 						{title}
 					</a>
 				</h3>
 
 				<div className={"desc" + (sh ? " act" : "")}>
+					{enc && sh && (
+						<div className="imgb">
+							<img src={enc} alt="" />
+						</div>
+					)}
+
 					<div
-						class={"cont"}
+						className={"cont"}
 						dangerouslySetInnerHTML={{
 							__html: description
 						}}></div>
-					<span
-						className={"showh"}
-						onClick={() => _sh(e => !e)}></span>
 				</div>
+
+				<span className={"showh"} onClick={() => _sh(e => !e)}>
+					{sh ? "-" : "+"}
+				</span>
 
 				{sc && (
 					<div className="source">
-						Ресурс: #{" "}
+						Источник: #{" "}
 						<a href={scu} target="_blank">
 							{sc}
 						</a>
 					</div>
 				)}
-				<time datetime={pubDate}>{pubDate}</time>
+				<time dateTime={pubDate}>{pubDate}</time>
 			</div>
 		);
 	},
 	() => true
 );
 
+const RenderSource = ({ s }) => {
+	return (
+		<div className="src">
+			{s.indexOf("youtube") >= 0 && s.indexOf("iframe") >= 0 ? (
+				<div
+					dangerouslySetInnerHTML={{
+						__html: s
+					}}
+				/>
+			) : (
+				<a href={s} target="_blank">
+					{s}
+				</a>
+			)}
+		</div>
+	);
+};
+
 export default memo(
 	() => {
 		const {
 			api,
 			store: {
+				country_code,
+				region_code,
+				geo,
+				cpos,
 				index,
 				markers: { a: markers, loaded: mLoaded },
 				news: { a: news, loaded: nLoaded },
@@ -65,11 +102,27 @@ export default memo(
 			setStore
 		} = useContext(RootContext) || {};
 
+		// console.log("cpos", country_code, region_code, cpos, geo);
+
 		const active = index >= 0 ? markers[index] : false;
 
 		const comments = activity[index] || false;
 
 		const [nav, _nav] = useState("acts");
+
+		const { regions = false } = cpos || {};
+
+		const builtRegions = useMemo(
+			() =>
+				regions &&
+				Object.keys(regions).map(n => ({
+					region_code: n,
+					...regions[n]
+				})),
+			[regions]
+		);
+
+		// console.log("builtRegions", builtRegions);
 
 		const navigation = useCallback(key => {
 			_nav(key);
@@ -140,33 +193,16 @@ export default memo(
 			);
 		}, []);
 
-		const RenderSource = useCallback(({ s }) => {
-			return (
-				<div className="src">
-					{s.indexOf("youtube") >= 0 && s.indexOf("iframe") >= 0 ? (
-						<div
-							dangerouslySetInnerHTML={{
-								__html: s
-							}}
-						/>
-					) : (
-						<a href={s} target="_blank">
-							{s}
-						</a>
-					)}
-				</div>
-			);
-		}, []);
-
 		return (
 			<div className={"block activityArea " + nav}>
 				<nav>
 					<ol>
 						{[
-							{
-								id: "local",
-								title: <Pin />
-							},
+							// {
+							// 	id: "local",
+							// 	className: "pin",
+							// 	title: <Pin />
+							// },
 							{ id: "acts", title: "Заражения" },
 							{ id: "news", title: "Новости" }
 						].map((m, mx) => {
@@ -174,7 +210,9 @@ export default memo(
 								<li
 									key={mx}
 									className={
-										"navi " + (m.id === nav ? "active" : "")
+										"navi " +
+										(m.className || "") +
+										(m.id === nav ? " active" : "")
 									}
 									onClick={() => {
 										if (
@@ -191,8 +229,51 @@ export default memo(
 					</ol>
 				</nav>
 
+				<MakeMark />
+
 				<div className={"activity"}>
 					<div className="bb b1">
+						<div className="filterNavi tbf">
+							<div className="fitem tbf-c">
+								<select
+									value={country_code || ""}
+									onChange={({ target: { value } }) =>
+										setStore({ country_code: value })
+									}>
+									><option value="">Выберите страну</option>
+									{countries.map((c, ci) => {
+										return (
+											<option
+												key={ci}
+												value={c.country_code}>
+												{c.name}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className="sep" />
+							<div className="fitem tbf-c">
+								<select
+									value={region_code}
+									onChange={({ target: { value } }) =>
+										setStore({ region_code: value })
+									}>
+									<option value="">Выберите город</option>
+									{regions &&
+										builtRegions.map((r, ri) => {
+											return (
+												<option
+													key={ri}
+													value={r.region_code}>
+													{r.name}
+												</option>
+											);
+										})}
+								</select>
+							</div>
+						</div>
+
 						{mLoaded ? (
 							markers.length ? (
 								markers.map((a, ax) => {
@@ -206,7 +287,11 @@ export default memo(
 									);
 								})
 							) : (
-								<NoContent />
+								<NoContent
+									text={
+										"В данном регионе нет случаев заражения"
+									}
+								/>
 							)
 						) : (
 							<Skeleton1 row={5} />

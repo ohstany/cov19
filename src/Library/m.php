@@ -347,7 +347,7 @@ function iso3166_2_minify()
    foreach ($js as $c => $cv) {
       if ($cv->regions) {
          unset($cv->parent);
-         unset($cv->code);
+         // unset($cv->code);
          unset($cv->division);
          foreach ($cv->regions as $k => $v) {
             unset($cv->regions->$k->utf8);
@@ -365,6 +365,50 @@ function iso3166_2_minify()
    echo "</pre>";
 }
 
+function build_phones()
+{
+   $js = json_decode(file_get_contents("./phoned.json"));
+   $copy = [];
+
+   foreach ($js as $key => $value) {
+      $code = $value->code;
+      unset($value->code);
+      $copy[$code] = (object) [
+         'country' => $value->name,
+         'num' => $value->dial_code
+      ];
+   }
+
+   $copy = (object) $copy;
+
+   file_put_contents("./phone.m.json", json_encode($copy));
+
+   echo "<pre>";
+   print_r($copy);
+   echo "</pre>";
+}
+
+function buildNewCountries()
+{
+   $js = json_decode(file_get_contents("./iso-3166-2-object.json"));
+   $copy = [];
+
+   foreach ($js as $key => $value) {
+      $copy[] = [
+         'country_code' => $key,
+         'lat' => $value->lat,
+         'lng' => $value->lng,
+         'name' => $value->name
+      ];
+   }
+
+   file_put_contents("./countries-array.json", json_encode($copy));
+
+   echo "<pre>";
+   print_r($copy);
+   echo "</pre>";
+}
+
 // originToArray();
 // originToObject();
 // iso3166_2_toObject_build();
@@ -372,4 +416,6 @@ function iso3166_2_minify()
 // iso3166_2_toObject_build_reverse();
 // iso3166_2_latlng_title();
 // iso3166_2_finalize();
-iso3166_2_minify();
+// iso3166_2_minify();
+// build_phones();
+buildNewCountries();

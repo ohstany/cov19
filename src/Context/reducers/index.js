@@ -38,6 +38,7 @@ export const root_store_reducer = (s, a, params = false) => {
  */
 
 export const root_store_initial_state = {
+	cpos: false,
 	mapRef: null,
 	geo: false,
 	options: {},

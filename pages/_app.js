@@ -25,10 +25,7 @@ import Head from "next/head";
 const siteMeta = {
 	title: "Коронавирус",
 	description: "",
-	icon: "coronavirus2.png",
-	url:
-		(typeof window !== "undefined" && window.location.href) ||
-		"https://cov19.online/"
+	icon: "coronavirus2.png"
 };
 
 export default class MyApp extends App {

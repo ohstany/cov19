@@ -1,11 +1,27 @@
-import React, { useState, useCallback, memo, useContext } from "react";
+import React, {
+	useState,
+	useCallback,
+	memo,
+	useContext,
+	useEffect
+} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/fontawesome-free-solid";
+import {
+	faCheck,
+	faMobile,
+	faTimes,
+	faEnvelope
+} from "@fortawesome/fontawesome-free-solid";
 import RootContext from "Context";
 
 import phone from "./phone.png";
 import email from "./email.png";
-import phones from "./phones.json";
+import phones from "Library/phoned.json";
+
+// const via = {
+// 	phone: faMobile,
+// 	email: faEnvelope
+// };
 
 const via = {
 	phone,
@@ -14,13 +30,30 @@ const via = {
 
 export default memo(
 	() => {
-		const { api } = useContext(RootContext);
+		const { api, store: { geo } = {} } = useContext(RootContext);
 		const [state, _state] = useState({
 			via: "phone",
-			num: "+82",
+			num: phones[0].dial_code,
 			phone: "",
 			email: ""
 		});
+
+		const [sh, _sh] = useState(true);
+
+		useEffect(() => {
+			document.body.classList.add("subsc");
+		}, []);
+
+		useEffect(() => {
+			if (geo && geo.country_code) {
+				const ph = phones.find(i => i.code === geo.country_code);
+				ph &&
+					_state(e => ({
+						...e,
+						num: ph.dial_code
+					}));
+			}
+		}, [geo]);
 
 		const [done, _done] = useState("0");
 		const [openNot, _openNot] = useState(false);
@@ -64,75 +97,99 @@ export default memo(
 			_state(e => ({ ...e, via }));
 		}, []);
 
-		return (
+		return sh ? (
 			<div className={"block subscribe" + (openNot ? " active" : "")}>
-				<span class="submb">
-					<img src={phone} onClick={() => _openNot(e => !e)} />
-				</span>
-
-				<h2>
-					Оставьте свой номер телефона или имейл и мы вас оповестим
-					если есть рядом случай зараженния.
-				</h2>
-
-				<div className="sel">
-					{["phone", "email"].map((w, x) => {
-						return (
-							<img
-								key={x}
-								className={w === state.via ? "selected" : ""}
-								src={via[w]}
-								onClick={() => setVia(w)}
-							/>
-						);
-					})}
-
-					<div className={"inpf " + state.via}>
-						{done === "0" ? (
-							{
-								phone: (
-									<>
-										<select
-											name="num"
-											value={state.num}
-											onChange={updateState}>
-											{phones.map((p, px) => (
-												<option
-													key={px}
-													value={p.dial_code}>
-													{p.dial_code} ({p.name})
-												</option>
-											))}
-										</select>
-
-										<input
-											name="phone"
-											placeholder="Номер телефона"
-											value={state.phone}
-											onChange={updateState}
-										/>
-									</>
-								),
-								email: (
-									<input
-										name="email"
-										placeholder="Эл.почта"
-										value={state.email}
-										onChange={updateState}
+				<div className="container tbf">
+					<span className="submb">
+						<img src={phone} onClick={() => _openNot(e => !e)} />
+					</span>
+					<h2 className="tbf-c titl">
+						Подпишитесь, и мы оповестим о зарежении в вашем регионе.
+					</h2>
+					<div className="tbf-c sel">
+						<div className="centrize">
+							{["phone", "email"].map((w, x) => {
+								return (
+									<img
+										key={x}
+										className={
+											w === state.via ? "selected" : ""
+										}
+										src={via[w]}
+										onClick={() => setVia(w)}
 									/>
-								)
-							}[state.via || ""]
-						) : (
-							<div className="subss">Благодарим за подписку</div>
-						)}
-						{done === "0" && (
-							<button onClick={submitForm}>
-								<FontAwesomeIcon icon={faCheck} />
-							</button>
-						)}
+									// <div
+									// 	onClick={() => setVia(w)}
+									// 	className={
+									// 		"swb" +
+									// 		(w === state.via ? " selected" : "")
+									// 	}>
+									// 	<FontAwesomeIcon key={x} icon={via[w]} />
+									// </div>
+								);
+							})}
+
+							<div className={"inpf " + state.via}>
+								{done === "0" ? (
+									{
+										phone: (
+											<>
+												<select
+													name="num"
+													value={state.num}
+													onChange={updateState}>
+													{phones.map((p, px) => (
+														<option
+															key={px}
+															value={p.dial_code}>
+															{p.dial_code} (
+															{p.name})
+														</option>
+													))}
+												</select>
+
+												<input
+													name="phone"
+													placeholder="Номер телефона"
+													value={state.phone}
+													onChange={updateState}
+												/>
+											</>
+										),
+										email: (
+											<input
+												name="email"
+												placeholder="Эл.почта"
+												value={state.email}
+												onChange={updateState}
+											/>
+										)
+									}[state.via || ""]
+								) : (
+									<div className="subss">
+										Благодарим за подписку
+									</div>
+								)}
+								{done === "0" && (
+									<button onClick={submitForm}>
+										<FontAwesomeIcon icon={faCheck} />
+									</button>
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
+				<FontAwesomeIcon
+					className="closec"
+					icon={faTimes}
+					onClick={() => {
+						document.body.classList.remove("subsc");
+						_sh(e => !e);
+					}}
+				/>
 			</div>
+		) : (
+			""
 		);
 	},
 	() => true

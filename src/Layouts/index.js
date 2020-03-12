@@ -39,7 +39,6 @@ export const MainBlock = memo(
 		const { resizer, mainBlock } = refs || {};
 
 		const toggle = e => {
-
 			if (!dragging) {
 				e.stopPropagation();
 				if (device === "pc") {
@@ -151,21 +150,29 @@ export const MainBlock = memo(
 			} else {
 				const half = menuH / 2;
 
-				if (posFix < half) {
-					if (posFix > 100) {
-						slide("bottom");
-					} else {
-						slide("top");
-					}
-				} else if (posFix > half) {
-					if (menuH - posFix > 150) {
-						slide("top");
-					} else {
-						slide("bottom");
-					}
+				if (posFix > half && menuH - posFix < 150) {
+					slide("bottom");
+				} else if (posFix < half && posFix < 100) {
+					slide("top");
 				} else {
 					mainBlock.style.bottom = `-${posFix + 1}px`;
 				}
+
+				// if (posFix < half) {
+				// 	if (posFix > 100) {
+				// 		slide("bottom");
+				// 	} else {
+				// 		slide("top");
+				// 	}
+				// } else if (posFix > half) {
+				// 	if (menuH - posFix > 150) {
+				// 		slide("top");
+				// 	} else {
+				// 		slide("bottom");
+				// 	}
+				// } else {
+				// 	mainBlock.style.bottom = `-${posFix + 1}px`;
+				// }
 			}
 
 			document.onmouseup = null;

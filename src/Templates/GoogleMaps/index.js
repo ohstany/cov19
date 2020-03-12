@@ -36,8 +36,10 @@ const MapCover = withScriptjs(
 	withGoogleMap(props => {
 		const {
 			api,
-			store,
 			store: {
+				country_code: cc,
+				region_code: rc,
+				cpos,
 				geo = false,
 				markers: { a: markers, loaded },
 				index
@@ -45,41 +47,54 @@ const MapCover = withScriptjs(
 			setStore
 		} = useContext(RootContext) || {};
 
-		// console.log("store", store);
-
 		const [state, _state] = useReducer(reducer, {
-			cpos: false,
-			latlng: [50.167003, 31.072426],
+			lat: 50.167003,
+			lng: 31.072426,
 			zoom: 4,
 			activeMarker: null
 		});
 
 		const { zoom, lat, lng } = state;
 
-		useEffect(() => {
-			if (geo && (geo.countryCode || geo.country_code)) {
-				const c_code = geo.countryCode || geo.country_code;
-				const r_code = geo.regionCode || geo.region_code;
-				const cpos = locations[c_code];
+		const { country_code, region_code } = geo || {};
 
+		useEffect(() => {
+			if (cc) {
+				const cpos = locations[cc];
+				console.log("COUNTRY", cc, cpos);
 				if (cpos) {
-					let zoom = 7;
+					let zoom = cpos.zoom || 7;
 					let lngs = { lat: cpos.lat, lng: cpos.lng };
 
-					if (r_code && cpos.regions[r_code]) {
-						zoom = 9;
-						lngs = {
-							lat: cpos.regions[r_code].lat,
-							lng: cpos.regions[r_code].lng
-						};
-					}
+					setStore({ cpos });
 
 					_state({
-						cpos,
 						zoom,
 						...lngs
 					});
 				}
+			}
+		}, [cc]);
+
+		useEffect(() => {
+			if (rc && cpos) {
+				console.log("REGION", rc, cc, cpos);
+				if (cpos) {
+					if (rc && cpos.regions[rc]) {
+						_state({
+							zoom: cpos.regions[rc].zoom || 9,
+							lat: cpos.regions[rc].lat,
+							lng: cpos.regions[rc].lng
+						});
+					}
+				}
+			}
+		}, [rc, cpos]);
+
+		// initialize position from geo
+		useEffect(() => {
+			if (geo && country_code) {
+				setStore({ region_code, country_code });
 			}
 		}, [geo]);
 

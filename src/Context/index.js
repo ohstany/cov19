@@ -7,6 +7,10 @@ import { root_store_reducer, root_store_initial_state } from "./reducers";
 
 import { rootActions } from "./actions";
 
+import getConfig from "next/config";
+
+const { PROTOCOL } = getConfig().publicRuntimeConfig;
+
 const w = { device: "pc" };
 
 if (typeof window !== "undefined") {
@@ -56,12 +60,60 @@ const setStoreReducer = (state, data) => {
 	return { ...state, ...data };
 };
 
-const protocol =
-	typeof window === "undefined" ? "https:" : window.location.protocol;
+const proxy = PROTOCOL + "//cors-anywhere.herokuapp.com/";
 
-const proxy = protocol + "//cors-anywhere.herokuapp.com/";
+const origin =
+	(typeof window !== "undefined" && window.location.host) || "cov19.online";
 
-const origin = typeof window !== "undefined" ? window.location.origin : false;
+const formating = key => {
+	switch (key) {
+		case "geoplugin_request":
+		case "ip":
+			return "ip";
+
+		case "geoplugin_region":
+		case "region_name":
+			return "region";
+
+		case "geoplugin_regionName":
+		case "region_name":
+			return "region_name";
+
+		case "geoplugin_city":
+		case "city":
+			return "city";
+
+		case "geoplugin_regionCode":
+		case "region_code":
+			return "region_code";
+
+		case "geoplugin_countryCode":
+		case "country_code":
+			return "country_code";
+
+		case "geoplugin_countryName":
+		case "country_name":
+			return "country_name";
+
+		case "geoplugin_continentCode":
+			return "continent_code";
+
+		case "geoplugin_timezone":
+		case "time_zone":
+			return "continent_code";
+
+		case "geoplugin_latitude":
+		case "latitude":
+			return "lat";
+
+		case "geoplugin_longitude":
+		case "longitude":
+			return "lng";
+
+		default:
+			return false;
+	}
+};
 
 // Context as global app store
 export const RootProvider = withRouter(props => {
@@ -164,23 +216,49 @@ export const RootProvider = withRouter(props => {
 					geo: JSON.parse(geo)
 				});
 			} else {
-				console.log("EXTERNAL", protocol);
+				console.log("EXTERNAL", PROTOCOL);
 				fetch(
-					protocol === "https:"
+					PROTOCOL === "https"
 						? "https://freegeoip.app/json/"
 						: "http://www.geoplugin.net/json.gp"
 				)
 					.then(res => res.json())
 					.then(res => {
-						const geo = Object.keys(res).reduce(
-							(p, n) =>
-								Object.assign({}, p, {
-									[n.replace("geoplugin_", "")]: res[n]
-								}),
-							{}
-						);
+						// const res = {
+						// 	ip: "94.153.30.123",
+						// 	country_code: "UA",
+						// 	country_name: "Украина",
+						// 	region_code: "11",
+						// 	region_name: "Seoul",
+						// 	city: "Seoul",
+						// 	zip_code: "02878",
+						// 	time_zone: "Europe/Kiev",
+						// 	latitude: 50.4522,
+						// 	longitude: 30.5287,
+						// 	metro_code: 0
+						// };
+
+						const geo = Object.keys(res).reduce((p, n) => {
+							const key = formating(n);
+
+							return Object.assign(
+								{},
+								p,
+								key
+									? {
+											[key]: res[n]
+									  }
+									: {}
+							);
+						}, {});
+
+						geo.lat = parseFloat(geo.lat);
+						geo.lng = parseFloat(geo.lng);
+
+						console.log("geo", geo);
 
 						localStorage.setItem("geo", JSON.stringify(geo));
+
 						setStore({
 							geo
 						});
@@ -211,7 +289,7 @@ export const RootProvider = withRouter(props => {
 			value={{
 				siteMeta,
 				origin,
-				protocol,
+				protocol: PROTOCOL,
 				proxy,
 				store,
 				actioner,

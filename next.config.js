@@ -4,10 +4,12 @@ const withImages = require("next-images");
 const withSize = require("next-size");
 const withTM = require("next-transpile-modules");
 const withPlugins = require("next-compose-plugins");
+const envConfig = require("./env.config");
 
 const nextConfig = {
 	distDir: "." + process.env.NODE_ENV,
 	transpileModules: ["gsap"],
+	...envConfig,
 	// useFileSystemPublicRoutes: false,
 
 	webpack: (config, options) => {

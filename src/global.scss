@@ -72,6 +72,7 @@ main {
 	position: absolute;
 	table-layout: fixed;
 	width: 100%;
+	overflow: hidden;
 	> div {
 		display: table-cell;
 		width: 76%;
@@ -202,6 +203,22 @@ button {
 	}
 }
 
+.container {
+	max-width: 1140px;
+	width: 100%;
+	margin: 0 auto;
+}
+
+.tbf {
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+}
+
+.tbf-c {
+	display: table-cell;
+}
+
 .form {
 	width: 350px;
 	min-height: 500px;
@@ -245,6 +262,7 @@ select,
 textarea,
 input {
 	font-size: 15px;
+	outline-color: #ff0700;
 }
 
 ul,
@@ -267,6 +285,18 @@ input:required {
 	border-color: #e99090;
 }
 
+body.subsc {
+	main {
+		.mainBlock,
+		.mapArea {
+			padding-top: 60px;
+			@include md {
+				padding-top: 0;
+			}
+		}
+	}
+}
+
 .mainBlock {
 	height: 100%;
 	border-left: 1px solid rgba(0, 0, 0, 0.2);
@@ -282,7 +312,7 @@ input:required {
 
 	.resizer {
 		position: absolute;
-		top: 96px;
+		top: 100px;
 		left: -35px;
 		background: #ed1812;
 		color: white;
@@ -293,39 +323,42 @@ input:required {
 			content: "";
 			position: fixed;
 			height: 40%;
-			width: 100px;
-			margin-left: -54px;
+			width: 50px;
+			margin-left: -39px;
+			margin-top: 27px;
 		}
 		@include md {
-			top: -9px;
-			left: 0;
-			height: 18px;
-			border-radius: 50px;
-			width: 70px;
+			top: -20px;
+			height: 40px;
 			text-align: center;
 			padding: 0;
 			left: 0;
 			right: 0;
 			margin: auto;
+			width: 100%;
 			svg {
 				display: none;
 			}
+
+			&:after,
 			&:before {
 				content: "";
 				border-top: 1px solid rgba(255, 255, 255, 0.4);
 				position: absolute;
-				top: 9px;
-				width: 60%;
+				top: 10px;
+				width: 40px;
 				left: 0;
 				right: 0;
 				margin: auto;
 			}
+			&:before {
+				width: 40px;
+				height: 8px;
+				font-weight: 100;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+			}
 			&:after {
-				height: 35px;
-				width: 100%;
-				right: 0;
-				margin-left: 0;
-				margin-top: -8px;
+				top: 30px;
 			}
 		}
 	}
@@ -335,6 +368,33 @@ input:required {
 		position: relative;
 		height: 100%;
 	}
+	.filterNavi {
+		padding-bottom: 10px;
+		border-bottom: 1px solid #dadada;
+		padding: 10px 20px;
+		margin-left: -10px;
+		margin-right: -10px;
+		margin-top: -10px;
+		position: relative;
+		width: auto;
+		background: #ededed;
+		.sep {
+			width: 10px;
+		}
+		.fitem {
+			width: 49%;
+			padding: 4px;
+			background: white;
+			border: 1px solid #ccc;
+			select {
+				width: 100%;
+				border: none;
+				background: none;
+				outline: none;
+				box-shadow: none;
+			}
+		}
+	}
 	.block {
 		width: 100%;
 		&.activityArea {
@@ -343,8 +403,12 @@ input:required {
 		}
 		&.makeMark {
 			text-align: center;
-			border-bottom: 1px solid #eaeaea;
+			border-bottom: 1px solid #dadada;
 			padding: 10px 20px;
+			margin-left: -10px;
+			margin-right: -10px;
+			position: relative;
+			width: auto;
 			@include md {
 				position: fixed;
 				top: 0;
@@ -379,18 +443,13 @@ input:required {
 	img {
 		margin-left: 0.5rem;
 	}
-	a {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
 
 	.activityArea {
 		ol {
 			display: table;
 			table-layout: fixed;
 			width: 100%;
-			border-bottom: 1px solid #eaeaea;
+			border-bottom: 1px solid #dadada;
 			li {
 				text-align: center;
 				border-right: 1px solid #eaeaea;
@@ -413,7 +472,7 @@ input:required {
 						fill: #d8d8d8;
 					}
 				}
-				&:first-child {
+				&.pin {
 					width: 40px;
 					background: #efefef;
 				}
@@ -457,8 +516,9 @@ input:required {
 				position: absolute;
 				width: 100%;
 				height: 100%;
-				padding-bottom: 300px;
+				padding-bottom: 120px;
 				overflow-y: auto;
+				background-color: #ededed;
 			}
 			.b2 {
 				margin-left: -100%;
@@ -467,10 +527,11 @@ input:required {
 				margin-left: 100%;
 			}
 			.author {
+				position: relative;
 				padding: 10px;
-				border: 1px solid #eaeaea;
-				background: #f7f7f7;
-				margin-bottom: 15px;
+				border: 1px solid #e1e1e1;
+				background-color: white;
+				margin-bottom: 10px;
 				h3 {
 					margin: 0;
 					margin-bottom: 10px;
@@ -489,7 +550,7 @@ input:required {
 			}
 			.comments {
 				h3 {
-					margin-bottom: 10px;
+					margin-bottom: 5px;
 				}
 				.cm {
 					margin-bottom: 8px;
@@ -516,36 +577,49 @@ input:required {
 		}
 		.desc {
 			position: relative;
+
+			p {
+				margin: 0;
+				display: inline;
+			}
+		}
+		.author.shown {
+			.desc {
+				p {
+					margin: 10px 0;
+					display: block;
+				}
+			}
 		}
 		.source {
 			text-align: left;
 			display: inline-block;
 			width: 100%;
-			margin-top: 10px;
+			margin-top: 5px;
 			a {
 				display: inline-block;
 			}
 		}
+		.showh {
+			position: absolute;
+			bottom: 10px;
+			right: 10px;
+			border: 1px solid #a5a5a5;
+			width: 20px;
+			height: 20px;
+			text-align: center;
+			line-height: 16px;
+		}
 		.b3 {
 			.desc {
 				position: relative;
-				height: 200px;
+				height: 35px;
 				overflow: hidden;
 				display: inline-block;
 				.cont {
 					height: 200px;
 				}
-				.showh {
-					position: absolute;
-					bottom: 0px;
-					width: 100%;
-					height: 40px;
-					left: 0;
-					background: linear-gradient(
-						rgba(255, 255, 255, 0),
-						rgb(247, 247, 247)
-					);
-				}
+
 				&.act {
 					height: 100%;
 					overflow: visible;
@@ -567,16 +641,23 @@ input:required {
 	}
 
 	.subscribe {
-		padding: 0 20px;
-		position: absolute;
-		bottom: 0;
-		height: 140px;
+		height: 60px;
+		padding: 15px 0;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
 		background: #2e2e2e;
 		color: white;
 		transition: all 0.3s;
+		> div,
+		h2 {
+			vertical-align: middle;
+		}
 		h2 {
 			font-size: 15px;
 			text-align: center;
+			padding: 0 20px;
 		}
 		img {
 			margin: 0;
@@ -590,13 +671,49 @@ input:required {
 				border: 1px solid #ff0700;
 			}
 		}
-		.sel {
+		.closec {
+			width: 15px;
+			height: 15px;
+			position: absolute;
+			right: 20px;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+		}
+		.swb {
+			height: 50%;
+			text-align: center;
+			position: relative;
+			cursor: pointer;
+			background: #1b1b1b;
+			&:first-child {
+				border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+			}
+			&.selected {
+				background-color: #d4130e;
+			}
+			svg {
+				width: 20px;
+				vertical-align: middle;
+				margin: auto;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				position: absolute;
+			}
+		}
+		.centrize {
 			display: flex;
 			align-items: center;
+		}
+		.sel {
+			width: 450px;
 		}
 		.inpf {
 			display: flex;
 			align-items: center;
+			width: 100%;
 			&.phone {
 				select,
 				input {
@@ -628,6 +745,7 @@ input:required {
 				padding: 6px 10px;
 			}
 		}
+
 		button {
 			width: 50px;
 			border-radius: 5px;
@@ -657,6 +775,28 @@ input:required {
 		@include md {
 			position: fixed;
 			right: -100%;
+			left: auto;
+			height: 200px;
+			bottom: 0;
+			top: auto;
+			> div,
+			h2 {
+				display: block;
+			}
+			h2 {
+				font-size: 18px;
+			}
+			.closec {
+				display: none;
+			}
+			.centrize {
+				display: block;
+				text-align: center;
+			}
+			.inpf {
+				padding: 0 20px;
+				padding-top: 10px;
+			}
 			&.active {
 				right: 0;
 			}
@@ -664,45 +804,54 @@ input:required {
 	}
 
 	.socials {
-		position: fixed;
+		position: absolute;
 		margin: auto;
-		margin-left: -6%;
 		text-shadow: 0 0 black;
-		top: 0;
+		top: auto;
+		width: 100%;
 		bottom: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
+		.sct {
+			display: block;
+			text-align: center;
+			background: #343434;
+			color: white;
+			padding: 4px 0;
+			font-weight: 200;
+			@include md {
+				display: none;
+			}
+		}
 		.share-links {
+			display: table;
+			table-layout: fixed;
+			width: 100%;
 			a {
-				border: 1px solid #ffffff;
-				padding: 5px;
-				border-radius: 50%;
-				height: 35px;
-				width: 35px;
+				padding: 9px 0;
+				padding-top: 11px;
 				text-align: center;
-				margin-bottom: 5px;
 				background: #515151;
+				display: inline-block;
+				display: table-cell;
+				vertical-align: middle;
 				svg {
 					width: 17px;
 					font-size: 20px;
 					color: #fdfdfd;
 				}
 				&.fb {
-					background-color: #3b5998;
+					background-color: #3764c2;
 				}
 				&.tw {
-					background-color: #1dcaff;
+					background-color: #09b3e7;
 				}
 				&.ld {
-					background-color: #0e76a8;
+					background-color: #0072a9;
 				}
 				&.rdd {
 					background-color: #ff5700;
 				}
 				&.vk {
-					background-color: #4c75a3;
+					background-color: #4087d6;
 				}
 				&.od {
 					background-color: #ed812b;
@@ -714,36 +863,16 @@ input:required {
 					background-color: #00aff0;
 				}
 				&.whatsapp {
-					background-color: #128c7e;
+					background-color: #00b180;
 				}
 				&.telegram {
-					background-color: #0088cc;
+					background-color: #0097e3;
 				}
 				&.viber {
-					background-color: #59267c;
+					background-color: #6e1aa7;
 				}
-			}
-		}
-		@include md {
-			position: relative;
-			text-align: center;
-			margin: 0 auto;
-			.share-links {
-				display: inline-block;
-				float: left;
-				font-size: small;
-				font-style: italic;
-				text-align: center;
-				overflow-x: scroll;
-				white-space: nowrap;
-				width: 100%;
-				padding: 10px;
-				padding-top: 20px;
-				border-top: 1px solid #e0e0e0;
-				a {
-					display: inline-block;
-					vertical-align: top;
-					margin: 0 2px;
+				&.email {
+					background-color: #3e3e3e;
 				}
 			}
 		}
@@ -756,6 +885,9 @@ input:required {
 		bottom: 0;
 		top: auto;
 		position: fixed;
+		.hidden {
+			padding-top: 20px;
+		}
 	}
 }
 
@@ -842,14 +974,15 @@ input:required {
 	img {
 		margin: 0;
 		max-width: 80px;
+		display: none;
 	}
 	.txt {
-		font-size: 17px;
+		font-size: 15px;
 		width: 100%;
 		bottom: 31px;
-		background: white;
 		left: 0;
 		padding: 10px 0;
+		font-weight: 200;
 	}
 }
 

@@ -1,5 +1,11 @@
 // use environmental API path or custom if not empty
+import getConfig from "next/config";
+
+const { API_HOST, API_PREFIX, PROTOCOL } = getConfig().publicRuntimeConfig;
+
+// use environmental API path or custom if not empty
 export default {
-	apipath: "https://api.cov19.online",
-	apiver: "/tk-api/v2/"
+	protocol: PROTOCOL || "http",
+	apipath: "" || API_HOST,
+	apiver: "" || API_PREFIX
 };

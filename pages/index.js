@@ -1,6 +1,5 @@
 import GoogleMaps from "Templates/GoogleMaps";
 import Subscribe from "Templates/Subscribe";
-import MakeMark from "Templates/MakeMark";
 import ActivityArea from "Templates/ActivityArea";
 import Socials from "Templates/Socials";
 import GoogleAnalytics from "Library/GoogleAnalytics";
@@ -16,16 +15,12 @@ const Home = memo(
 	}) => {
 		return (
 			<GoogleAnalytics>
-				<main>
+				<main id="main">
 					<GoogleMaps language={ucal || "en"} />
 
 					<MainBlock>
-						<Socials />
-
-						<MakeMark />
-
 						<ActivityArea />
-
+						<Socials />
 						<Subscribe />
 					</MainBlock>
 				</main>

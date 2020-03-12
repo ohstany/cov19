@@ -25,7 +25,9 @@ export default async (_params, _signal = false, methods = false) => {
 	try {
 		if (_params.action) {
 			const request = await fetch(
-				settings.apipath +
+				settings.protocol +
+					"://" +
+					settings.apipath +
 					(location === "local"
 						? "/" + _params.action
 						: settings.apiver +

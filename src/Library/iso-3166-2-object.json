@@ -35078,8 +35078,10 @@
 		}
 	},
 	"SH": {
+      "lat": -15.927630,
+		"lng": -5.715560,
 		"code": "SH",
-		"name": "Saint Helena, Ascension and Tristan da Cunha",
+		"name": "Saint Helena",
 		"division": "country",
 		"parent": null,
 		"regions": {}

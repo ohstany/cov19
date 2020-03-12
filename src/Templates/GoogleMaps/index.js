@@ -61,13 +61,14 @@ const MapCover = withScriptjs(
 		useEffect(() => {
 			if (cc) {
 				const cpos = locations[cc];
-				console.log("COUNTRY", cc, cpos);
+
 				if (cpos) {
 					let zoom = cpos.zoom || 7;
 					let lngs = { lat: cpos.lat, lng: cpos.lng };
 
 					setStore({ cpos });
 
+					console.log("COUNTRY", cc, cpos);
 					_state({
 						zoom,
 						...lngs
@@ -78,9 +79,10 @@ const MapCover = withScriptjs(
 
 		useEffect(() => {
 			if (rc && cpos) {
-				console.log("REGION", rc, cc, cpos);
 				if (cpos) {
 					if (rc && cpos.regions[rc]) {
+						console.log("REGION", rc, cc, cpos);
+						_state({ zoom: 10 });
 						_state({
 							zoom: cpos.regions[rc].zoom || 9,
 							lat: cpos.regions[rc].lat,

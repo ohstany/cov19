@@ -619,6 +619,8 @@ body.subsc {
 				display: inline-block;
 				.cont {
 					height: 200px;
+					white-space: pre-wrap;
+					position: relative;
 				}
 
 				&.act {

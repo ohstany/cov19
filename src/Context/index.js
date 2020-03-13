@@ -146,7 +146,7 @@ export const RootProvider = withRouter(props => {
 									reducer: root_store_reducer
 								},
 								single,
-								{ loginStatus, logout },
+								{ loginStatus: store.loginStatus, logout },
 								updater.signals[x]
 							);
 						})
@@ -158,7 +158,7 @@ export const RootProvider = withRouter(props => {
 			updater.toState = await finalizeStore(
 				{ store, actions: rootActions, reducer: root_store_reducer },
 				apiParams,
-				{ loginStatus, logout },
+				{ loginStatus: store.loginStatus, logout },
 				updater.signals[0]
 			);
 		}

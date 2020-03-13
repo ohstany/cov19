@@ -3,7 +3,8 @@ import React, {
 	useContext,
 	useEffect,
 	useReducer,
-	memo
+	memo,
+	useState
 } from "react";
 // import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import markerImg from "./m.png";
@@ -54,9 +55,11 @@ const MapCover = withScriptjs(
 			activeMarker: null
 		});
 
-		const { zoom, lat, lng } = state;
+		const [zoom, _zoom] = useState(4);
 
-		const { country_code, region_code } = geo || {};
+		const { lat, lng } = state;
+
+		const { country_code = false, region_code = false } = geo || {};
 
 		useEffect(() => {
 			if (cc) {
@@ -69,10 +72,12 @@ const MapCover = withScriptjs(
 					setStore({ cpos });
 
 					console.log("COUNTRY", cc, cpos);
+
 					_state({
-						zoom,
 						...lngs
 					});
+
+					_zoom(zoom);
 				}
 			}
 		}, [cc]);
@@ -82,12 +87,17 @@ const MapCover = withScriptjs(
 				if (cpos) {
 					if (rc && cpos.regions[rc]) {
 						console.log("REGION", rc, cc, cpos);
-						_state({ zoom: 10 });
+
+						_zoom(p => p - 1);
+
 						_state({
-							zoom: cpos.regions[rc].zoom || 9,
 							lat: cpos.regions[rc].lat,
 							lng: cpos.regions[rc].lng
 						});
+
+						setTimeout(() => {
+							_zoom(cpos.regions[rc].zoom || 9);
+						}, 200);
 					}
 				}
 			}
@@ -95,7 +105,7 @@ const MapCover = withScriptjs(
 
 		// initialize position from geo
 		useEffect(() => {
-			if (geo && country_code) {
+			if (geo && country_code !== undefined) {
 				setStore({ region_code, country_code });
 			}
 		}, [geo]);
@@ -130,11 +140,13 @@ const MapCover = withScriptjs(
 					}
 				} = refs[index];
 
-				_state({ zoom: 10 });
+				_zoom(10);
+
+				_zoom(15);
+
 				_state({
 					lat,
-					lng,
-					zoom: 15
+					lng
 				});
 			}
 		}, [index]);

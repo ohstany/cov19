@@ -15,6 +15,19 @@ const logPageView = (url = false) => {
 	ReactGA.pageview(page);
 };
 
+export const trackEvent = (category, action, label = "") => {
+	if (typeof window === "undefined") return;
+
+	if (!window.GA_INITIALIZED && category && action) {
+		console.log("VIEW", category, action);
+		ReactGA.event({
+			category,
+			action,
+			label
+		});
+	}
+};
+
 export default memo(({ children }) => {
 	const host = typeof window !== "undefined" ? window.location.origin : false;
 

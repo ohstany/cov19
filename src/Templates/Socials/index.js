@@ -22,6 +22,28 @@ import {
 	faWhatsapp
 } from "@fortawesome/free-brands-svg-icons";
 
+import { trackEvent } from "Library/GoogleAnalytics";
+
+const share = (e, url, sc = "") => {
+	e.preventDefault();
+	e.stopPropagation();
+	trackEvent("click", "share", sc);
+	window.open(url, "_blank");
+};
+
+const copy = (e, url) => {
+	e.preventDefault();
+	e.stopPropagation();
+	trackEvent("click", "share", "copylink");
+	var el = document.createElement("textarea");
+	el.value = url;
+	document.body.appendChild(el);
+	el.select();
+	document.execCommand("copy");
+	document.body.removeChild(el);
+	alert("Скопировано");
+};
+
 export default memo(
 	() => {
 		const {
@@ -34,26 +56,47 @@ export default memo(
 
 		return (
 			<div className="socials">
-				<div className="sct">Поделись, обереги друзей и близких.</div>
+				<div className="sct">
+					Share, protect your friends and family.
+				</div>
+
 				<div className="share-links">
 					<a
-						href={"https://www.facebook.com/sharer.php?u=" + url}
+						href="#"
+						onClick={e =>
+							share(
+								e,
+								"https://www.facebook.com/sharer.php?u=" + url,
+								"facebook"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="fb">
 						<FontAwesomeIcon icon={faFacebook} />
 					</a>
 					<a
-						href={`https://twitter.com/intent/tweet?text=${title}&amp;url=${url}`}
+						href="#"
+						onClick={e =>
+							share(
+								e,
+								`https://twitter.com/intent/tweet?text=${title}&amp;url=${url}`,
+								"twitter"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="tw">
 						<FontAwesomeIcon icon={faTwitter} />
 					</a>
 					<a
-						href={`https://www.linkedin.com/shareArticle?mini=true&amp;url=${url}&amp;title=${title}`}
+						href="#"
+						onClick={e =>
+							share(
+								e,
+								`https://www.linkedin.com/shareArticle?mini=true&amp;url=${url}&amp;title=${title}`,
+								"linkedin"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="ld">
 						<span className="fa fa-linkedin"></span>
 						<FontAwesomeIcon icon={faLinkedin} />
@@ -66,9 +109,15 @@ export default memo(
 						<FontAwesomeIcon icon={faReddit} />
 					</a> */}
 					<a
-						href={`https://vk.com/share.php?url=${url}`}
+						href="#"
+						onClick={e =>
+							share(
+								e,
+								`https://vk.com/share.php?url=${url}`,
+								"vk"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="vk">
 						<FontAwesomeIcon icon={faVk} />
 					</a>
@@ -94,45 +143,57 @@ export default memo(
 						<FontAwesomeIcon icon={faSkype} />
 					</a> */}
 					<a
-						href={`https://api.whatsapp.com/send?text=${title}%20${url}`}
+						onClick={e =>
+							share(
+								e,
+								`https://api.whatsapp.com/send?text=${title}%20${url}`,
+								"whatsapp"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="whatsapp">
 						<FontAwesomeIcon icon={faWhatsapp} />
 					</a>
 					<a
-						href={`https://telegram.me/share/url?url=${url}&amp;text=${title}`}
+						href="#"
+						onClick={e =>
+							share(
+								e,
+								`https://telegram.me/share/url?url=${url}&amp;text=${title}`,
+								"telegram"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="telegram">
 						<FontAwesomeIcon icon={faPaperPlane} />
 					</a>
 					<a
-						href={`viber://forward?text=${title}%20${url}`}
+						href="#"
+						onClick={e =>
+							share(
+								e,
+								`viber://forward?text=${title}%20${url}`,
+								"viber"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="viber">
 						<FontAwesomeIcon icon={faViber} />
 					</a>
 					<a
-						href={`mailto:?subject=${title}&amp;body=${url}`}
+						href="#"
+						onClick={e =>
+							share(
+								e,
+								`mailto:?subject=${title}&amp;body=${url}`,
+								"email"
+							)
+						}
 						rel="external noopener"
-						target="_blank"
 						className="email">
 						<FontAwesomeIcon icon={faEnvelope} />
 					</a>
-					<a
-						className="custom copyurl"
-						onClick={event => {
-							event.stopPropagation();
-							var el = document.createElement("textarea");
-							el.value = "${url}";
-							document.body.appendChild(el);
-							el.select();
-							document.execCommand("copy");
-							document.body.removeChild(el);
-							alert("Скопировано");
-						}}>
+					<a className="custom copyurl" onClick={e => copy(e, url)}>
 						<FontAwesomeIcon icon={faCopy} />
 					</a>
 				</div>

@@ -6,17 +6,25 @@ import {
 	memo,
 	useMemo
 } from "react";
-import Pin from "Assets/images/pin.svg";
+// import Pin from "Assets/images/pin.svg";
 import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
 import RootContext from "Context";
 import countries from "Library/countries-array.json";
 
-const News = memo(
-	({ data: { sc, scu, pubDate, title, enclosure, description } = {} }) => {
-		const enc = enclosure["@attributes"].url;
+let newsRef = null;
 
+const News = memo(
+	({
+		data: {
+			title,
+			guid,
+			create_date,
+			meta_data: { sc, image } = {},
+			content
+		} = {}
+	}) => {
 		const [sh, _sh] = useState(false);
 
 		return (
@@ -35,16 +43,16 @@ const News = memo(
 				</h3>
 
 				<div className={"desc" + (sh ? " act" : "")}>
-					{enc && sh && (
+					{image && sh && (
 						<div className="imgb">
-							<img src={enc} alt="" />
+							<img src={image} alt="" />
 						</div>
 					)}
 
 					<div
 						className={"cont"}
 						dangerouslySetInnerHTML={{
-							__html: description
+							__html: content
 						}}></div>
 				</div>
 
@@ -54,13 +62,14 @@ const News = memo(
 
 				{sc && (
 					<div className="source">
-						Источник: #{" "}
-						<a href={scu} target="_blank">
+						Source: #{" "}
+						<a href={guid} target="_blank">
 							{sc}
 						</a>
 					</div>
 				)}
-				<time dateTime={pubDate}>{pubDate}</time>
+
+				<time dateTime={create_date}>{create_date}</time>
 			</div>
 		);
 	},
@@ -88,6 +97,7 @@ const RenderSource = ({ s }) => {
 export default memo(
 	() => {
 		const {
+			actioner,
 			api,
 			store: {
 				country_code,
@@ -96,19 +106,28 @@ export default memo(
 				cpos,
 				index,
 				markers: { a: markers, loaded: mLoaded },
-				news: { a: news, loaded: nLoaded },
+				news,
+				newsLimit,
 				activity
 			},
 			setStore
 		} = useContext(RootContext) || {};
 
-		// console.log("cpos", country_code, region_code, cpos, geo);
+		const newsData =
+			country_code && news[country_code] ? news[country_code] : false;
+
+		const limited =
+			country_code && newsLimit[country_code]
+				? newsLimit[country_code]
+				: false;
 
 		const active = index >= 0 ? markers[index] : false;
 
 		const comments = activity[index] || false;
 
 		const [nav, _nav] = useState("acts");
+
+		const [fetching, _fetching] = useState(false);
 
 		const { regions = false } = cpos || {};
 
@@ -122,29 +141,57 @@ export default memo(
 			[regions]
 		);
 
-		// console.log("builtRegions", builtRegions);
+		useEffect(() => {
+			if (!fetching && !limited) {
+				newsRef.addEventListener("scroll", handleScroll);
+				return () =>
+					newsRef.removeEventListener("scroll", handleScroll);
+			}
+		}, [fetching]);
+
+		useEffect(() => {
+			if (!fetching) return;
+			fetchNews();
+		}, [fetching]);
+
+		const handleScroll = () => {
+			const { clientHeight, scrollHeight, scrollTop } = newsRef;
+			if (
+				clientHeight + scrollTop !== scrollHeight ||
+				fetching ||
+				limited
+			)
+				return;
+			_fetching(true);
+		};
+
+		function fetchNews() {
+			const offset =
+				news[country_code] && news[country_code].length
+					? news[country_code][news[country_code].length - 1].ID
+					: 0;
+
+			setTimeout(() => {
+				actioner({
+					method: "GET",
+					action: "news",
+					params: `locale=${country_code}&limit=10&offset=${offset}`,
+					reduce: "SET_NEWS"
+				}).then(() => {
+					_fetching(false);
+				});
+			}, 1000);
+		}
 
 		const navigation = useCallback(key => {
 			_nav(key);
 		}, []);
 
-		const getNews = () => {
-			api({
-				method: "GET",
-				action: "news"
-			}).then(news => {
-				setStore({
-					news: {
-						a: news || [],
-						loaded: true
-					}
-				});
-			});
-		};
-
 		useEffect(() => {
-			getNews();
-		}, []);
+			if (country_code !== undefined) {
+				_fetching(true);
+			}
+		}, [country_code]);
 
 		useEffect(() => {
 			if (index >= 0) {
@@ -165,7 +212,7 @@ export default memo(
 								navigation("local");
 							}
 						}}>
-						{news ? a.title : `Пользователь #${a.id}`}
+						{news ? a.title : `User #${a.id}`}
 					</h3>
 
 					<div className="desc">{a.content}</div>
@@ -189,7 +236,7 @@ export default memo(
 					)}
 				</div>
 			) : (
-				"Нажмите не метку на карте"
+				"Click on marker on the map"
 			);
 		}, []);
 
@@ -203,8 +250,8 @@ export default memo(
 							// 	className: "pin",
 							// 	title: <Pin />
 							// },
-							{ id: "acts", title: "Заражения" },
-							{ id: "news", title: "Новости" }
+							{ id: "acts", title: "Infections" },
+							{ id: "news", title: "News" }
 						].map((m, mx) => {
 							return (
 								<li
@@ -231,49 +278,45 @@ export default memo(
 
 				<MakeMark />
 
+				<div className="filterNavi tbf">
+					<div className="fitem tbf-c">
+						<select
+							value={country_code || ""}
+							onChange={({ target: { value } }) =>
+								setStore({ country_code: value })
+							}>
+							><option value="">Select country</option>
+							{countries.map((c, ci) => {
+								return (
+									<option key={ci} value={c.country_code}>
+										{c.name}
+									</option>
+								);
+							})}
+						</select>
+					</div>
+					<div className="sep" />
+					<div className="fitem tbf-c">
+						<select
+							value={region_code}
+							onChange={({ target: { value } }) =>
+								setStore({ region_code: value })
+							}>
+							<option value="">Select City</option>
+							{regions &&
+								builtRegions.map((r, ri) => {
+									return (
+										<option key={ri} value={r.region_code}>
+											{r.name}
+										</option>
+									);
+								})}
+						</select>
+					</div>
+				</div>
+
 				<div className={"activity"}>
 					<div className="bb b1">
-						<div className="filterNavi tbf">
-							<div className="fitem tbf-c">
-								<select
-									value={country_code || ""}
-									onChange={({ target: { value } }) =>
-										setStore({ country_code: value })
-									}>
-									><option value="">Выберите страну</option>
-									{countries.map((c, ci) => {
-										return (
-											<option
-												key={ci}
-												value={c.country_code}>
-												{c.name}
-											</option>
-										);
-									})}
-								</select>
-							</div>
-							<div className="sep" />
-							<div className="fitem tbf-c">
-								<select
-									value={region_code}
-									onChange={({ target: { value } }) =>
-										setStore({ region_code: value })
-									}>
-									<option value="">Выберите город</option>
-									{regions &&
-										builtRegions.map((r, ri) => {
-											return (
-												<option
-													key={ri}
-													value={r.region_code}>
-													{r.name}
-												</option>
-											);
-										})}
-								</select>
-							</div>
-						</div>
-
 						{mLoaded ? (
 							markers.length ? (
 								markers.map((a, ax) => {
@@ -288,9 +331,7 @@ export default memo(
 								})
 							) : (
 								<NoContent
-									text={
-										"В данном регионе нет случаев заражения"
-									}
+									text={"No cases of infection at this city."}
 								/>
 							)
 						) : (
@@ -302,7 +343,7 @@ export default memo(
 						<SingleItem nav={nav} a={active} ax={0} />
 						{active && (
 							<div className="comments">
-								<h3>Коментарии ({comments.length || 0})</h3>
+								<h3>Comments ({comments.length || 0})</h3>
 								{comments
 									? comments.map((c, cx) => {
 											return (
@@ -325,22 +366,24 @@ export default memo(
 												</div>
 											);
 									  })
-									: "Пока нет коментариев, напишите первым"}
+									: "There are no comments"}
 							</div>
 						)}
 					</div>
 
-					<div className="bb b3">
-						{nLoaded ? (
-							news.length ? (
-								news.map((a, ax) => {
+					<div id="okoko" ref={r => (newsRef = r)} className="bb b3">
+						{newsData && newsData.length
+							? newsData.map((a, ax) => {
 									return <News key={ax} data={a} ax={ax} />;
-								})
-							) : (
-								<NoContent />
-							)
-						) : (
+							  })
+							: ""}
+
+						{fetching ? (
 							<Skeleton1 row={5} />
+						) : newsData.length === 0 || limited ? (
+							<NoContent />
+						) : (
+							""
 						)}
 					</div>
 				</div>

@@ -2,11 +2,17 @@ import React, { memo, useState, useContext, useCallback } from "react";
 import RootContext from "Context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { trackEvent } from "Library/GoogleAnalytics";
+
 import { faThermometerThreeQuarters } from "@fortawesome/fontawesome-free-solid";
 
 export default memo(
 	() => {
-		const { api, device } = useContext(RootContext);
+		const {
+			api,
+			device,
+			store: { geo, country_code, region_code }
+		} = useContext(RootContext);
 
 		const [visible, _visible] = useState(false);
 
@@ -27,18 +33,26 @@ export default memo(
 			e.stopPropagation();
 
 			if (["email", "city", "content"].some(i => !state[i])) {
-				alert("Необходимо заполнить все необходимые поля");
+				alert("Please, fill out all required fields.");
 			} else {
 				api({
 					method: "POST",
 					action: "report",
-					data: state
+					data: {
+						state,
+						location: {
+							geo,
+							country_code,
+							region_code
+						}
+					}
 				}).then(res => {
 					console.log("res", res);
 					if (res || res === "-1") {
+						trackEvent("click", "usermark");
 						_done(res);
 					} else {
-						alert("Необходимо заполнить все необходимые поля");
+						alert("Must fill in all required fields.");
 					}
 				});
 			}
@@ -73,7 +87,7 @@ export default memo(
 				{device === "pc" ? (
 					<div className="block makeMark">
 						<button onClick={togglePopup}>
-							Сообщить о заражении
+							Report About Infection
 						</button>
 					</div>
 				) : (
@@ -89,30 +103,30 @@ export default memo(
 					<div id="popup" className="popup" onClick={clickOut}>
 						<div id="form" className="form">
 							<h2>
-								Сообщитe о заражении. Заполните форму ниже и
-								нажмите кнопку отправить.
+								Infection Report. Fill out the form below and
+								click submit.
 							</h2>
 
 							{done === "0" ? (
 								<form>
 									<ul>
 										<li>
-											Не указывайте адрес квартиры или
-											дома.
+											Do not write an address of
+											appartment or house.
 										</li>
 										<li>
-											Не указывайте конктретные инициалы.
+											Do not indicate person initials.
 										</li>
 										<li>
-											При нарушении вышеперечисленного
-											оповещение будет удалено.
+											In violation of the above
+											information will be rejected.
 										</li>
 									</ul>
 
 									<input
 										type="email"
 										name="email"
-										placeholder="Введите вашу электронную почту"
+										placeholder="Email Address"
 										onChange={updateState}
 										required={true}
 										value={email}
@@ -122,7 +136,7 @@ export default memo(
 									<input
 										type="text"
 										name="city"
-										placeholder="Город заражения"
+										placeholder="City"
 										required={true}
 										onChange={updateState}
 										value={city}
@@ -132,7 +146,7 @@ export default memo(
 									<input
 										type="text"
 										name="street"
-										placeholder="Улица заражения"
+										placeholder="Street"
 										onChange={updateState}
 										value={street}
 									/>
@@ -141,7 +155,7 @@ export default memo(
 									<input
 										type="number"
 										name="amount"
-										placeholder="Количество заразившихся"
+										placeholder="Number of infected"
 										onChange={updateState}
 										required={true}
 										value={
@@ -153,7 +167,7 @@ export default memo(
 									<input
 										name="source"
 										type="text"
-										placeholder="Cсылка на ресурс №1 (Youtube, новости и тд.)"
+										placeholder="Link to the source #1 (Youtube, website..)"
 										onChange={updateState}
 										value={source}
 									/>
@@ -162,7 +176,7 @@ export default memo(
 									<input
 										name="source2"
 										type="text"
-										placeholder="Cсылка на ресурс №2 (Youtube, новости и тд.)"
+										placeholder="Link to the source #1 (Youtube, website..)"
 										onChange={updateState}
 										value={source2}
 									/>
@@ -170,7 +184,7 @@ export default memo(
 
 									<textarea
 										name="content"
-										placeholder="Опишите случай"
+										placeholder="Write about case"
 										onChange={updateState}
 										required={true}
 										value={content}
@@ -178,13 +192,12 @@ export default memo(
 									<label />
 
 									<button onClick={submitForm} type="submit">
-										Отправить
+										Submit
 									</button>
 								</form>
 							) : (
 								<div className="formacc">
-									Мы получили уведомление от вас, в ближайшее
-									время данные появятся на карте.
+									We've received your information. Thank you!
 								</div>
 							)}
 						</div>

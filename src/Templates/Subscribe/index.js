@@ -18,6 +18,8 @@ import phone from "./phone.png";
 import email from "./email.png";
 import phones from "Library/phoned.json";
 
+import { trackEvent } from "Library/GoogleAnalytics";
+
 // const via = {
 // 	phone: faMobile,
 // 	email: faEnvelope
@@ -67,15 +69,22 @@ export default memo(
 				}).then(res => {
 					console.log("res", res);
 					if (res || res === "-1") {
+						trackEvent(
+							"click",
+							"subscribe",
+							state.phone && !state.email
+								? "pnone"
+								: !state.phone && state.email
+								? "email"
+								: "both"
+						);
 						_done(res);
 					} else {
-						alert("Неверный формат номера телефона или почты");
+						alert("Wrong format of phone number or email");
 					}
 				});
 			} else {
-				alert(
-					"Необходимо ввести номера телефона или электронный адрес"
-				);
+				alert("Must fill in phone number or email");
 			}
 		};
 
@@ -104,7 +113,8 @@ export default memo(
 						<img src={phone} onClick={() => _openNot(e => !e)} />
 					</span>
 					<h2 className="tbf-c titl">
-						Подпишитесь, и мы оповестим о зарежении в вашем регионе.
+						Leave your contacts to receive notification of new
+						infections nearby
 					</h2>
 					<div className="tbf-c sel">
 						<div className="centrize">
@@ -150,7 +160,7 @@ export default memo(
 
 												<input
 													name="phone"
-													placeholder="Номер телефона"
+													placeholder="Phone number"
 													value={state.phone}
 													onChange={updateState}
 												/>
@@ -159,7 +169,7 @@ export default memo(
 										email: (
 											<input
 												name="email"
-												placeholder="Эл.почта"
+												placeholder="Email"
 												value={state.email}
 												onChange={updateState}
 											/>
@@ -167,7 +177,7 @@ export default memo(
 									}[state.via || ""]
 								) : (
 									<div className="subss">
-										Благодарим за подписку
+										Thank you for subscription.
 									</div>
 								)}
 								{done === "0" && (

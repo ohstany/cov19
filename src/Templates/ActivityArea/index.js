@@ -180,7 +180,7 @@ export default memo(
 				}).then(() => {
 					_fetching(false);
 				});
-			}, 1000);
+			}, 200);
 		}
 
 		const navigation = useCallback(key => {

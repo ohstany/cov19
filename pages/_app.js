@@ -40,10 +40,11 @@ export default class MyApp extends App {
 		}
 
 		if (ctx.req && ctx.req.url) {
-			presets = await api({
-				action: "settings",
-				method: "GET"
-			});
+			presets = {};
+			//  await api({
+			// 	action: "settings",
+			// 	method: "GET"
+			// });
 		}
 
 		return {

@@ -202,6 +202,13 @@ export const RootProvider = withRouter(props => {
 
 	// set user's geo information
 	useEffect(() => {
+		actioner({
+			reduce: "LOGIN",
+			method: "POST",
+			action: "settings",
+			method: "GET"
+		});
+
 		if (typeof window !== "undefined") {
 			const dev = window.innerWidth > 768 ? "pc" : "mobile";
 			_device(dev);
@@ -211,12 +218,12 @@ export const RootProvider = withRouter(props => {
 			const geo = localStorage.getItem("geo");
 
 			if (geo) {
-				console.log("INTERNAL");
+				// console.log("INTERNAL");
 				setStore({
 					geo: JSON.parse(geo)
 				});
 			} else {
-				console.log("EXTERNAL", PROTOCOL);
+				// console.log("EXTERNAL", PROTOCOL);
 				fetch(
 					PROTOCOL === "https"
 						? "https://freegeoip.app/json/"

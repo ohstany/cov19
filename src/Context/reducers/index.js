@@ -8,6 +8,135 @@ export const root_store_reducer = (s, a, params = false) => {
 	const { data = [], reduce } = a || {};
 
 	switch (reduce) {
+		case "LOGIN": {
+			if (data && data.ID) {
+				return { userdata: data, loginStatus: true, fetched: true };
+			} else {
+				return { fetched: true };
+			}
+		}
+
+		case "ADD_MARKER": {
+			const { markers } = s;
+
+			const { ID, fields_updated } = data || {};
+
+			console.log("fields_updated", fields_updated);
+
+			fields_updated.ID = ID;
+
+			const kk = fields_updated.locale;
+
+			if (kk && !markers[kk]) markers[kk] = [];
+
+			markers[kk || "other"].unshift(fields_updated);
+
+			return {
+				markers
+			};
+		}
+
+		case "MODIFY_MARKER": {
+			const { markers } = s;
+			const { modify, ID, locale } = params.data;
+
+			const kk = locale || "other";
+
+			const index = markers[kk].findIndex(i => i.ID === ID);
+
+			if (index >= 0) {
+				markers[kk][index] = {
+					...markers[kk][index],
+					...modify
+				};
+			}
+
+			return {
+				markers
+			};
+		}
+
+		case "DELETE_MARKER": {
+			const { markers } = s;
+			const { ID, locale } = params.data;
+
+			const kk = locale || "other";
+
+			const index = markers[kk].findIndex(i => i.ID === ID);
+
+			if (index >= 0) {
+				markers[kk].splice(index, 1);
+			}
+
+			return {
+				markers
+			};
+		}
+
+		case "UPDATE_LOCATION": {
+			const { markers } = s;
+			const { address, ID } = params.data;
+
+			if (address.locale) {
+				const inn = markers[address.locale]
+					? markers[address.locale].findIndex(i => i.ID === ID)
+					: false;
+
+				if (inn >= 0 && inn !== false) {
+					const meta_data = {
+						...((markers[address.locale][inn] &&
+							markers[address.locale][inn].meta_data) ||
+							{}),
+						...address.meta_data
+					};
+
+					markers[address.locale][inn] = {
+						...markers[address.locale][inn],
+						...address,
+						meta_data
+					};
+				} else {
+					const inn2 = markers["other"]
+						? markers["other"].findIndex(i => i.ID === ID)
+						: false;
+
+					if (inn2 >= 0 && inn2 !== false) {
+						const meta_data = {
+							...markers["other"][inn2].meta_data,
+							...address.meta_data
+						};
+
+						markers["other"][inn2] = {
+							...markers["other"][inn2],
+							...address,
+							meta_data
+						};
+					}
+				}
+			}
+
+			return {
+				markers
+			};
+		}
+
+		case "SET_MARKERS_ADMIN": {
+			const red = data.reduce((p, n) => {
+				if (n.locale) {
+					if (!p[n.locale]) p[n.locale] = [];
+					p[n.locale].push(n);
+				} else {
+					if (!p["other"]) p["other"] = [];
+					p.other.push(n);
+				}
+				return Object.assign({}, p);
+			}, {});
+
+			console.log("SSS", red, data);
+
+			return { markers: red };
+		}
+
 		case "UPDATE_OPTION": {
 			const { options } = s;
 			const { key, value } = params.data;
@@ -65,9 +194,11 @@ export const root_store_reducer = (s, a, params = false) => {
  */
 
 export const root_store_initial_state = {
+	userdata: {},
 	country_code: undefined,
 	region_code: undefined,
 	index: undefined,
+	fetched: false,
 	cpos: false,
 	geo: false,
 	loginStatus: false,
@@ -77,8 +208,8 @@ export const root_store_initial_state = {
 	activity: {},
 	newsLimit: {},
 	news: {},
+	mk: [],
 	markers: {
-		a: [],
-		loaded: false
+		other: []
 	}
 };

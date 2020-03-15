@@ -1,3 +1,26 @@
+let not = 0;
+
+export const notification = (text, close = 2000) => {
+	const idd = "not" + not;
+	var node = document.createElement("div");
+	var textnode = document.createTextNode(text);
+	node.appendChild(textnode);
+	node.id = idd;
+	node.classList.add("notif");
+	document.body.appendChild(node);
+
+	document.getElementById(idd).style.top = "20px";
+
+	setTimeout(() => {
+		document.getElementById(idd).style.top = "-50px";
+		setTimeout(() => {
+			document.getElementById(idd).remove();
+		}, 1000);
+	}, close);
+
+	not++;
+};
+
 // Momoization of functional component or CLASS method
 export const memoize = fn => {
 	return () => {

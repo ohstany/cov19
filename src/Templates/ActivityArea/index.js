@@ -105,13 +105,38 @@ export default memo(
 				geo,
 				cpos,
 				index,
-				markers: { a: markers, loaded: mLoaded },
 				news,
+				mk,
 				newsLimit,
 				activity
 			},
 			setStore
 		} = useContext(RootContext) || {};
+
+		const cMarkers = useMemo(() =>
+			country_code && mk[country_code]
+				? mk[country_code].reduce((p, n) => {
+						n.position =
+							n.region && cpos.regions[n.region]
+								? [
+										cpos.regions[n.region].lat,
+										cpos.regions[n.region].lng
+								  ]
+								: [cpos.lat, cpos.lng];
+
+						if (n.region) {
+							if (!p[n.region]) p[n.region] = [];
+
+							p[n.region].push(n);
+						} else {
+							if (!p["country"]) p["country"] = [];
+
+							p.country.push(n);
+						}
+						return Object.assign({}, p);
+				  }, {})
+				: []
+		);
 
 		const newsData =
 			country_code && news[country_code] ? news[country_code] : false;
@@ -201,39 +226,30 @@ export default memo(
 
 		const SingleItem = useCallback(({ nav, a, ax, news = false }) => {
 			return a ? (
-				<div className="author">
-					<h3
-						className={
-							"atitle" + (nav === "acts" ? " clickable" : "")
-						}
-						onClick={() => {
-							if (nav === "acts") {
-								setStore({ index: ax });
-								navigation("local");
-							}
-						}}>
-						{news ? a.title : `User #${a.id}`}
+				<div className={"author"}>
+					<h3 className={"atitle"}>
+						<span className={"b circ " + a.type}></span>
+						{`${a.type.charAt(0).toUpperCase() +
+							a.type.slice(1)} #${a.ID}`}
 					</h3>
 
-					<div className="desc">{a.content}</div>
+					<div className={"infc"}>
+						<b>Infection cases: </b>
+						<span className="b">{a.number}</span>
+					</div>
 
-					{a.source && a.source.length && (
-						<div className="source">
-							{a.source.map((s, sx) => (
-								<RenderSource key={sx} s={s} />
-							))}
-						</div>
-					)}
+					<div className={"desc"}>{a.details.content}</div>
 
-					{nav === "acts" && (
-						<button
-							onClick={() => {
-								setStore({ index: ax });
-								navigation("local");
-							}}>
-							Открыть
-						</button>
-					)}
+					<div className="source">
+						{a.details.source && (
+							<RenderSource s={a.details.source} />
+						)}
+						{a.details.source2 && (
+							<RenderSource s={a.details.source2} />
+						)}
+					</div>
+
+					<time dateTime={a.date}>{a.date}</time>
 				</div>
 			) : (
 				"Click on marker on the map"
@@ -317,9 +333,11 @@ export default memo(
 
 				<div className={"activity"}>
 					<div className="bb b1">
-						{mLoaded ? (
-							markers.length ? (
-								markers.map((a, ax) => {
+						{region_code ? (
+							cMarkers &&
+							cMarkers[region_code] &&
+							cMarkers[region_code].length ? (
+								cMarkers[region_code].map((a, ax) => {
 									return (
 										<SingleItem
 											nav={nav}

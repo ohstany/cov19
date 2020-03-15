@@ -4,7 +4,8 @@ import React, {
 	useEffect,
 	useReducer,
 	memo,
-	useState
+	useState,
+	useMemo
 } from "react";
 // import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import markerImg from "./m.png";
@@ -25,7 +26,7 @@ const {
 
 const apiKey = "AIzaSyA4zKpi3hRchkPewoFrU0h_V4a2ykGrohk";
 
-const defsize = 20;
+const defsize = 40;
 
 const refs = {};
 
@@ -40,9 +41,8 @@ const MapCover = withScriptjs(
 			store: {
 				country_code: cc,
 				region_code: rc,
-				cpos,
 				geo = false,
-				markers: { a: markers, loaded },
+				mk,
 				index
 			},
 			setStore
@@ -61,17 +61,44 @@ const MapCover = withScriptjs(
 
 		const { country_code = false, region_code = false } = geo || {};
 
+		const localData = useMemo(() => (cc ? locations[cc] : false), [cc]);
+
+		const cMarkers = useMemo(() =>
+			cc && mk[cc]
+				? mk[cc].reduce((p, n) => {
+						n.position =
+							n.region && localData.regions[n.region]
+								? [
+										localData.regions[n.region].lat,
+										localData.regions[n.region].lng
+								  ]
+								: [localData.lat, localData.lng];
+
+						if (n.region) {
+							if (!p[n.region]) p[n.region] = [];
+
+							p[n.region].push(n);
+						} else {
+							if (!p["country"]) p["country"] = [];
+
+							p.country.push(n);
+						}
+						return Object.assign({}, p);
+				  }, {})
+				: []
+		);
+
+		console.log("cMarkers", cc, cMarkers, localData, mk);
+
 		useEffect(() => {
 			if (cc) {
-				const cpos = locations[cc];
+				if (localData) {
+					let zoom = localData.zoom || 7;
+					let lngs = { lat: localData.lat, lng: localData.lng };
 
-				if (cpos) {
-					let zoom = cpos.zoom || 7;
-					let lngs = { lat: cpos.lat, lng: cpos.lng };
+					setStore({ cpos: localData });
 
-					setStore({ cpos });
-
-					console.log("COUNTRY", cc, cpos);
+					// console.log("COUNTRY", cc, localData);
 
 					_state({
 						...lngs
@@ -83,25 +110,25 @@ const MapCover = withScriptjs(
 		}, [cc]);
 
 		useEffect(() => {
-			if (rc && cpos) {
-				if (cpos) {
-					if (rc && cpos.regions[rc]) {
-						console.log("REGION", rc, cc, cpos);
+			if (rc && localData) {
+				if (localData) {
+					if (rc && localData.regions[rc]) {
+						// console.log("REGION", rc, cc, cpos);
 
 						_zoom(p => p - 1);
 
 						_state({
-							lat: cpos.regions[rc].lat,
-							lng: cpos.regions[rc].lng
+							lat: localData.regions[rc].lat,
+							lng: localData.regions[rc].lng
 						});
 
 						setTimeout(() => {
-							_zoom(cpos.regions[rc].zoom || 9);
+							_zoom(localData.regions[rc].zoom || 9);
 						}, 200);
 					}
 				}
 			}
-		}, [rc, cpos]);
+		}, [rc, localData]);
 
 		// initialize position from geo
 		useEffect(() => {
@@ -111,20 +138,20 @@ const MapCover = withScriptjs(
 		}, [geo]);
 
 		useEffect(() => {
-			if (!loaded) {
+			if (country_code) {
 				api({
 					method: "GET",
-					action: "markers"
+					action: "markers",
+					params: "country=" + country_code
 				}).then(markers => {
+					console.log("SDAD");
+					mk[country_code] = markers;
 					setStore({
-						markers: {
-							a: markers || [],
-							loaded: true
-						}
+						mk
 					});
 				});
 			}
-		}, []);
+		}, [country_code]);
 
 		useEffect(() => {
 			if (refs.mapArea) {
@@ -158,8 +185,9 @@ const MapCover = withScriptjs(
 			}
 		};
 
-		const onMarkerClick = useCallback((pp, index) => {
-			setStore({ index });
+		const onMarkerClick = useCallback((pp, ccod, reg) => {
+			_zoom(12);
+			setStore({ country_code: reg, country_region: ccod });
 		}, []);
 
 		return (
@@ -179,37 +207,57 @@ const MapCover = withScriptjs(
 						{
 							textColor: "white",
 							url: markerImg,
-							height: 50,
-							width: 50
+							height: 120,
+							width: 120
 						},
 						{
 							textColor: "white",
 							url: markerImg,
-							height: 50,
-							width: 50
+							height: 120,
+							width: 120
 						},
 						{
 							textColor: "white",
 							url: markerImg,
-							height: 50,
-							width: 50
+							height: 120,
+							width: 120
 						}
 					]}
 					averageCenter
 					enableRetinaIcons
-					gridSize={80}>
-					{markers.map((m, mx) => (
-						<Marker
-							ref={r => setRefs(r, mx)}
-							labelClass="labelc"
-							onClick={(pp, mr) => onMarkerClick(pp, mx)}
-							key={mx}
-							animation={google.maps.Animation.DROP}
-							{...markerSets}
-							position={m.position}
-							// {...m}
-						/>
-					))}
+					gridSize={120}>
+					{Object.keys(cMarkers).map((m, mx) => {
+						const position =
+							cMarkers[m] &&
+							cMarkers[m][0] &&
+							cMarkers[m][0].position
+								? {
+										lat: cMarkers[m][0].position[0],
+										lng: cMarkers[m][0].position[1]
+								  }
+								: {
+										lat: localData.lat,
+										lng: localData.lng
+								  };
+
+						return (
+							<Marker
+								ref={r => setRefs(r, mx)}
+								labelClass="labelc"
+								onClick={pp =>
+									onMarkerClick(pp, m, cMarkers[m][0].locale)
+								}
+								key={mx}
+								animation={google.maps.Animation.DROP}
+								{...markerSets}
+								label={{
+									text: "" + cMarkers[m].length,
+									color: "white"
+								}}
+								position={position}
+							/>
+						);
+					})}
 				</MarkerClusterer>
 			</GoogleMap>
 		);

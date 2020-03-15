@@ -157,22 +157,6 @@ export const MainBlock = memo(
 				} else {
 					mainBlock.style.bottom = `-${posFix + 1}px`;
 				}
-
-				// if (posFix < half) {
-				// 	if (posFix > 100) {
-				// 		slide("bottom");
-				// 	} else {
-				// 		slide("top");
-				// 	}
-				// } else if (posFix > half) {
-				// 	if (menuH - posFix > 150) {
-				// 		slide("top");
-				// 	} else {
-				// 		slide("bottom");
-				// 	}
-				// } else {
-				// 	mainBlock.style.bottom = `-${posFix + 1}px`;
-				// }
 			}
 
 			document.onmouseup = null;

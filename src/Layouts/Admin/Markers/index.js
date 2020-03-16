@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState, memo, useCallback } from "react";
 import { notification } from "Library";
 import RootContext from "Context";
-import AdminCover from "Layouts/AdminCover";
 import Popup from "Library/Popup";
 import countries_a from "Library/countries-array.json";
 import iso from "Library/iso-3166-2-object.json";
@@ -447,7 +446,7 @@ export default () => {
 	);
 
 	return (
-		<AdminCover>
+		<>
 			<h1>Markers</h1>
 
 			<button
@@ -565,7 +564,6 @@ export default () => {
 						type="text"
 						name="address"
 						placeholder="Street, road, city of infection"
-						required={true}
 						onChange={updateState}
 						value={state.address}
 					/>
@@ -635,6 +633,6 @@ export default () => {
 					</button>
 				</form>
 			</Popup>
-		</AdminCover>
+		</>
 	);
 };

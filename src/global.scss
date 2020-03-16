@@ -1163,6 +1163,13 @@ $color-shadow: lightgray;
 			border-bottom: 1px solid #dcdcdc;
 			background: #3a3a3a;
 			color: white;
+			.logout {
+				display: block;
+				font-size: 12px;
+				margin-top: 10px;
+				color: #ff8380;
+				cursor: pointer;
+			}
 		}
 		nav {
 			margin-top: 10px;

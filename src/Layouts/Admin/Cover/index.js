@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import Access from "Library/Login";
 import RootContext from "Context";
-import Header from "Layouts/Header";
+import Header from "Layouts/Admin/Header";
 import Head from "next/head";
 import "global.scss";
 
 export default ({ children }) => {
-	const { actioner, setStore, store } = useContext(RootContext);
+	const { actioner, setStore, store, logout } = useContext(RootContext);
 
 	return (
 		<>
@@ -21,7 +21,7 @@ export default ({ children }) => {
 
 			<Access actioner={actioner} store={store} set={setStore}>
 				<div className="awrapper">
-					<Header />
+					<Header logout={logout} />
 
 					<div className="amain">
 						<div className="hhead"></div>

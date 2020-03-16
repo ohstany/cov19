@@ -121,18 +121,20 @@ export const root_store_reducer = (s, a, params = false) => {
 		}
 
 		case "SET_MARKERS_ADMIN": {
-			const red = data.reduce((p, n) => {
-				if (n.locale) {
-					if (!p[n.locale]) p[n.locale] = [];
-					p[n.locale].push(n);
-				} else {
-					if (!p["other"]) p["other"] = [];
-					p.other.push(n);
-				}
-				return Object.assign({}, p);
-			}, {});
-
-			console.log("SSS", red, data);
+			console.log("data", data);
+			const red = (data && data instanceof Array ? data : []).reduce(
+				(p, n) => {
+					if (n.locale) {
+						if (!p[n.locale]) p[n.locale] = [];
+						p[n.locale].push(n);
+					} else {
+						if (!p["other"]) p["other"] = [];
+						p.other.push(n);
+					}
+					return Object.assign({}, p);
+				},
+				{}
+			);
 
 			return { markers: red };
 		}

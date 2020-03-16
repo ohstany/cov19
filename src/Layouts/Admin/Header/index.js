@@ -1,14 +1,21 @@
 import Link from "next/link";
 
-export default () => {
+const url = "XTP1A5HK8Q";
+
+export default ({ logout }) => {
 	return (
 		<div className="aheader">
-			<div className="al">Admin</div>
+			<div className="al">
+				Admin
+				<span className="logout" onClick={() => logout(false)}>
+					Logout
+				</span>
+			</div>
 			<nav>
 				{[
-					{ url: "/admin", text: "Markers" },
-					{ url: "/admin/subscriptions", text: "Subscriptions" },
-					{ url: "/admin/settings", text: "Settings" }
+					{ url: `/${url}`, text: "Markers" },
+					{ url: `/${url}/subscriptions`, text: "Subscriptions" },
+					{ url: `/${url}/settings`, text: "Settings" }
 				].map((n, nx) => {
 					return (
 						<Link key={nx} href={n.url}>

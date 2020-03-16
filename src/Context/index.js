@@ -215,12 +215,29 @@ export const RootProvider = withRouter(props => {
 			document.body.classList.add(dev);
 			window.addEventListener("resize", getScreenState);
 
-			const geo = localStorage.getItem("geo");
+			const geo = JSON.parse(localStorage.getItem("geo") || "{}");
+			// const geo = {
+			// 	ip: "94.153.30.123",
+			// 	country_code: "UA",
+			// 	country_name: "Украина",
+			// 	region_code: 12,
+			// 	region_name: "Seoul",
+			// 	city: "Seoul",
+			// 	zip_code: "02878",
+			// 	time_zone: "Europe/Kiev",
+			// 	latitude: 50.4522,
+			// 	longitude: 30.5287,
+			// 	metro_code: 0
+			// };
 
 			if (geo) {
-				// console.log("INTERNAL");
+				// console.log("INTERNAL", geo);
+				const { region_code, country_code } = geo || {};
+
 				setStore({
-					geo: JSON.parse(geo)
+					region_code,
+					country_code,
+					geo
 				});
 			} else {
 				// console.log("EXTERNAL", PROTOCOL);
@@ -231,20 +248,6 @@ export const RootProvider = withRouter(props => {
 				)
 					.then(res => res.json())
 					.then(res => {
-						// const res = {
-						// 	ip: "94.153.30.123",
-						// 	country_code: "UA",
-						// 	country_name: "Украина",
-						// 	region_code: "11",
-						// 	region_name: "Seoul",
-						// 	city: "Seoul",
-						// 	zip_code: "02878",
-						// 	time_zone: "Europe/Kiev",
-						// 	latitude: 50.4522,
-						// 	longitude: 30.5287,
-						// 	metro_code: 0
-						// };
-
 						const geo = Object.keys(res).reduce((p, n) => {
 							const key = formating(n);
 
@@ -259,14 +262,16 @@ export const RootProvider = withRouter(props => {
 							);
 						}, {});
 
+						const { region_code, country_code } = geo || {};
+
 						geo.lat = parseFloat(geo.lat);
 						geo.lng = parseFloat(geo.lng);
-
-						console.log("geo", geo);
 
 						localStorage.setItem("geo", JSON.stringify(geo));
 
 						setStore({
+							region_code,
+							country_code,
 							geo
 						});
 					});

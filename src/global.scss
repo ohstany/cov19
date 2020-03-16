@@ -294,6 +294,7 @@ ul {
 textarea:required,
 input:required {
 	border-color: #e99090;
+	padding-right: 25px;
 }
 
 body.subsc {
@@ -537,6 +538,22 @@ body.subsc {
 					}
 					.infc {
 						margin-bottom: 10px;
+						span {
+							border-right: 1px solid #d8d8d8;
+							padding-right: 7px;
+							margin-right: 7px;
+							color: #949494;
+							b {
+								font-size: 11px;
+								width: 10px;
+								height: 10px;
+								vertical-align: baseline;
+								margin-right: 5px;
+							}
+							&:last-child {
+								border: 0;
+							}
+						}
 					}
 				}
 			}
@@ -1122,6 +1139,7 @@ $color-shadow: lightgray;
 		vertical-align: sub;
 		margin-right: 10px;
 	}
+	&.suspicion,
 	&.hidden {
 		background: #ed6200;
 	}
@@ -1134,10 +1152,37 @@ $color-shadow: lightgray;
 	&.source {
 		background: #cc2f7f;
 	}
+	&.source {
+		background: #902fcc;
+	}
+	&.infected {
+		background: #ed1813;
+	}
+	&.mortal {
+		background: black;
+	}
+
 	select {
 		background: none;
 		border: none;
 		color: white;
+	}
+}
+
+.selcond {
+	margin-bottom: 10px;
+	h5 {
+		margin: 0;
+		margin-bottom: 5px;
+	}
+	span {
+		margin-right: 10px;
+		cursor: pointer;
+		input {
+			display: inline-block;
+			width: auto;
+			margin-right: 5px;
+		}
 	}
 }
 

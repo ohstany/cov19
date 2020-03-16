@@ -3,7 +3,8 @@ import { notification } from "Library";
 import RootContext from "Context";
 import Popup from "Library/Popup";
 import countries_a from "Library/countries-array.json";
-import iso from "Library/iso-3166-2-object.json";
+// import iso from "Library/iso-3166-2-object.json";
+import * as iso from "Library/iso-3166-2-object.js";
 
 const Content = memo(
 	({
@@ -87,6 +88,7 @@ const Content = memo(
 								}}>
 								<option value="witness">Witness</option>
 								<option value="source">Source</option>
+								<option value="osource">Of.Source</option>
 							</select>
 						</span>
 					</li>
@@ -202,7 +204,7 @@ const initialState = {
 	lng: "",
 	locale: "",
 	region: "",
-	amount: 0,
+	amount: undefined,
 	source: "",
 	source2: "",
 	type: "witness",
@@ -619,11 +621,22 @@ export default () => {
 					<label style={{ marginRight: 10 }}>Status</label>
 					<select
 						value={state.status}
-						onChange={({ target: { value } }) =>
-							_state(e => ({ ...e, status: value }))
+						onChange={({ target: { value: status } }) =>
+							_state(e => ({ ...e, status }))
 						}>
 						<option value="hidden">Hidden</option>
 						<option value="published">Published</option>
+					</select>
+					<br />
+					<label style={{ marginRight: 10 }}>Type</label>
+					<select
+						value={state.type}
+						onChange={({ target: { value: type } }) =>
+							_state(e => ({ ...e, type }))
+						}>
+						<option value="witness">Witness</option>
+						<option value="source">Source</option>
+						<option value="osource">Of.Source</option>
 					</select>
 					<br />
 					<br />

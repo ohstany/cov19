@@ -16,12 +16,40 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 		}
 
+		case "SET_ACTIVITY": {
+			const { activity } = s;
+
+			const { country, city } = getUrlParams("?" + params.params);
+
+			if (!activity[country]) {
+				activity[country] = {};
+			}
+
+			const key = city || "other";
+
+			activity[country][key] = data || [];
+
+			return {
+				activity
+			};
+		}
+
+		case "SET_MAP_MARKERS": {
+			const { mapMarkers } = s;
+
+			const { country } = getUrlParams("?" + params.params);
+
+			mapMarkers[country] = data;
+
+			return {
+				mapMarkers
+			};
+		}
+
 		case "ADD_MARKER": {
 			const { markers } = s;
 
 			const { ID, fields_updated } = data || {};
-
-			console.log("fields_updated", fields_updated);
 
 			fields_updated.ID = ID;
 
@@ -121,7 +149,6 @@ export const root_store_reducer = (s, a, params = false) => {
 		}
 
 		case "SET_MARKERS_ADMIN": {
-			console.log("data", data);
 			const red = (data && data instanceof Array ? data : []).reduce(
 				(p, n) => {
 					if (n.locale) {
@@ -211,6 +238,7 @@ export const root_store_initial_state = {
 	newsLimit: {},
 	news: {},
 	mk: [],
+	mapMarkers: {},
 	markers: {
 		other: []
 	}

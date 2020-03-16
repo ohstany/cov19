@@ -12,6 +12,8 @@ import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
 import RootContext from "Context";
 import countries from "Library/countries-array.json";
+import { sources } from "Library/statuses.js";
+import { condition } from "../../Library/statuses";
 
 let newsRef = null;
 
@@ -79,6 +81,7 @@ const News = memo(
 const RenderSource = ({ s }) => {
 	return (
 		<div className="src">
+			Source:{" "}
 			{s.indexOf("youtube") >= 0 && s.indexOf("iframe") >= 0 ? (
 				<div
 					dangerouslySetInnerHTML={{
@@ -98,45 +101,17 @@ export default memo(
 	() => {
 		const {
 			actioner,
-			api,
 			store: {
 				country_code,
 				region_code,
-				geo,
 				cpos,
 				index,
 				news,
-				mk,
 				newsLimit,
 				activity
 			},
 			setStore
 		} = useContext(RootContext) || {};
-
-		const cMarkers = useMemo(() =>
-			country_code && mk[country_code]
-				? mk[country_code].reduce((p, n) => {
-						n.position =
-							n.region && cpos.regions[n.region]
-								? [
-										cpos.regions[n.region].lat,
-										cpos.regions[n.region].lng
-								  ]
-								: [cpos.lat, cpos.lng];
-
-						if (n.region) {
-							if (!p[n.region]) p[n.region] = [];
-
-							p[n.region].push(n);
-						} else {
-							if (!p["country"]) p["country"] = [];
-
-							p.country.push(n);
-						}
-						return Object.assign({}, p);
-				  }, {})
-				: []
-		);
 
 		const newsData =
 			country_code && news[country_code] ? news[country_code] : false;
@@ -146,9 +121,15 @@ export default memo(
 				? newsLimit[country_code]
 				: false;
 
-		const active = index >= 0 ? markers[index] : false;
+		const active = false;
 
-		const comments = activity[index] || false;
+		const rkey = region_code || "other";
+
+		const infections = country_code
+			? !activity[country_code] || !activity[country_code][rkey]
+				? false
+				: activity[country_code][rkey]
+			: false;
 
 		const [nav, _nav] = useState("acts");
 
@@ -165,6 +146,17 @@ export default memo(
 				})),
 			[regions]
 		);
+
+		useEffect(() => {
+			if (region_code && country_code) {
+				actioner({
+					reduce: "SET_ACTIVITY",
+					method: "GET",
+					action: "activity",
+					params: `country=${country_code}&city=${region_code}`
+				});
+			}
+		}, [region_code]);
 
 		useEffect(() => {
 			if (!fetching && !limited) {
@@ -229,13 +221,20 @@ export default memo(
 				<div className={"author"}>
 					<h3 className={"atitle"}>
 						<span className={"b circ " + a.type}></span>
-						{`${a.type.charAt(0).toUpperCase() +
-							a.type.slice(1)} #${a.ID}`}
+						{`${sources[a.type]} #${a.ID}`}
 					</h3>
 
 					<div className={"infc"}>
-						<b>Infection cases: </b>
-						<span className="b">{a.number}</span>
+						<span>
+							<b className="b circ suspicion" />
+							{condition["suspicion"]}
+						</span>
+
+						{a.number >= 1 && (
+							<span>
+								Cases: <b className="b">{a.number}</b>
+							</span>
+						)}
 					</div>
 
 					<div className={"desc"}>{a.details.content}</div>
@@ -299,7 +298,10 @@ export default memo(
 						<select
 							value={country_code || ""}
 							onChange={({ target: { value } }) =>
-								setStore({ country_code: value })
+								setStore({
+									country_code: value,
+									region_code: ""
+								})
 							}>
 							><option value="">Select country</option>
 							{countries.map((c, ci) => {
@@ -333,27 +335,27 @@ export default memo(
 
 				<div className={"activity"}>
 					<div className="bb b1">
-						{region_code ? (
-							cMarkers &&
-							cMarkers[region_code] &&
-							cMarkers[region_code].length ? (
-								cMarkers[region_code].map((a, ax) => {
-									return (
-										<SingleItem
-											nav={nav}
-											key={ax}
-											a={a}
-											ax={ax}
-										/>
-									);
-								})
-							) : (
-								<NoContent
-									text={"No cases of infection at this city."}
-								/>
-							)
-						) : (
+						{!country_code && infections === false ? (
 							<Skeleton1 row={5} />
+						) : infections && infections.length ? (
+							infections.map((a, ax) => {
+								return (
+									<SingleItem
+										nav={nav}
+										key={ax}
+										a={a}
+										ax={ax}
+									/>
+								);
+							})
+						) : (
+							<NoContent
+								text={
+									!region_code
+										? "Select the city"
+										: "No cases of infection at this city."
+								}
+							/>
 						)}
 					</div>
 
@@ -361,8 +363,8 @@ export default memo(
 						<SingleItem nav={nav} a={active} ax={0} />
 						{active && (
 							<div className="comments">
-								<h3>Comments ({comments.length || 0})</h3>
-								{comments
+								{/* <h3>Comments ({comments.length || 0})</h3> */}
+								{/* {comments
 									? comments.map((c, cx) => {
 											return (
 												<div
@@ -384,7 +386,7 @@ export default memo(
 												</div>
 											);
 									  })
-									: "There are no comments"}
+									: "There are no comments"} */}
 							</div>
 						)}
 					</div>

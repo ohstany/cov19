@@ -365,6 +365,38 @@ function iso3166_2_minify()
    echo "</pre>";
 }
 
+function iso3166_2_minify_to_js()
+{
+   $js = json_decode(file_get_contents("./iso-3166-2-object.json"));
+   $copy = $js;
+
+   $str = "";
+
+   foreach ($js as $c => $cv) {
+      if ($cv->regions) {
+         unset($cv->parent);
+         // unset($cv->code);
+         unset($cv->division);
+         foreach ($cv->regions as $k => $v) {
+            unset($cv->regions->$k->utf8);
+            unset($cv->regions->$k->parent);
+            unset($cv->regions->$k->division);
+         }
+         $str .= "export const $c = " . json_encode($cv) . ";\n";
+         $copy->$c = $cv;
+
+         // file_put_contents("./iso-3166-2-object.js", $str);
+         // exit;
+      }
+   }
+
+   file_put_contents("./iso-3166-2-object.js", $str);
+
+   echo "<pre>";
+   print_r($copy);
+   echo "</pre>";
+}
+
 function build_phones()
 {
    $js = json_decode(file_get_contents("./phoned.json"));
@@ -418,4 +450,5 @@ function buildNewCountries()
 // iso3166_2_finalize();
 // iso3166_2_minify();
 // build_phones();
-buildNewCountries();
+// buildNewCountries();
+iso3166_2_minify_to_js();

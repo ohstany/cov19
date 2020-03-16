@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import RootContext from "Context";
 import Popup from "Library/Popup";
+import { condition } from "Library/statuses.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { trackEvent } from "Library/GoogleAnalytics";
@@ -17,7 +18,8 @@ const initialState = {
 	email: "",
 	address: "",
 	content: "",
-	amount: 0,
+	condition: "",
+	amount: undefined,
 	source: "",
 	source2: ""
 };
@@ -91,7 +93,15 @@ export default memo(
 
 		const togglePopup = useCallback(() => _visible(e => !e), []);
 
-		const { email, address, content, amount, source, source2 } = state;
+		const {
+			email,
+			address,
+			content,
+			amount,
+			source,
+			source2,
+			condition: cond
+		} = state;
 
 		return (
 			<>
@@ -143,7 +153,7 @@ export default memo(
 							<input
 								type="text"
 								name="address"
-								placeholder="Street, road, city of infection"
+								placeholder="City, Street, Place (EX: cafeteria) "
 								required={true}
 								onChange={updateState}
 								value={address}
@@ -159,6 +169,45 @@ export default memo(
 								value={amount}
 							/>
 							<label />
+
+							<div className="selcond">
+								<h5>Case</h5>
+								<span
+									onClick={() =>
+										_state(e => ({
+											...e,
+											condition: ""
+										}))
+									}>
+									<input
+										name="condition"
+										type="radio"
+										value=""
+										checked={cond === ""}
+									/>
+									None
+								</span>
+								{Object.keys(condition).map((r, rx) => {
+									console.log("S cond === r", cond, r);
+									return (
+										<span
+											onClick={() =>
+												_state(e => ({
+													...e,
+													condition: r
+												}))
+											}>
+											<input
+												name="condition"
+												type="radio"
+												value={r}
+												checked={cond === r}
+											/>
+											{condition[r]}
+										</span>
+									);
+								})}
+							</div>
 
 							<input
 								name="source"

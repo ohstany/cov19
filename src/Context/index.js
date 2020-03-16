@@ -215,7 +215,7 @@ export const RootProvider = withRouter(props => {
 			document.body.classList.add(dev);
 			window.addEventListener("resize", getScreenState);
 
-			const geo = JSON.parse(localStorage.getItem("geo") || "{}");
+			const geo = JSON.parse(localStorage.getItem("geo"));
 			// const geo = {
 			// 	ip: "94.153.30.123",
 			// 	country_code: "UA",
@@ -231,7 +231,7 @@ export const RootProvider = withRouter(props => {
 			// };
 
 			if (geo) {
-				// console.log("INTERNAL", geo);
+				console.log("INTERNAL", geo);
 				const { region_code, country_code } = geo || {};
 
 				setStore({

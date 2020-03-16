@@ -188,9 +188,9 @@ export default memo(
 									None
 								</span>
 								{Object.keys(condition).map((r, rx) => {
-									console.log("S cond === r", cond, r);
 									return (
 										<span
+											key={rx}
 											onClick={() =>
 												_state(e => ({
 													...e,

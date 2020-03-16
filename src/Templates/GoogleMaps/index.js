@@ -60,10 +60,9 @@ const MapCover = withScriptjs(
 
 		const { lat, lng } = state;
 
-		const cMarkers = useMemo(
-			() => (country_code ? mapMarkers[country_code] || [] : []),
-			[country_code, mapMarkers[country_code]]
-		);
+		const cMarkers = country_code ? mapMarkers[country_code] || [] : [];
+
+		console.log("cMarkers", cMarkers);
 
 		useEffect(() => {
 			if (country_code) {
@@ -107,13 +106,15 @@ const MapCover = withScriptjs(
 		}, [region_code, cpos]);
 
 		useEffect(() => {
-			actioner({
-				reduce: "SET_MAP_MARKERS",
-				method: "GET",
-				action: "markers",
-				params: "country=" + country_code
-			});
-		}, []);
+			if (country_code) {
+				actioner({
+					reduce: "SET_MAP_MARKERS",
+					method: "GET",
+					action: "markers",
+					params: "country=" + country_code
+				});
+			}
+		}, [country_code]);
 
 		useEffect(() => {
 			if (refs.mapArea) {

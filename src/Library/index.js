@@ -21,6 +21,10 @@ export const notification = (text, close = 2000) => {
 	not++;
 };
 
+export const numComma = x => {
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 // Momoization of functional component or CLASS method
 export const memoize = fn => {
 	return () => {

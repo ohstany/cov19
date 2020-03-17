@@ -154,21 +154,6 @@ export default memo(
 			[country_code, rkey, fetchingMarkers]
 		);
 
-		// console.log(
-		// 	"INNNF",
-		// 	`${country_code}_${rkey}`,
-		// 	activityLimited,
-		// 	infections,
-		// 	activity,
-		// 	activityLimit
-		// );
-
-		// const infections = country_code
-		// 	? !activity[country_code] || !activity[country_code][rkey]
-		// 		? false
-		// 		: activity[country_code][rkey]
-		// 	: false;
-
 		const builtRegions = useMemo(
 			() =>
 				regions &&
@@ -178,17 +163,6 @@ export default memo(
 				})),
 			[regions]
 		);
-
-		useEffect(() => {
-			if (region_code && country_code) {
-				actioner({
-					reduce: "SET_ACTIVITY",
-					method: "GET",
-					action: "activity",
-					params: `country=${country_code}&city=${region_code}&limit=10`
-				});
-			}
-		}, [region_code]);
 
 		useEffect(() => {
 			if (country_code) {
@@ -202,7 +176,7 @@ export default memo(
 			}
 		}, [region_code]);
 
-		function fetchMarkers() {
+		const fetchMarkers = () => {
 			if (region_code && country_code && fetchingMarkers === false) {
 				_fetchingMarkers(true);
 
@@ -222,9 +196,9 @@ export default memo(
 					});
 				}, 200);
 			}
-		}
+		};
 
-		function fetchNews() {
+		const fetchNews = () => {
 			if (fetchingNews === false) {
 				_fetchingNews(true);
 
@@ -245,7 +219,7 @@ export default memo(
 					});
 				}, 200);
 			}
-		}
+		};
 
 		const navigation = useCallback(key => {
 			_nav(key);
@@ -403,31 +377,6 @@ export default memo(
 								: ""}
 						</InfiniteScroll>
 					</div>
-
-					{/* <div className="bb b1">
-						{!country_code && infections === false ? (
-							<Skeleton1 row={5} />
-						) : infections && infections.length ? (
-							infections.map((a, ax) => {
-								return (
-									<SingleItem
-										nav={nav}
-										key={ax}
-										a={a}
-										ax={ax}
-									/>
-								);
-							})
-						) : (
-							<NoContent
-								text={
-									!region_code
-										? "Select the city"
-										: "No cases of infection at this city."
-								}
-							/>
-						)}
-					</div> */}
 
 					<div className="bb b2">
 						<SingleItem nav={nav} a={active} ax={0} />

@@ -269,7 +269,7 @@ input {
 	overflow: auto !important;
 	padding: 0;
 	width: 200px;
-	min-height: 90px;
+	min-height: 100px;
 }
 
 .infw {
@@ -278,6 +278,13 @@ input {
 	height: 100%;
 	padding: 15px 10px;
 	font-size: 14px;
+	.stat {
+		&.all {
+			b {
+				color: #ca1119;
+			}
+		}
+	}
 	.close {
 		cursor: pointer;
 		width: 15px;

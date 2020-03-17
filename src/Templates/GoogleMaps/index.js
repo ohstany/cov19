@@ -7,10 +7,10 @@ import React, {
 	useState
 } from "react";
 // import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
-import markerImg from "./m.png";
+import markerImg from "./m2.png";
 import styles from "./mapStyling.json";
 import * as locations from "Library/iso-3166-2-object.js";
-import { reducer } from "Library";
+import { reducer, numComma } from "Library";
 import RootContext from "Context";
 import {
 	withScriptjs,
@@ -52,6 +52,8 @@ const MapCover = withScriptjs(
 			activeMarker: null
 		});
 
+		console.log("mapMarkers", mapMarkers);
+
 		const [zoom, _zoom] = useState(4);
 
 		const [mks, _mks] = useState(40);
@@ -59,6 +61,13 @@ const MapCover = withScriptjs(
 		const [open, _open] = useState({});
 
 		const { lat, lng } = state;
+
+		const markerSets = {
+			icon: {
+				url: markerImg,
+				scaledSize: new google.maps.Size(mks, mks)
+			}
+		};
 
 		useEffect(() => {
 			if (country_code) {
@@ -115,32 +124,6 @@ const MapCover = withScriptjs(
 			}
 		}, [1]);
 
-		useEffect(() => {
-			if (index >= 0) {
-				const {
-					props: {
-						position: { lat, lng }
-					}
-				} = refs[index];
-
-				_zoom(10);
-
-				_zoom(15);
-
-				_state({
-					lat,
-					lng
-				});
-			}
-		}, [index]);
-
-		const markerSets = {
-			icon: {
-				url: markerImg,
-				scaledSize: new google.maps.Size(mks, mks)
-			}
-		};
-
 		const onMarkerClick = useCallback((pp, country_code, region_code) => {
 			_zoom(p => p + 1);
 			_zoom(12);
@@ -170,35 +153,12 @@ const MapCover = withScriptjs(
 				onZoomChanged={() => {
 					const s = refs.map.getZoom();
 					const z = markerSizes(s);
-					// console.log("SSS", s, z);
+					if (s <= 5) {
+						_open({});
+					}
 					_mks(z);
 				}}
 				center={{ lat, lng }}>
-				{/* <MarkerClusterer
-					clusterClass="marks"
-					styles={[
-						{
-							textColor: "white",
-							url: markerImg,
-							height: 50,
-							width: 50
-						},
-						{
-							textColor: "white",
-							url: markerImg,
-							height: 50,
-							width: 50
-						},
-						{
-							textColor: "white",
-							url: markerImg,
-							height: 50,
-							width: 50
-						}
-					]}
-					averageCenter
-					enableRetinaIcons
-					gridSize={400}> */}
 				{mapMarkers.map(({ region, locale, infections }, mx) => {
 					const cpos = locations[locale];
 					const position =
@@ -240,15 +200,16 @@ const MapCover = withScriptjs(
 											}}>
 											<img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224px%22%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23000000%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M19%206.41L17.59%205%2012%2010.59%206.41%205%205%206.41%2010.59%2012%205%2017.59%206.41%2019%2012%2013.41%2017.59%2019%2019%2017.59%2013.41%2012z%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fsvg%3E%0A" />
 										</span>
-										<div>Infection Cases</div>
-										<b>{infections}</b>
+										<div className="stat all">
+											All Cases:{" "}
+											<b>{numComma(infections)}</b>
+										</div>
 									</div>
 								</InfoWindow>
 							)}
 						</Marker>
 					);
 				})}
-				{/* </MarkerClusterer> */}
 			</GoogleMap>
 		);
 	})

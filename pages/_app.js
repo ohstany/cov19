@@ -72,6 +72,10 @@ export default class MyApp extends App {
 
 				<meta name="theme-color" content="#ffffff" />
 
+				<link
+					href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+					rel="stylesheet"></link>
+
 				<title>{siteMeta.title}</title>
 			</Head>
 		);

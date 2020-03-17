@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, memo, useCallback } from "react";
 import { notification } from "Library";
+import { condition as cond, via as vi } from "Library/statuses";
 import RootContext from "Context";
 import Popup from "Library/Popup";
 import countries_a from "Library/countries-array.json";
@@ -21,7 +22,9 @@ const Content = memo(
 			number,
 			latlng,
 			address,
+			via,
 			type,
+			condition,
 			details: { content, source, source2 } = {},
 			meta_data: { country_code, region_code, geo } = {}
 		}
@@ -59,6 +62,9 @@ const Content = memo(
 						<span className={"b"}>{number}</span>
 					</li>
 					<li>
+						<span className={"b " + via}>{vi[via]}</span>
+					</li>
+					<li>
 						<button
 							className={"lget" + (locale ? " got" : "")}
 							onClick={() => {
@@ -72,6 +78,25 @@ const Content = memo(
 							}}>
 							GET
 						</button>
+					</li>
+					<li>
+						<span className={"b " + condition}>
+							<select
+								value={condition}
+								onChange={({ target: { value } }) => {
+									if (value !== type) {
+										modifyMarker(
+											ID,
+											{ condition: value },
+											locale
+										);
+									}
+								}}>
+								{Object.keys(cond).map((i, ix) => (
+									<option value={i}>{cond[i]}</option>
+								))}
+							</select>
+						</span>
 					</li>
 					<li>
 						<span className={"b " + type}>
@@ -489,7 +514,9 @@ export default () => {
 						<li>Region</li>
 						<li>LatLng</li>
 						<li className="id">Number</li>
+						<li>By</li>
 						<li>Get GEO</li>
+						<li>Condition</li>
 						<li>Type</li>
 						<li className="status">Status</li>
 					</ul>
@@ -538,6 +565,7 @@ export default () => {
 						/>
 						<label />
 					</div>
+
 					<div className="selinp">
 						<RegionSelect
 							key={state.locale}
@@ -562,6 +590,7 @@ export default () => {
 						/>
 						<label />
 					</div>
+
 					<input
 						type="text"
 						name="address"
@@ -570,6 +599,7 @@ export default () => {
 						value={state.address}
 					/>
 					<label />
+
 					<input
 						type="text"
 						name="lat"
@@ -578,6 +608,7 @@ export default () => {
 						value={state.lat}
 					/>
 					<label />
+
 					<input
 						type="text"
 						name="lng"
@@ -586,6 +617,7 @@ export default () => {
 						value={state.lng}
 					/>
 					<label />
+
 					<input
 						type="number"
 						name="amount"
@@ -595,6 +627,7 @@ export default () => {
 						value={state.amount}
 					/>
 					<label />
+
 					<input
 						name="source"
 						type="text"
@@ -603,6 +636,7 @@ export default () => {
 						value={state.source}
 					/>
 					<label />
+
 					<input
 						name="source2"
 						type="text"
@@ -611,6 +645,7 @@ export default () => {
 						value={state.source2}
 					/>
 					<label />
+
 					<textarea
 						name="content"
 						placeholder="Write about case"
@@ -629,6 +664,7 @@ export default () => {
 					</select>
 					<br />
 					<label style={{ marginRight: 10 }}>Type</label>
+
 					<select
 						value={state.type}
 						onChange={({ target: { value: type } }) =>

@@ -16,8 +16,6 @@ import { sources } from "Library/statuses.js";
 import { condition } from "../../Library/statuses";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-let newsRef = null;
-
 const News = memo(
 	({
 		data: {
@@ -231,44 +229,51 @@ export default memo(
 			}
 		}, [index]);
 
-		const SingleItem = useCallback(({ a }) => {
-			return a ? (
-				<div className={"author"}>
-					<h3 className={"atitle"}>
-						<span className={"b circ " + a.type}></span>
-						{`${sources[a.type]} #${a.ID}`}
-					</h3>
+		const SingleItem = useCallback(
+			({
+				a: { ID, condition: cond, type, number, details, date } = {}
+			}) => {
+				return ID ? (
+					<div className={"author"}>
+						<h3 className={"atitle " + type}>
+							<span className={"b circ " + type}></span>
+							{`${sources[type]} #${ID}`}
+						</h3>
 
-					<div className={"infc"}>
-						<span>
-							<b className="b circ suspicion" />
-							{condition["suspicion"]}
-						</span>
+						<div className={"desc"}>{details.content}</div>
 
-						{a.number >= 1 && (
-							<span>
-								Cases: <b className="b">{a.number}</b>
-							</span>
-						)}
+						<div className="source">
+							{details.source && (
+								<RenderSource s={details.source} />
+							)}
+							{details.source2 && (
+								<RenderSource s={details.source2} />
+							)}
+						</div>
+
+						<div className={"infc"}>
+							{cond !== "none" && (
+								<span className={cond}>
+									<b className={"b circ " + cond} />
+									{condition[cond]}
+								</span>
+							)}
+
+							{number > 1 && (
+								<span>
+									Cases: <b className="b">{number}</b>
+								</span>
+							)}
+
+							<time dateTime={date}>{date}</time>
+						</div>
 					</div>
-
-					<div className={"desc"}>{a.details.content}</div>
-
-					<div className="source">
-						{a.details.source && (
-							<RenderSource s={a.details.source} />
-						)}
-						{a.details.source2 && (
-							<RenderSource s={a.details.source2} />
-						)}
-					</div>
-
-					<time dateTime={a.date}>{a.date}</time>
-				</div>
-			) : (
-				"Click on marker on the map"
-			);
-		}, []);
+				) : (
+					"Click on marker on the map"
+				);
+			},
+			[]
+		);
 
 		return (
 			<div className={"block activityArea " + nav}>
@@ -308,48 +313,52 @@ export default memo(
 
 				<MakeMark />
 
-				<div className="filterNavi tbf">
-					<div className="fitem tbf-c">
-						<select
-							value={country_code || ""}
-							onChange={({ target: { value } }) =>
-								setStore({
-									country_code: value,
-									region_code: ""
-								})
-							}>
-							><option value="">Select country</option>
-							{countries.map((c, ci) => {
-								return (
-									<option key={ci} value={c.country_code}>
-										{c.name}
-									</option>
-								);
-							})}
-						</select>
-					</div>
-					<div className="sep" />
-					<div className="fitem tbf-c">
-						<select
-							value={region_code}
-							onChange={({ target: { value } }) =>
-								setStore({ region_code: value })
-							}>
-							<option value="">Select City</option>
-							{regions &&
-								builtRegions.map((r, ri) => {
-									return (
-										<option key={ri} value={r.region_code}>
-											{r.name}
-										</option>
-									);
-								})}
-						</select>
-					</div>
-				</div>
-
 				<div className={"activity"}>
 					<div id="sc-markers" className="bb b1">
+						<div className="filterNavi tbf">
+							<div className="fitem tbf-c">
+								<select
+									value={country_code || ""}
+									onChange={({ target: { value } }) =>
+										setStore({
+											country_code: value,
+											region_code: ""
+										})
+									}>
+									><option value="">Select country</option>
+									{countries.map((c, ci) => {
+										return (
+											<option
+												key={ci}
+												value={c.country_code}>
+												{c.name}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className="sep" />
+							<div className="fitem tbf-c">
+								<select
+									value={region_code}
+									onChange={({ target: { value } }) =>
+										setStore({ region_code: value })
+									}>
+									<option value="">Select City</option>
+									{regions &&
+										builtRegions.map((r, ri) => {
+											return (
+												<option
+													key={ri}
+													value={r.region_code}>
+													{r.name}
+												</option>
+											);
+										})}
+								</select>
+							</div>
+						</div>
+
 						<InfiniteScroll
 							dataLength={infections ? infections.length : 0}
 							next={fetchMarkers}

@@ -93,7 +93,9 @@ const Content = memo(
 									}
 								}}>
 								{Object.keys(cond).map((i, ix) => (
-									<option value={i}>{cond[i]}</option>
+									<option key={ix} value={i}>
+										{cond[i]}
+									</option>
 								))}
 							</select>
 						</span>

@@ -665,7 +665,6 @@ body.subsc {
 			.desc {
 				p {
 					margin: 10px 0;
-					display: block;
 				}
 			}
 		}
@@ -701,6 +700,7 @@ body.subsc {
 					white-space: pre-wrap;
 					position: relative;
 					overflow: hidden;
+					display: inline;
 				}
 
 				&.act {

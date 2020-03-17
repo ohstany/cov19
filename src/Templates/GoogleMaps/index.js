@@ -4,8 +4,7 @@ import React, {
 	useEffect,
 	useReducer,
 	memo,
-	useState,
-	useMemo
+	useState
 } from "react";
 // import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import markerImg from "./m.png";
@@ -16,6 +15,7 @@ import RootContext from "Context";
 import {
 	withScriptjs,
 	withGoogleMap,
+	InfoWindow,
 	GoogleMap,
 	Marker
 } from "react-google-maps";
@@ -33,10 +33,8 @@ const setRefs = (r, k) => {
 };
 
 const markerSizes = size => {
-	if (size >= 10) {
-		return 250;
-	}
-	return size * 10;
+	const s = size * 10;
+	return s - (size >= 3 ? 20 : 0);
 };
 
 const MapCover = withScriptjs(
@@ -58,11 +56,9 @@ const MapCover = withScriptjs(
 
 		const [mks, _mks] = useState(40);
 
+		const [open, _open] = useState({});
+
 		const { lat, lng } = state;
-
-		const cMarkers = country_code ? mapMarkers[country_code] || [] : [];
-
-		console.log("cMarkers", cMarkers);
 
 		useEffect(() => {
 			if (country_code) {
@@ -106,15 +102,12 @@ const MapCover = withScriptjs(
 		}, [region_code, cpos]);
 
 		useEffect(() => {
-			if (country_code) {
-				actioner({
-					reduce: "SET_MAP_MARKERS",
-					method: "GET",
-					action: "markers",
-					params: "country=" + country_code
-				});
-			}
-		}, [country_code]);
+			actioner({
+				reduce: "SET_MAP_MARKERS",
+				method: "GET",
+				action: "markers"
+			});
+		}, []);
 
 		useEffect(() => {
 			if (refs.mapArea) {
@@ -206,7 +199,7 @@ const MapCover = withScriptjs(
 					averageCenter
 					enableRetinaIcons
 					gridSize={400}> */}
-				{cMarkers.map(({ region, locale, infections }, mx) => {
+				{mapMarkers.map(({ region, locale, infections }, mx) => {
 					const cpos = locations[locale];
 					const position =
 						region && cpos.regions[region]
@@ -223,16 +216,36 @@ const MapCover = withScriptjs(
 						<Marker
 							ref={r => setRefs(r, mx)}
 							labelClass="labelc"
-							onClick={pp => onMarkerClick(pp, locale, region)}
+							onClick={pp => {
+								_open(p => {
+									p[mx] = true;
+									return p;
+								});
+								onMarkerClick(pp, locale, region);
+							}}
 							key={mx}
 							animation={google.maps.Animation.DROP}
 							{...markerSets}
-							label={{
-								text: "" + infections,
-								color: "white"
-							}}
-							position={position}
-						/>
+							position={position}>
+							{open[mx] && (
+								<InfoWindow>
+									<div className="infw">
+										<span
+											className="close"
+											onClick={() => {
+												_open(p => {
+													p[mx] = !p[mx];
+													return { ...p };
+												});
+											}}>
+											<img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224px%22%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23000000%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M19%206.41L17.59%205%2012%2010.59%206.41%205%205%206.41%2010.59%2012%205%2017.59%206.41%2019%2012%2013.41%2017.59%2019%2019%2017.59%2013.41%2012z%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fsvg%3E%0A" />
+										</span>
+										<div>Infection Cases</div>
+										<b>{infections}</b>
+									</div>
+								</InfoWindow>
+							)}
+						</Marker>
 					);
 				})}
 				{/* </MarkerClusterer> */}

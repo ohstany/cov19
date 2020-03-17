@@ -16,33 +16,83 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 		}
 
-		case "SET_ACTIVITY": {
-			const { activity } = s;
+		case "SET_NEWS": {
+			const { news, newsLimit } = s;
 
-			const { country, city } = getUrlParams("?" + params.params);
+			const { limit, locale } = getUrlParams("?" + params.params);
 
-			if (!activity[country]) {
-				activity[country] = {};
+			if (!locale) return {};
+
+			if (!news[locale]) {
+				news[locale] = [];
+				newsLimit[locale] = false;
 			}
 
-			const key = city || "other";
-
-			activity[country][key] = data || [];
+			if (data) {
+				news[locale] = [...news[locale], ...data];
+				if (limit && data.length < limit) {
+					newsLimit[locale] = true;
+				}
+			} else {
+				newsLimit[locale] = true;
+			}
 
 			return {
-				activity
+				newsLimit,
+				news
 			};
 		}
 
-		case "SET_MAP_MARKERS": {
-			const { mapMarkers } = s;
+		case "SET_ACTIVITY": {
+			const { activity, activityLimit } = s;
 
-			const { country } = getUrlParams("?" + params.params);
+			const { limit, country, city } = getUrlParams("?" + params.params);
 
-			mapMarkers[country] = data;
+			if (!country) return {};
+
+			const rkey = `${country}_${city || "other"}`;
+
+			if (!activity[rkey]) {
+				activity[rkey] = [];
+				activityLimit[rkey] = false;
+			}
+
+			if (data) {
+				activity[rkey] = [...activity[rkey], ...data];
+				if (limit && data.length < limit) {
+					activityLimit[rkey] = true;
+				}
+			} else {
+				activityLimit[rkey] = true;
+			}
 
 			return {
-				mapMarkers
+				activity,
+				activityLimit
+			};
+		}
+
+		// case "SET_ACTIVITY": {
+		// 	const { activity } = s;
+
+		// 	const { country, city, limit } = getUrlParams("?" + params.params);
+
+		// 	if (!activity[country]) {
+		// 		activity[country] = {};
+		// 	}
+
+		// 	const key = city || "other";
+
+		// 	activity[country][key] = data || [];
+
+		// 	return {
+		// 		activity
+		// 	};
+		// }
+
+		case "SET_MAP_MARKERS": {
+			return {
+				mapMarkers: data || []
 			};
 		}
 
@@ -179,33 +229,6 @@ export const root_store_reducer = (s, a, params = false) => {
 			};
 		}
 
-		case "SET_NEWS": {
-			const { news, newsLimit } = s;
-
-			const { limit, locale } = getUrlParams("?" + params.params);
-
-			if (!locale) return {};
-
-			if (!news[locale]) {
-				news[locale] = [];
-				newsLimit[locale] = false;
-			}
-
-			if (data) {
-				news[locale] = [...news[locale], ...data];
-				if (limit && data.length < limit) {
-					newsLimit[locale] = true;
-				}
-			} else {
-				newsLimit[locale] = true;
-			}
-
-			return {
-				newsLimit,
-				news
-			};
-		}
-
 		case "DEFAULT": {
 			return {};
 		}
@@ -234,11 +257,12 @@ export const root_store_initial_state = {
 	mapRef: null,
 	options: {},
 	settings: {},
+	activityLimit: {},
 	activity: {},
 	newsLimit: {},
 	news: {},
 	mk: [],
-	mapMarkers: {},
+	mapMarkers: [],
 	markers: {
 		other: []
 	}

@@ -14,6 +14,7 @@ import RootContext from "Context";
 import countries from "Library/countries-array.json";
 import { sources } from "Library/statuses.js";
 import { condition } from "../../Library/statuses";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 let newsRef = null;
 
@@ -108,34 +109,65 @@ export default memo(
 				index,
 				news,
 				newsLimit,
-				activity
+				activity,
+				activityLimit
 			},
 			setStore
 		} = useContext(RootContext) || {};
 
-		const newsData =
-			country_code && news[country_code] ? news[country_code] : false;
-
-		const limited =
-			country_code && newsLimit[country_code]
-				? newsLimit[country_code]
-				: false;
+		const [nav, _nav] = useState("acts");
+		const [fetchingNews, _fetchingNews] = useState(false);
+		const [fetchingMarkers, _fetchingMarkers] = useState(false);
 
 		const active = false;
-
 		const rkey = region_code || "other";
-
-		const infections = country_code
-			? !activity[country_code] || !activity[country_code][rkey]
-				? false
-				: activity[country_code][rkey]
-			: false;
-
-		const [nav, _nav] = useState("acts");
-
-		const [fetching, _fetching] = useState(false);
-
+		const markerKey = `${country_code}_${rkey}`;
 		const { regions = false } = cpos || {};
+
+		const newsData = useMemo(
+			() =>
+				country_code && news[country_code] ? news[country_code] : [],
+			[country_code, fetchingNews]
+		);
+
+		const newsLimited = useMemo(
+			() =>
+				country_code && newsLimit[country_code]
+					? newsLimit[country_code]
+					: false,
+			[country_code, fetchingNews]
+		);
+
+		const activityLimited = useMemo(
+			() =>
+				country_code && activityLimit[markerKey]
+					? activityLimit[markerKey]
+					: false,
+			[country_code, rkey, fetchingMarkers]
+		);
+
+		const infections = useMemo(
+			() =>
+				country_code && activity[markerKey]
+					? activity[markerKey]
+					: false,
+			[country_code, rkey, fetchingMarkers]
+		);
+
+		// console.log(
+		// 	"INNNF",
+		// 	`${country_code}_${rkey}`,
+		// 	activityLimited,
+		// 	infections,
+		// 	activity,
+		// 	activityLimit
+		// );
+
+		// const infections = country_code
+		// 	? !activity[country_code] || !activity[country_code][rkey]
+		// 		? false
+		// 		: activity[country_code][rkey]
+		// 	: false;
 
 		const builtRegions = useMemo(
 			() =>
@@ -153,51 +185,66 @@ export default memo(
 					reduce: "SET_ACTIVITY",
 					method: "GET",
 					action: "activity",
-					params: `country=${country_code}&city=${region_code}`
+					params: `country=${country_code}&city=${region_code}&limit=10`
 				});
 			}
 		}, [region_code]);
 
 		useEffect(() => {
-			if (!fetching && !limited) {
-				newsRef.addEventListener("scroll", handleScroll);
-				return () =>
-					newsRef.removeEventListener("scroll", handleScroll);
+			if (country_code) {
+				fetchNews();
 			}
-		}, [fetching]);
+		}, [country_code]);
 
 		useEffect(() => {
-			if (!fetching) return;
-			fetchNews();
-		}, [fetching]);
+			if (region_code) {
+				fetchMarkers();
+			}
+		}, [region_code]);
 
-		const handleScroll = () => {
-			const { clientHeight, scrollHeight, scrollTop } = newsRef;
-			if (
-				clientHeight + scrollTop !== scrollHeight ||
-				fetching ||
-				limited
-			)
-				return;
-			_fetching(true);
-		};
+		function fetchMarkers() {
+			if (region_code && country_code && fetchingMarkers === false) {
+				_fetchingMarkers(true);
+
+				const offset =
+					activity[markerKey] && activity[markerKey].length
+						? activity[markerKey][activity[markerKey].length - 1].ID
+						: 0;
+
+				setTimeout(() => {
+					actioner({
+						reduce: "SET_ACTIVITY",
+						method: "GET",
+						action: "activity",
+						params: `country=${country_code}&city=${region_code}&limit=10&offset=${offset}`
+					}).then(() => {
+						_fetchingMarkers(false);
+					});
+				}, 200);
+			}
+		}
 
 		function fetchNews() {
-			const offset =
-				news[country_code] && news[country_code].length
-					? news[country_code][news[country_code].length - 1].ID
-					: 0;
+			if (fetchingNews === false) {
+				_fetchingNews(true);
 
-			setTimeout(() => {
-				actioner({
-					method: "GET",
-					action: "news",
-					params: `locale=${country_code}&limit=10&offset=${offset}`,
-					reduce: "SET_NEWS"
-				}).then(() => {
-					_fetching(false);
-				});
-			}, 200);
+				const offset =
+					news[country_code] && news[country_code].length
+						? news[country_code][news[country_code].length - 1]
+								.create_date
+						: 0;
+
+				setTimeout(() => {
+					actioner({
+						method: "GET",
+						action: "news",
+						params: `locale=${country_code}&limit=10&offset=${offset}`,
+						reduce: "SET_NEWS"
+					}).then(() => {
+						_fetchingNews(false);
+					});
+				}, 200);
+			}
 		}
 
 		const navigation = useCallback(key => {
@@ -205,18 +252,12 @@ export default memo(
 		}, []);
 
 		useEffect(() => {
-			if (country_code !== undefined) {
-				_fetching(true);
-			}
-		}, [country_code]);
-
-		useEffect(() => {
 			if (index >= 0) {
 				navigation("local");
 			}
 		}, [index]);
 
-		const SingleItem = useCallback(({ nav, a, ax, news = false }) => {
+		const SingleItem = useCallback(({ a }) => {
 			return a ? (
 				<div className={"author"}>
 					<h3 className={"atitle"}>
@@ -334,7 +375,36 @@ export default memo(
 				</div>
 
 				<div className={"activity"}>
-					<div className="bb b1">
+					<div id="sc-markers" className="bb b1">
+						<InfiniteScroll
+							dataLength={infections ? infections.length : 0}
+							next={fetchMarkers}
+							hasMore={!activityLimited}
+							loader={
+								region_code ? (
+									<Skeleton1 row={5} />
+								) : (
+									<NoContent text="Select the city" />
+								)
+							}
+							endMessage={<NoContent text="No More Data" />}
+							scrollableTarget="sc-markers">
+							{infections && infections.length
+								? infections.map((a, ax) => {
+										return (
+											<SingleItem
+												nav={nav}
+												key={ax}
+												a={a}
+												ax={ax}
+											/>
+										);
+								  })
+								: ""}
+						</InfiniteScroll>
+					</div>
+
+					{/* <div className="bb b1">
 						{!country_code && infections === false ? (
 							<Skeleton1 row={5} />
 						) : infections && infections.length ? (
@@ -357,7 +427,7 @@ export default memo(
 								}
 							/>
 						)}
-					</div>
+					</div> */}
 
 					<div className="bb b2">
 						<SingleItem nav={nav} a={active} ax={0} />
@@ -391,20 +461,18 @@ export default memo(
 						)}
 					</div>
 
-					<div id="okoko" ref={r => (newsRef = r)} className="bb b3">
-						{newsData && newsData.length
-							? newsData.map((a, ax) => {
-									return <News key={ax} data={a} ax={ax} />;
-							  })
-							: ""}
-
-						{fetching ? (
-							<Skeleton1 row={5} />
-						) : newsData.length === 0 || limited ? (
-							<NoContent />
-						) : (
-							""
-						)}
+					<div id="sc-news" className="bb b3">
+						<InfiniteScroll
+							dataLength={newsData.length}
+							next={fetchNews}
+							hasMore={!newsLimited}
+							loader={<Skeleton1 row={5} />}
+							endMessage={<NoContent />}
+							scrollableTarget="sc-news">
+							{newsData.map((a, ax) => (
+								<News key={ax} data={a} ax={ax} />
+							))}
+						</InfiniteScroll>
 					</div>
 				</div>
 			</div>

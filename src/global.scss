@@ -586,6 +586,7 @@ body.subsc {
 					.infc {
 						margin-bottom: 0;
 						font-size: 11px;
+						margin-top: 10px;
 						* {
 							vertical-align: middle;
 						}
@@ -593,17 +594,22 @@ body.subsc {
 							display: inline-block;
 						}
 						span {
-							border-right: 1px solid #d8d8d8;
 							padding-right: 7px;
 							margin-right: 7px;
-
+							display: block;
 							b {
-								margin-top: -1px;
-								font-size: 11px;
-								width: 10px;
-								height: 10px;
+								margin-top: -2px;
 								margin-right: 5px;
+								font-size: 11px;
 							}
+
+							&.cond {
+								b {
+									width: 10px;
+									height: 10px;
+								}
+							}
+
 							&:last-child {
 								border: 0;
 							}
@@ -646,6 +652,7 @@ body.subsc {
 		}
 		.desc {
 			position: relative;
+			margin-bottom: 10px;
 			br {
 				display: none;
 			}
@@ -664,9 +671,11 @@ body.subsc {
 		}
 		.resource {
 			text-align: left;
-			display: inline-block;
+			display: block;
 			width: 100%;
-			margin-top: 5px;
+			.src:first-child {
+				margin-top: 10px;
+			}
 			a {
 				display: inline-block;
 			}
@@ -1180,7 +1189,7 @@ $mortal: black;
 	}
 }
 
-span {
+span.cond {
 	&.suspicion,
 	&.hidden {
 		color: $suspicion;
@@ -1228,10 +1237,6 @@ span {
 			text-decoration: underline;
 		}
 	}
-	.src {
-		margin-bottom: 5px;
-		margin-top: 5px;
-	}
 
 	iframe {
 		width: 100%;
@@ -1276,6 +1281,7 @@ span {
 	padding: 1px 5px;
 	color: white;
 	border-radius: 3px;
+	display: inline-block;
 	&.circ {
 		width: 20px;
 		height: 20px;

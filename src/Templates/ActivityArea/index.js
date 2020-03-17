@@ -13,7 +13,8 @@ import NoContent from "Templates/NoContent";
 import RootContext from "Context";
 import countries from "Library/countries-array.json";
 import { sources } from "Library/statuses.js";
-import { condition } from "../../Library/statuses";
+import { condition } from "Library/statuses";
+import { numComma } from "Library";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const News = memo(
@@ -242,7 +243,7 @@ export default memo(
 
 						<div className={"desc"}>{details.content}</div>
 
-						<div className="source">
+						<div className="resource">
 							{details.source && (
 								<RenderSource s={details.source} />
 							)}
@@ -253,7 +254,7 @@ export default memo(
 
 						<div className={"infc"}>
 							{cond !== "none" && (
-								<span className={cond}>
+								<span className={"cond " + cond}>
 									<b className={"b circ " + cond} />
 									{condition[cond]}
 								</span>
@@ -261,7 +262,8 @@ export default memo(
 
 							{number > 1 && (
 								<span>
-									Cases: <b className="b">{number}</b>
+									<b className="b">{numComma(number)}</b>{" "}
+									cases
 								</span>
 							)}
 

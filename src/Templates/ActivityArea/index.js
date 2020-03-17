@@ -62,7 +62,7 @@ const News = memo(
 				</span>
 
 				{sc && (
-					<div className="source">
+					<div className="resource">
 						Source: #{" "}
 						<a href={guid} target="_blank">
 							{sc}
@@ -234,9 +234,9 @@ export default memo(
 				a: { ID, condition: cond, type, number, details, date } = {}
 			}) => {
 				return ID ? (
-					<div className={"author"}>
+					<div className={"author " + type}>
 						<h3 className={"atitle " + type}>
-							<span className={"b circ " + type}></span>
+							{/* <span className={"b circ " + type}></span> */}
 							{`${sources[type]} #${ID}`}
 						</h3>
 

@@ -117,9 +117,10 @@ const formating = key => {
 
 // Context as global app store
 export const RootProvider = withRouter(props => {
-	const { presets, children, siteMeta } = props;
+	const { presets, children, siteMeta, language } = props;
 
 	root_store_initial_state.settings = presets;
+	root_store_initial_state.language = language;
 
 	const [store, setStore] = useReducer(
 		setStoreReducer,
@@ -231,7 +232,7 @@ export const RootProvider = withRouter(props => {
 			// };
 
 			if (geo) {
-				console.log("INTERNAL", geo);
+				// console.log("INTERNAL", geo);
 				const { region_code, country_code } = geo || {};
 
 				setStore({

@@ -441,6 +441,24 @@ function buildNewCountries()
    echo "</pre>";
 }
 
+function countriesTranslate()
+{
+   $js = json_decode(file_get_contents("./iso-3166-2-object.json"));
+   $copy = [];
+
+   foreach ($js as $key => $value) {
+      foreach ($value->regions as $kk => $vv) {
+         $copy[$vv->name] = "$vv->name";
+      }
+   }
+
+   file_put_contents("./citiesT.json", json_encode($copy));
+
+   echo "<pre>";
+   print_r($copy);
+   echo "</pre>";
+}
+
 // originToArray();
 // originToObject();
 // iso3166_2_toObject_build();
@@ -451,4 +469,5 @@ function buildNewCountries()
 // iso3166_2_minify();
 // build_phones();
 // buildNewCountries();
-iso3166_2_minify_to_js();
+// iso3166_2_minify_to_js();
+countriesTranslate();

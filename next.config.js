@@ -9,7 +9,6 @@ const envConfig = require("./env.config");
 const nextConfig = {
 	distDir: "." + process.env.NODE_ENV,
 	transpileModules: ["gsap"],
-	...envConfig,
 	// useFileSystemPublicRoutes: false,
 
 	webpack: (config, options) => {
@@ -55,7 +54,8 @@ const nextConfig = {
 		}
 
 		return config;
-	}
+	},
+	...envConfig
 };
 
 module.exports = withPlugins(
@@ -90,3 +90,12 @@ module.exports = withPlugins(
 	],
 	nextConfig
 );
+
+// module.exports = {
+// 	publicRuntimeConfig: {
+// 		localeSubpaths:
+// 			typeof process.env.LOCALE_SUBPATHS === "string"
+// 				? process.env.LOCALE_SUBPATHS
+// 				: "none"
+// 	}
+// };

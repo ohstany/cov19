@@ -17,10 +17,11 @@ if (typeof window !== "undefined") {
 
 import React from "react";
 import App from "next/app";
-import api from "api";
+// import api from "api";
 import RootContext, { RootProvider } from "Context";
 import { memoize } from "Library";
 import Head from "next/head";
+import { appWithTranslation, i18n } from "i18n";
 
 const siteMeta = {
 	title: "Коронавирус",
@@ -28,7 +29,7 @@ const siteMeta = {
 	icon: "coronavirus2.png"
 };
 
-export default class MyApp extends App {
+class MyApp extends App {
 	static async getInitialProps({ Component, ctx }) {
 		let pageProps = {};
 		let presets = {};
@@ -86,6 +87,7 @@ export default class MyApp extends App {
 
 		return (
 			<RootProvider
+				language={i18n.language}
 				presets={presets}
 				headers={headers}
 				siteMeta={siteMeta}
@@ -102,3 +104,5 @@ export default class MyApp extends App {
 		);
 	}
 }
+
+export default appWithTranslation(MyApp);

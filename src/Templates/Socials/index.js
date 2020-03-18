@@ -21,6 +21,7 @@ import {
 	faSkype,
 	faWhatsapp
 } from "@fortawesome/free-brands-svg-icons";
+import { withTranslation } from "i18n";
 
 import { trackEvent } from "Library/GoogleAnalytics";
 
@@ -31,7 +32,7 @@ const share = (e, url, sc = "") => {
 	window.open(url, "_blank");
 };
 
-const copy = (e, url) => {
+const copy = (e, url, title) => {
 	e.preventDefault();
 	e.stopPropagation();
 	trackEvent("click", "share", "copylink");
@@ -41,11 +42,11 @@ const copy = (e, url) => {
 	el.select();
 	document.execCommand("copy");
 	document.body.removeChild(el);
-	alert("Скопировано");
+	alert(title);
 };
 
 export default memo(
-	() => {
+	withTranslation("common")(({ t }) => {
 		const {
 			origin,
 			protocol,
@@ -56,9 +57,7 @@ export default memo(
 
 		return (
 			<div className="socials">
-				<div className="sct">
-					Share, protect your friends and family.
-				</div>
+				<div className="sct">{t("share")}</div>
 
 				<div className="share-links">
 					<a
@@ -193,12 +192,14 @@ export default memo(
 						className="email">
 						<FontAwesomeIcon icon={faEnvelope} />
 					</a>
-					<a className="custom copyurl" onClick={e => copy(e, url)}>
+					<a
+						className="custom copyurl"
+						onClick={e => copy(e, url, t("copy"))}>
 						<FontAwesomeIcon icon={faCopy} />
 					</a>
 				</div>
 			</div>
 		);
-	},
+	}),
 	() => true
 );

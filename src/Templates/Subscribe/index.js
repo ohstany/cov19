@@ -6,13 +6,9 @@ import React, {
 	useEffect
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-	faCheck,
-	faMobile,
-	faTimes,
-	faEnvelope
-} from "@fortawesome/fontawesome-free-solid";
+import { faCheck, faTimes } from "@fortawesome/fontawesome-free-solid";
 import RootContext from "Context";
+import { withTranslation } from "i18n";
 
 import phone from "./phone.png";
 import email from "./email.png";
@@ -20,18 +16,13 @@ import phones from "Library/phoned.json";
 
 import { trackEvent } from "Library/GoogleAnalytics";
 
-// const via = {
-// 	phone: faMobile,
-// 	email: faEnvelope
-// };
-
 const via = {
 	phone,
 	email
 };
 
 export default memo(
-	() => {
+	withTranslation()(({ t }) => {
 		const { api, store: { geo } = {} } = useContext(RootContext);
 		const [state, _state] = useState({
 			via: "phone",
@@ -80,11 +71,11 @@ export default memo(
 						);
 						_done(res);
 					} else {
-						alert("Wrong format of phone number or email");
+						alert(t("wrongInputFormat"));
 					}
 				});
 			} else {
-				alert("Must fill in phone number or email");
+				alert(t("reuiredInputFormat"));
 			}
 		};
 
@@ -112,10 +103,7 @@ export default memo(
 					<span className="submb">
 						<img src={phone} onClick={() => _openNot(e => !e)} />
 					</span>
-					<h2 className="tbf-c titl">
-						Leave your contacts to receive notification of new
-						infections nearby
-					</h2>
+					<h2 className="tbf-c titl">{t("leavecontacts")}</h2>
 					<div className="tbf-c sel">
 						<div className="centrize">
 							{["phone", "email"].map((w, x) => {
@@ -128,14 +116,6 @@ export default memo(
 										src={via[w]}
 										onClick={() => setVia(w)}
 									/>
-									// <div
-									// 	onClick={() => setVia(w)}
-									// 	className={
-									// 		"swb" +
-									// 		(w === state.via ? " selected" : "")
-									// 	}>
-									// 	<FontAwesomeIcon key={x} icon={via[w]} />
-									// </div>
 								);
 							})}
 
@@ -160,7 +140,9 @@ export default memo(
 
 												<input
 													name="phone"
-													placeholder="Phone number"
+													placeholder={t(
+														"phonenumber"
+													)}
 													value={state.phone}
 													onChange={updateState}
 												/>
@@ -169,7 +151,7 @@ export default memo(
 										email: (
 											<input
 												name="email"
-												placeholder="Email"
+												placeholder={t("email")}
 												value={state.email}
 												onChange={updateState}
 											/>
@@ -177,7 +159,7 @@ export default memo(
 									}[state.via || ""]
 								) : (
 									<div className="subss">
-										Thank you for subscription.
+										{t("subscrThank")}
 									</div>
 								)}
 								{done === "0" && (
@@ -201,6 +183,6 @@ export default memo(
 		) : (
 			""
 		);
-	},
+	}),
 	() => true
 );

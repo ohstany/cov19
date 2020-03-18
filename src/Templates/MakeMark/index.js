@@ -8,6 +8,7 @@ import React, {
 import RootContext from "Context";
 import Popup from "Library/Popup";
 import { condition } from "Library/statuses.js";
+import { withTranslation } from "i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { trackEvent } from "Library/GoogleAnalytics";
@@ -25,7 +26,7 @@ const initialState = {
 };
 
 export default memo(
-	() => {
+	withTranslation("common")(({ t }) => {
 		const {
 			api,
 			device,
@@ -52,7 +53,7 @@ export default memo(
 			e.stopPropagation();
 
 			if (["email", "address", "content"].some(i => !state[i])) {
-				alert("Please, fill out all required fields.");
+				alert(t("fillReqFields"));
 			} else {
 				api({
 					method: "POST",
@@ -71,7 +72,7 @@ export default memo(
 						trackEvent("click", "usermark");
 						_done(res);
 					} else {
-						alert("Must fill in all required fields.");
+						alert(t("mustFillReqFields"));
 					}
 				});
 			}
@@ -108,7 +109,7 @@ export default memo(
 				{device === "pc" ? (
 					<div className="block makeMark">
 						<button onClick={togglePopup}>
-							Report About Infection
+							{t("infectionReport")}
 						</button>
 					</div>
 				) : (
@@ -121,29 +122,20 @@ export default memo(
 				)}
 
 				<Popup visible={visible} onClose={togglePopup}>
-					<h2>
-						Fill out about infection in the form below and click
-						submit.
-					</h2>
+					<h2>{t("infectionReportTitle")}</h2>
 
 					{done === "0" ? (
 						<form>
 							<ul>
-								<li>
-									Do not write an address of appartment or
-									house.
-								</li>
-								<li>Do not indicate someone's initials.</li>
-								<li>
-									In violation of the above information
-									provided will be deleted.
-								</li>
+								<li>{t("restrict1")}</li>
+								<li>{t("restrict2")}</li>
+								<li>{t("restrict3")}</li>
 							</ul>
 
 							<input
 								type="email"
 								name="email"
-								placeholder="Your Email Address"
+								placeholder={t("emailPlaceholder")}
 								onChange={updateState}
 								required={true}
 								value={email}
@@ -153,7 +145,7 @@ export default memo(
 							<input
 								type="text"
 								name="address"
-								placeholder="City, Street, Place (EX: cafeteria) "
+								placeholder={t("addressPlaceholder")}
 								required={true}
 								onChange={updateState}
 								value={address}
@@ -163,7 +155,7 @@ export default memo(
 							<input
 								type="number"
 								name="amount"
-								placeholder="Number of infected"
+								placeholder={t("amountPlaceholder")}
 								onChange={updateState}
 								required={true}
 								value={amount}
@@ -171,7 +163,7 @@ export default memo(
 							<label />
 
 							<div className="selcond">
-								<h5>Case</h5>
+								<h5>{t("caseb")}</h5>
 								<span
 									onClick={() =>
 										_state(e => ({
@@ -185,7 +177,7 @@ export default memo(
 										value=""
 										checked={cond === ""}
 									/>
-									None
+									{t("none")}
 								</span>
 								{Object.keys(condition).map((r, rx) => {
 									return (
@@ -203,7 +195,7 @@ export default memo(
 												value={r}
 												checked={cond === r}
 											/>
-											{condition[r]}
+											{t(condition[r])}
 										</span>
 									);
 								})}
@@ -212,7 +204,7 @@ export default memo(
 							<input
 								name="source"
 								type="text"
-								placeholder="Link to the source #1 (Youtube, website..)"
+								placeholder={t("sourcePlaceholder")}
 								onChange={updateState}
 								value={source}
 							/>
@@ -221,7 +213,7 @@ export default memo(
 							<input
 								name="source2"
 								type="text"
-								placeholder="Link to the source #1 (Youtube, website..)"
+								placeholder={t("source2Placeholder")}
 								onChange={updateState}
 								value={source2}
 							/>
@@ -229,7 +221,7 @@ export default memo(
 
 							<textarea
 								name="content"
-								placeholder="Write about case"
+								placeholder={t("casePlaceholder")}
 								onChange={updateState}
 								required={true}
 								value={content}
@@ -237,18 +229,19 @@ export default memo(
 							<label />
 
 							<button onClick={submitForm} type="submit">
-								Submit
+								{t("submit")}
 							</button>
 						</form>
 					) : (
 						<div className="formacc">
-							We've received your information. <br />
-							Thank you!
+							{t("iRecieved")}
+							<br />
+							{t("thankyou")}
 						</div>
 					)}
 				</Popup>
 			</>
 		);
-	},
+	}),
 	() => true
 );

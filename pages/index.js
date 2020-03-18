@@ -7,6 +7,7 @@ import NavMenu from "Templates/NavMenu";
 import GoogleAnalytics from "Library/GoogleAnalytics";
 import { MainBlock } from "Layouts";
 import { withTranslation, i18n } from "i18n";
+import { NextSeo } from "next-seo";
 import "global.scss";
 
 const Home = memo(
@@ -17,18 +18,29 @@ const Home = memo(
 		}
 	}) => {
 		return (
-			<GoogleAnalytics>
-				<main id="main">
-					<GoogleMaps language={language || "en"} />
+			<>
+				<NextSeo
+					title={t("siteTitle")}
+					description={t("siteDescription")}
+					openGraph={{
+						title: t("siteTitle"),
+						description: t("siteDescription")
+					}}
+				/>
 
-					<MainBlock>
-						<ActivityArea />
-						<Socials />
-						<Subscribe />
-						<NavMenu />
-					</MainBlock>
-				</main>
-			</GoogleAnalytics>
+				<GoogleAnalytics>
+					<main id="main">
+						<GoogleMaps language={language || "en"} />
+
+						<MainBlock>
+							<ActivityArea />
+							<Socials />
+							<Subscribe />
+							<NavMenu />
+						</MainBlock>
+					</main>
+				</GoogleAnalytics>
+			</>
 		);
 	}
 );

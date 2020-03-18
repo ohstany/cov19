@@ -21,13 +21,38 @@ import App from "next/app";
 import RootContext, { RootProvider } from "Context";
 import { memoize } from "Library";
 import Head from "next/head";
-import { appWithTranslation, i18n } from "i18n";
+import { appWithTranslation, withTranslation, i18n } from "i18n";
 
 const siteMeta = {
 	title: "Коронавирус",
 	description: "",
 	icon: "coronavirus2.png"
 };
+
+const AddToHead = memoize(
+	withTranslation("common")(({ t }) => {
+		return (
+			<Head>
+				<link rel="shortcut icon" href={siteMeta.icon} />
+
+				<meta name="msapplication-TileColor" content="#ffffff" />
+
+				<meta
+					name="msapplication-config"
+					content="/static/favicon/browserconfig.xml"
+				/>
+
+				<meta name="theme-color" content="#ffffff" />
+
+				<link
+					href="https://fonts.googleapis.com/css?family=Lato&display=swap"
+					rel="stylesheet"></link>
+
+				<title>{t("siteTitle")}</title>
+			</Head>
+		);
+	})
+);
 
 class MyApp extends App {
 	static async getInitialProps({ Component, ctx }) {
@@ -59,31 +84,15 @@ class MyApp extends App {
 		};
 	}
 
-	AddToHead = memoize(() => {
-		return (
-			<Head>
-				<link rel="shortcut icon" href={siteMeta.icon} />
-
-				<meta name="msapplication-TileColor" content="#ffffff" />
-
-				<meta
-					name="msapplication-config"
-					content="/static/favicon/browserconfig.xml"
-				/>
-
-				<meta name="theme-color" content="#ffffff" />
-
-				<link
-					href="https://fonts.googleapis.com/css?family=Lato&display=swap"
-					rel="stylesheet"></link>
-
-				<title>{siteMeta.title}</title>
-			</Head>
-		);
-	});
-
 	render() {
-		const { Component, pageProps, router, headers, presets } = this.props;
+		const {
+			t,
+			Component,
+			pageProps,
+			router,
+			headers,
+			presets
+		} = this.props;
 
 		return (
 			<RootProvider
@@ -95,7 +104,7 @@ class MyApp extends App {
 				<RootContext.Consumer>
 					{context => (
 						<>
-							<this.AddToHead />
+							<AddToHead />
 							<Component {...pageProps} context={context} />
 						</>
 					)}

@@ -29,7 +29,7 @@
 	"Bahamas": "Bahamas",
 	"Bhutan": "Bhutan",
 	"Botswana": "Botswana",
-	"Belarus": "Belarus",
+	"Belarus": "Белоруссия",
 	"Belize": "Belize",
 	"Canada": "Canada",
 	"The Democratic Republic of Congo": "The Democratic Republic of Congo",
@@ -101,7 +101,7 @@
 	"North Korea": "North Korea",
 	"South Korea": "South Korea",
 	"Kuwait": "Kuwait",
-	"Kazakhstan": "Kazakhstan",
+	"Kazakhstan": "Казахстан",
 	"Laos": "Laos",
 	"Liechtenstein": "Liechtenstein",
 	"Lebanon": "Lebanon",
@@ -154,7 +154,7 @@
 	"Qatar": "Qatar",
 	"Romania": "Romania",
 	"Serbia": "Serbia",
-	"Russia": "Russia",
+	"Russia": "Россия",
 	"Rwanda": "Rwanda",
 	"Saudi Arabia": "Saudi Arabia",
 	"Solomon Islands": "Solomon Islands",
@@ -187,7 +187,7 @@
 	"Tuvalu": "Tuvalu",
 	"Taiwan": "Taiwan",
 	"Tanzania": "Tanzania",
-	"Ukraine": "Ukraine",
+	"Ukraine": "Украина",
 	"Uganda": "Uganda",
 	"United States Minor Outlying Islands": "United States Minor Outlying Islands",
 	"United States": "United States",
@@ -203,3 +203,4 @@
 	"Zambia": "Zambia",
 	"Zimbabwe": "Zimbabwe"
 }
+

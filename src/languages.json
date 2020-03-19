@@ -14,29 +14,5 @@
 	"ru": {
 		"name": "Russian",
 		"nativeName": "Русский"
-	},
-	"it": {
-		"name": "Italian",
-		"nativeName": "Italiano"
-	},
-	"zh": {
-		"name": "Chinese",
-		"nativeName": "中文"
-	},
-	"kk": {
-		"name": "Kazakh",
-		"nativeName": "Қазақ тілі"
-	},
-	"uz": {
-		"name": "Uzbek",
-		"nativeName": "Ўзбек‎"
-	},
-	"ve": {
-		"name": "Venda",
-		"nativeName": "Tshivenḓa"
-	},
-	"vi": {
-		"name": "Vietnamese",
-		"nativeName": "Tiếng Việt"
 	}
 }

@@ -22,7 +22,7 @@ function originToArray()
 
    echo "</pre>";
 
-   file_put_contents("./countries-array.json", json_encode($n));
+   file_put_contents("./countries-array.json", json_encode($n, JSON_UNESCAPED_UNICODE));
 }
 
 function originToObject()
@@ -48,7 +48,7 @@ function originToObject()
 
    echo "</pre>";
 
-   file_put_contents("./countries-object.json", json_encode($n));
+   file_put_contents("./countries-object.json", json_encode($n, JSON_UNESCAPED_UNICODE));
 }
 
 function iso3166_2_toObject_build()
@@ -89,7 +89,7 @@ function iso3166_2_toObject_build()
 
    echo "</pre>";
 
-   file_put_contents("./iso-3166-2-object.json", json_encode($n));
+   file_put_contents("./iso-3166-2-object.json", json_encode($n, JSON_UNESCAPED_UNICODE));
 }
 
 function iso3166_2_normalize()
@@ -128,7 +128,7 @@ function iso3166_2_normalize()
 
    echo "</pre>";
 
-   file_put_contents("./iso_3166_2-normalized.json", json_encode($new));
+   file_put_contents("./iso_3166_2-normalized.json", json_encode($new, JSON_UNESCAPED_UNICODE));
 }
 
 function iso3166_2_toObject_build_reverse()
@@ -198,7 +198,7 @@ function iso3166_2_toObject_build_reverse()
 
    echo "</pre>";
 
-   file_put_contents("./iso-3166-2-object.json", json_encode($n));
+   file_put_contents("./iso-3166-2-object.json", json_encode($n, JSON_UNESCAPED_UNICODE));
 }
 
 function iso3166_2_latlng_title()
@@ -332,7 +332,7 @@ function iso3166_2_finalize()
       }
    }
 
-   file_put_contents("./iso-3166-2-object1.json", json_encode($copy));
+   file_put_contents("./iso-3166-2-object1.json", json_encode($copy, JSON_UNESCAPED_UNICODE));
 
    echo "<pre>";
    print_r($copy);
@@ -358,7 +358,7 @@ function iso3166_2_minify()
       }
    }
 
-   file_put_contents("./iso-3166-2-object.m.json", json_encode($copy));
+   file_put_contents("./iso-3166-2-object.m.json", json_encode($copy, JSON_UNESCAPED_UNICODE));
 
    echo "<pre>";
    print_r($copy);
@@ -373,20 +373,22 @@ function iso3166_2_minify_to_js()
    $str = "";
 
    foreach ($js as $c => $cv) {
-      if ($cv->regions) {
-         unset($cv->parent);
-         // unset($cv->code);
-         unset($cv->division);
-         foreach ($cv->regions as $k => $v) {
-            unset($cv->regions->$k->utf8);
-            unset($cv->regions->$k->parent);
-            unset($cv->regions->$k->division);
-         }
-         $str .= "export const $c = " . json_encode($cv) . ";\n";
-         $copy->$c = $cv;
+      if (!in_array($cv->name, ["Earth", "Asia", "Africa", "Antarctica", "Australia", "Europe", "North America", "South America"])) {
+         if ($cv->regions) {
+            unset($cv->parent);
+            // unset($cv->code);
+            unset($cv->division);
+            foreach ($cv->regions as $k => $v) {
+               unset($cv->regions->$k->utf8);
+               unset($cv->regions->$k->parent);
+               unset($cv->regions->$k->division);
+            }
+            $str .= "export const $c = " . json_encode($cv, JSON_UNESCAPED_UNICODE) . ";\n";
+            $copy->$c = $cv;
 
-         // file_put_contents("./iso-3166-2-object.js", $str);
-         // exit;
+            // file_put_contents("./iso-3166-2-object.js", $str);
+            // exit;
+         }
       }
    }
 
@@ -413,7 +415,7 @@ function build_phones()
 
    $copy = (object) $copy;
 
-   file_put_contents("./phone.m.json", json_encode($copy));
+   file_put_contents("./phone.m.json", json_encode($copy, JSON_UNESCAPED_UNICODE));
 
    echo "<pre>";
    print_r($copy);
@@ -426,36 +428,79 @@ function buildNewCountries()
    $copy = [];
 
    foreach ($js as $key => $value) {
-      $copy[] = [
-         'country_code' => $key,
-         'lat' => $value->lat,
-         'lng' => $value->lng,
-         'name' => $value->name
-      ];
+      if (!in_array($value->name, ["Earth", "Asia", "Africa", "Antarctica", "Australia", "Europe", "North America", "South America"])) {
+         $copy[] = [
+            'country_code' => $key,
+            'lat' => $value->lat,
+            'lng' => $value->lng,
+            'name' => $value->name
+         ];
+      }
    }
 
-   file_put_contents("./countries-array.json", json_encode($copy));
+   file_put_contents("./countries-array.json", json_encode($copy, JSON_UNESCAPED_UNICODE));
 
    echo "<pre>";
    print_r($copy);
    echo "</pre>";
 }
 
-function countriesTranslate()
+function buildCountries()
 {
    $js = json_decode(file_get_contents("./iso-3166-2-object.json"));
    $copy = [];
 
    foreach ($js as $key => $value) {
-      foreach ($value->regions as $kk => $vv) {
-         $copy[$vv->name] = "$vv->name";
-      }
+      if (!in_array($value->name, ["Earth", "Asia", "Africa", "Antarctica", "Australia", "Europe", "North America", "South America"]))
+         $copy[$value->name] = "$value->name";
    }
 
-   file_put_contents("./citiesT.json", json_encode($copy));
+   file_put_contents("./countries.json", json_encode($copy, JSON_UNESCAPED_UNICODE));
 
    echo "<pre>";
    print_r($copy);
+   echo "</pre>";
+}
+
+function buildCities()
+{
+   $js = json_decode(file_get_contents("./iso-3166-2-object.json"));
+   $copy = [];
+
+   foreach ($js as $key => $value) {
+      foreach ($js as $key => $value) {
+         if (!in_array($value->name, ["Earth", "Asia", "Africa", "Antarctica", "Australia", "Europe", "North America", "South America"])) {
+            foreach ($value->regions as $kk => $vv) {
+               $copy[$vv->name] = "$vv->name";
+            }
+         }
+      }
+   }
+
+   file_put_contents("./cities.json", json_encode($copy, JSON_UNESCAPED_UNICODE));
+
+   echo "<pre>";
+   print_r($copy);
+   echo "</pre>";
+}
+
+function replaceTranslation()
+{
+   $o = (object) json_decode(file_get_contents("./countries.json"));
+   $t = (object) json_decode(file_get_contents("./cnt-uk.json"));
+   $keys = array_keys((array) $o);
+
+   $k = 0;
+   foreach ($t as $key => $value) {
+      $kk = $keys[$k];
+      $o->$kk = $value;
+      $k++;
+   }
+
+   file_put_contents("./countries-uk.json", json_encode($o, JSON_UNESCAPED_UNICODE));
+
+   echo "<pre>";
+   print_r($o);
    echo "</pre>";
 }
 
@@ -470,4 +515,6 @@ function countriesTranslate()
 // build_phones();
 // buildNewCountries();
 // iso3166_2_minify_to_js();
-countriesTranslate();
+// buildCountries();
+// buildCities();
+// replaceTranslation();

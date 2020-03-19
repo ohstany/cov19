@@ -95,6 +95,7 @@ export const MainBlock = memo(
 
 		const dragStart = e => {
 			e = e || window.event;
+			e.stopPropagation();
 			e.preventDefault();
 
 			mainBlock.classList.remove("shifting");
@@ -108,6 +109,7 @@ export const MainBlock = memo(
 
 		const dragAction = e => {
 			e = e || window.event;
+			e.stopPropagation();
 			e.preventDefault();
 			// mark true if dragging to distinguish between onclick & onmousedown
 
@@ -149,6 +151,7 @@ export const MainBlock = memo(
 
 		const dragEnd = e => {
 			e.preventDefault();
+			e.stopPropagation();
 			if (device === "pc") {
 				if (posFix > menuW / 2) {
 					slide("right");

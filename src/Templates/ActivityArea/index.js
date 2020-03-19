@@ -16,9 +16,42 @@ import { sources } from "Library/statuses.js";
 import { condition } from "Library/statuses";
 import { numComma } from "Library";
 import { withTranslation, i18n } from "i18n";
-import PropTypes from "prop-types";
 import InfiniteScroll from "react-infinite-scroll-component";
 import langs from "languages.json";
+
+const CountryList = withTranslation("countries")(
+	({ t, value, onChange = () => false }) => {
+		return (
+			<select value={value || ""} onChange={onChange}>
+				><option value="">{t("selectCountry")}</option>
+				{countries.map((c, ci) => {
+					return (
+						<option key={ci} value={c.country_code}>
+							{t(c.name)}
+						</option>
+					);
+				})}
+			</select>
+		);
+	}
+);
+
+const CityList = withTranslation("cities")(
+	({ t, value, regions, onChange = () => false }) => {
+		return (
+			<select value={value} onChange={onChange}>
+				<option value="">{t("selectCity")}</option>
+				{(regions || []).map((r, ri) => {
+					return (
+						<option key={ri} value={r.region_code}>
+							{t(r.name)}
+						</option>
+					);
+				})}
+			</select>
+		);
+	}
+);
 
 const News = memo(
 	({
@@ -280,6 +313,19 @@ const Activity = ({ t }) => {
 		[]
 	);
 
+	const setCountry = useCallback(({ target: { value } }) => {
+		setStore({
+			country_code: value,
+			region_code: ""
+		});
+	}, []);
+
+	const setCity = useCallback(({ target: { value } }) => {
+		setStore({
+			region_code: value
+		});
+	}, []);
+
 	return (
 		<div className={"block activityArea " + nav}>
 			<div className="languages">
@@ -333,45 +379,20 @@ const Activity = ({ t }) => {
 				<div id="sc-markers" className="bb b1">
 					<div className="filterNavi tbf">
 						<div className="fitem tbf-c">
-							<select
-								value={country_code || ""}
-								onChange={({ target: { value } }) =>
-									setStore({
-										country_code: value,
-										region_code: ""
-									})
-								}>
-								><option value="">{t("selectCountry")}</option>
-								{countries.map((c, ci) => {
-									return (
-										<option key={ci} value={c.country_code}>
-											{t(c.name)}
-										</option>
-									);
-								})}
-							</select>
+							<CountryList
+								value={country_code}
+								onChange={setCountry}
+							/>
 						</div>
 
 						<div className="sep" />
 
 						<div className="fitem tbf-c">
-							<select
+							<CityList
 								value={region_code}
-								onChange={({ target: { value } }) =>
-									setStore({ region_code: value })
-								}>
-								<option value="">{t("selectCity")}</option>
-								{regions &&
-									builtRegions.map((r, ri) => {
-										return (
-											<option
-												key={ri}
-												value={r.region_code}>
-												{t(r.name)}
-											</option>
-										);
-									})}
-							</select>
+								onChange={setCity}
+								regions={builtRegions}
+							/>
 						</div>
 					</div>
 
@@ -454,11 +475,7 @@ const Activity = ({ t }) => {
 };
 
 Activity.getInitialProps = async () => ({
-	namespacesRequired: ["countries", "cities"]
+	namespacesRequired: ["common", "countries", "cities"]
 });
-
-Activity.propTypes = {
-	t: PropTypes.func.isRequired
-};
 
 export default memo(withTranslation("common")(Activity), () => true);

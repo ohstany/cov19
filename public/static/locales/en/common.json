@@ -6,9 +6,9 @@
 	"cases": "cases",
 	"case": "case",
 	"caseb": "Case",
-   "source": "Source",
-   "selectCountry": "Select Country",
-   "selectCity": "Select the city",
+	"source": "Source",
+	"selectCountry": "Select Country",
+	"selectCity": "Select the city",
 	"nodata": "No More Data",
 	"nocontent": "No content",
 	"clickmap": "Click on marker on the map",
@@ -46,5 +46,9 @@
 	"Official Source": "Official Source",
 	"Source": "Source",
 	"Admin": "Admin",
-	"Anonimous": "Anonimous"
+	"Anonimous": "Anonimous",
+	"tonumber": "To Cellphone Number",
+	"toemail": "To Email",
+	"subscribe": "Subscribe",
+	"donotshow": "Do not show anymore"
 }

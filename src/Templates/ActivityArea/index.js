@@ -10,14 +10,14 @@ import {
 import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
+import Subscribe from "Templates/Subscribe";
 import RootContext from "Context";
 import countries from "Library/countries-array.json";
 import { sources } from "Library/statuses.js";
 import { condition } from "Library/statuses";
 import { numComma } from "Library";
-import { withTranslation, i18n } from "i18n";
+import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
-import langs from "languages.json";
 
 const CountryList = withTranslation("countries")(
 	({ t, value, onChange = () => false }) => {
@@ -81,19 +81,21 @@ const News = memo(
 					</a>
 				</h3>
 
-				<div className={"desc" + (sh ? " act" : "")}>
-					{image && sh && (
-						<div className="imgb">
-							<img src={image} alt="" />
-						</div>
-					)}
+				{sh && (
+					<div className={"desc" + (sh ? " act" : "")}>
+						{image && (
+							<div className="imgb">
+								<img src={image} alt="" />
+							</div>
+						)}
 
-					<div
-						className={"cont"}
-						dangerouslySetInnerHTML={{
-							__html: content
-						}}></div>
-				</div>
+						<div
+							className={"cont"}
+							dangerouslySetInnerHTML={{
+								__html: content
+							}}></div>
+					</div>
+				)}
 
 				<span className={"showh"} onClick={() => _sh(e => !e)}>
 					{sh ? "-" : "+"}
@@ -328,20 +330,6 @@ const Activity = ({ t }) => {
 
 	return (
 		<div className={"block activityArea " + nav}>
-			<div className="languages">
-				<select
-					value={i18n.language}
-					onChange={({ target: { value } }) => {
-						setStore({ language: value });
-						i18n.changeLanguage(value);
-					}}>
-					{Object.keys(langs).map((i, ix) => (
-						<option key={ix} value={i}>
-							{langs[i].nativeName}
-						</option>
-					))}
-				</select>
-			</div>
 			<nav>
 				<ol>
 					{[
@@ -373,10 +361,12 @@ const Activity = ({ t }) => {
 				</ol>
 			</nav>
 
-			<MakeMark />
-
 			<div className={"activity"}>
 				<div id="sc-markers" className="bb b1">
+					<Subscribe />
+
+					<MakeMark />
+
 					<div className="filterNavi tbf">
 						<div className="fitem tbf-c">
 							<CountryList

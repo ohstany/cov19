@@ -46,5 +46,9 @@
 	"Official Source": "공식 출처",
 	"Source": "출처",
 	"Admin": "관리자",
-	"Anonimous": "익명"
+	"Anonimous": "익명",
+	"tonumber": "휴댜전화로 발송",
+	"toemail": "이메일로 발송",
+	"subscribe": "구독하기",
+	"donotshow": "더 이상 보지 않기"
 }

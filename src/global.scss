@@ -62,26 +62,128 @@ body {
 	word-break: break-word;
 }
 
+$navDim: 60px;
+$resizer: 30px;
+
+%extend_2 {
+	width: 150px;
+	height: 50px;
+	line-height: 50px;
+	font-size: 20px;
+}
+
 img {
 	max-width: 100%;
 }
 
-main {
-	display: table;
+#wrapper {
+	position: absolute;
 	width: 100%;
 	height: 100%;
-	position: absolute;
-	table-layout: fixed;
-	width: 100%;
+	padding-right: $navDim;
 	overflow: hidden;
-	> div {
-		display: table-cell;
-		width: 76%;
+	@include md {
+		padding-right: 0;
 	}
+}
+
+.navBlock {
+	width: $navDim;
+	height: 100%;
+	right: 0;
+	position: absolute;
+	top: 0;
+	.contain {
+		padding: 20px 0;
+		background: #272727;
+		z-index: 10;
+		color: white;
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		text-align: center;
+		@include md {
+			padding: 60px 0;
+			background: none;
+		}
+	}
+	.languages {
+		position: absolute;
+		text-align: center;
+		bottom: 0;
+		width: 100%;
+		margin: 15px 0;
+		.langc {
+			background: white;
+			color: #272726;
+			border-radius: 50%;
+			padding: 5px;
+			border: 1px solid #000;
+			cursor: pointer;
+			display: inline-block;
+			font-weight: bold;
+			width: 33px;
+			height: 33px;
+			line-height: 22px;
+		}
+		@include md {
+			margin-top: 10px;
+			position: relative;
+		}
+	}
+	.sellang {
+		z-index: 1;
+		position: absolute;
+		transition: all 0.3s;
+		right: -160px;
+		bottom: 0;
+		width: 120px;
+		background: white;
+		box-shadow: -3px 2px 4px 2px rgba(0, 0, 0, 0.2);
+		color: #0f0f0f;
+		text-align: left;
+		.lo {
+			display: block;
+			padding: 4px 10px;
+			border-bottom: 1px solid #ededed;
+			cursor: pointer;
+			&.sel {
+				background: #f5f5f5;
+				font-weight: bold;
+			}
+		}
+		&.visible {
+			right: $navDim;
+		}
+		@include md {
+			height: 100%;
+		}
+	}
+
+	.submb {
+		padding: 10px 0;
+		img {
+			cursor: pointer;
+			border: 1px solid #ffffff;
+			background: #272727;
+			box-shadow: 0 0 0 #ed1812;
+			animation: pulse 2s infinite;
+			width: 33px;
+			padding: 5px;
+			border-radius: 50%;
+		}
+	}
+}
+
+main {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+	padding-right: 60px;
 	@include md {
 		display: block;
 		> div {
-			display: table-cell;
 			width: 100%;
 		}
 	}
@@ -151,6 +253,13 @@ code {
 	}
 }
 
+img.closable {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	cursor: pointer;
+}
+
 footer {
 	position: absolute;
 	bottom: 0;
@@ -182,7 +291,7 @@ button {
 	right: 0;
 	top: 0;
 	bottom: 0;
-	z-index: 1;
+	z-index: 100;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -198,7 +307,7 @@ button {
 	top: 0;
 	right: 0;
 	bottom: 0;
-	display: table-cell;
+	display: inline-block;
 	@include md {
 		width: 100%;
 	}
@@ -225,6 +334,7 @@ button {
 	min-height: 500px;
 	background: white;
 	padding: 20px;
+	padding-top: 35px;
 	font-size: 15px;
 	max-height: 100%;
 	overflow: hidden;
@@ -248,6 +358,10 @@ button {
 		padding-bottom: 5px;
 		color: dimgrey;
 		padding-top: 2px;
+	}
+	@include md {
+		width: 98%;
+		margin: 2%;
 	}
 }
 
@@ -340,11 +454,26 @@ body.subsc {
 	main {
 		.mainBlock,
 		.mapArea {
-			padding-top: 60px;
 			@include md {
 				padding-top: 0;
 			}
 		}
+	}
+}
+
+.closer {
+	text-align: center;
+	svg {
+		color: white;
+		width: 100%;
+		height: auto;
+		font-size: 20px;
+		margin-bottom: 50px;
+		cursor: pointer;
+		padding: 10px 19px;
+	}
+	@include md {
+		display: none;
 	}
 }
 
@@ -355,32 +484,53 @@ body.subsc {
 	right: 0;
 	z-index: 1;
 	background: white;
-	display: table-cell;
+	display: inline-block;
 	max-width: 500px;
 	position: absolute;
 	vertical-align: top;
 	width: 25%;
 
+	.hidden {
+		overflow: hidden;
+		display: block;
+		position: relative;
+		height: 100%;
+	}
+
+	@include md {
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		height: 100%;
+		bottom: 0;
+		top: auto;
+		position: fixed;
+		border: 0;
+		border-top-right-radius: 10px;
+		border-top-left-radius: 10px;
+		box-shadow: 0px -1px 10px -3px rgba(0, 0, 0, 0.2);
+		z-index: 100;
+		.hidden {
+			padding-top: $resizer;
+		}
+	}
+
 	.resizer {
+		display: none;
 		position: absolute;
 		top: 100px;
 		left: -35px;
-		background: #ed1812;
+		background: #ffffff;
 		color: white;
 		padding: 10px;
 		cursor: pointer;
 		z-index: 10;
-		&:after {
-			content: "";
-			position: fixed;
-			height: 40%;
-			width: 50px;
-			margin-left: -39px;
-			margin-top: 27px;
-		}
+		border-top-right-radius: 10px;
+		border-top-left-radius: 10px;
 		@include md {
-			top: -20px;
-			height: 40px;
+			display: block;
+			top: 0;
+			height: $resizer;
 			text-align: center;
 			padding: 0;
 			left: 0;
@@ -394,31 +544,26 @@ body.subsc {
 			&:after,
 			&:before {
 				content: "";
-				border-top: 1px solid rgba(255, 255, 255, 0.4);
 				position: absolute;
-				top: 10px;
+				width: 40px;
+				height: 2px;
+				font-weight: 100;
 				width: 40px;
 				left: 0;
 				right: 0;
 				margin: auto;
+				border-radius: 25px;
+				background: rgba(101, 101, 101, 0.4);
 			}
 			&:before {
-				width: 40px;
-				height: 8px;
-				font-weight: 100;
-				border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+				top: 11px;
 			}
 			&:after {
-				top: 30px;
+				top: 16px;
 			}
 		}
 	}
-	.hidden {
-		overflow: hidden;
-		display: block;
-		position: relative;
-		height: 100%;
-	}
+
 	.filterNavi {
 		padding-bottom: 10px;
 		border-bottom: 1px solid #dadada;
@@ -462,20 +607,11 @@ body.subsc {
 			text-align: center;
 			border-bottom: 1px solid #dadada;
 			padding: 10px 20px;
-			margin-left: -10px;
-			margin-right: -10px;
+			margin-left: -15px;
+			margin-right: -15px;
 			position: relative;
+			background: white;
 			width: auto;
-			@include md {
-				position: fixed;
-				top: 0;
-				width: 70%;
-				left: 0;
-				margin: auto;
-				right: 0;
-				z-index: 10;
-				border: 0;
-			}
 		}
 	}
 	.makeMark-mb {
@@ -624,6 +760,9 @@ body.subsc {
 			}
 			.b3 {
 				margin-left: 100%;
+				.author {
+					border-left: 1px solid #e1e1e1;
+				}
 			}
 			.comments {
 				h3 {
@@ -674,6 +813,8 @@ body.subsc {
 			text-align: left;
 			display: block;
 			width: 100%;
+			font-size: 12px;
+			padding-right: 25px;
 			.src:first-child {
 				margin-top: 10px;
 			}
@@ -716,169 +857,6 @@ body.subsc {
 		}
 		@include md {
 			border-top: 1px solid #d0d0d0;
-		}
-	}
-
-	.subscribe {
-		height: 60px;
-		padding: 15px 0;
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		background: #2e2e2e;
-		color: white;
-		transition: all 0.3s;
-		> div,
-		h2 {
-			vertical-align: middle;
-		}
-		h2 {
-			font-size: 15px;
-			text-align: center;
-			padding: 0 20px;
-		}
-		img {
-			margin: 0;
-			cursor: pointer;
-			width: 30px;
-			padding: 5px;
-			border: 1px solid #ffffff;
-			border-radius: 50%;
-			margin-right: 5px;
-			&.selected {
-				border: 1px solid #ff0700;
-			}
-		}
-		.closec {
-			width: 15px;
-			height: 15px;
-			position: absolute;
-			right: 20px;
-			top: 0;
-			bottom: 0;
-			margin: auto;
-		}
-		.swb {
-			height: 50%;
-			text-align: center;
-			position: relative;
-			cursor: pointer;
-			background: #1b1b1b;
-			&:first-child {
-				border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-			}
-			&.selected {
-				background-color: #d4130e;
-			}
-			svg {
-				width: 20px;
-				vertical-align: middle;
-				margin: auto;
-				top: 0;
-				bottom: 0;
-				left: 0;
-				right: 0;
-				position: absolute;
-			}
-		}
-		.centrize {
-			display: flex;
-			align-items: center;
-		}
-		.sel {
-			width: 450px;
-		}
-		.inpf {
-			display: flex;
-			align-items: center;
-			width: 100%;
-			&.phone {
-				select,
-				input {
-					height: 30px;
-				}
-				select {
-					width: 60px;
-					margin-right: 3%;
-				}
-				input {
-					width: 70%;
-					margin-right: 3%;
-				}
-			}
-			&.email {
-				input {
-					margin-right: 3%;
-				}
-			}
-			input,
-			select {
-				border-color: white;
-				background: none;
-				color: white;
-			}
-			input {
-				border-radius: 5px;
-				margin: 0;
-				padding: 6px 10px;
-			}
-		}
-
-		button {
-			width: 50px;
-			border-radius: 5px;
-			padding: 6px 0;
-			svg {
-				width: 13px;
-			}
-		}
-		.submb {
-			display: none;
-			@include md {
-				display: block;
-				position: fixed;
-				right: 5px;
-				bottom: 120px;
-				img {
-					cursor: pointer;
-					border: 1px solid #242020;
-					background: #272727;
-					box-shadow: 0 0 0 rgb(237, 24, 18);
-					animation: pulse 2s infinite;
-					width: 40px;
-					padding: 8px;
-				}
-			}
-		}
-		@include md {
-			position: fixed;
-			right: -100%;
-			left: auto;
-			height: 200px;
-			bottom: 0;
-			top: auto;
-			> div,
-			h2 {
-				display: block;
-			}
-			h2 {
-				font-size: 18px;
-			}
-			.closec {
-				display: none;
-			}
-			.centrize {
-				display: block;
-				text-align: center;
-			}
-			.inpf {
-				padding: 0 20px;
-				padding-top: 10px;
-			}
-			&.active {
-				right: 0;
-			}
 		}
 	}
 
@@ -956,16 +934,141 @@ body.subsc {
 			}
 		}
 	}
-	@include md {
-		display: block;
-		width: 100%;
-		max-width: 100%;
-		height: 100%;
+}
+
+.popup {
+	&.subs {
+		.form {
+			background: #2e2e2e;
+			color: white;
+		}
+		.closable {
+			background: #ffffff;
+			border-radius: 50%;
+		}
+	}
+}
+
+.subscribe {
+	transition: all 0.3s;
+	> div,
+	h2 {
+		vertical-align: middle;
+	}
+	h2 {
+		font-size: 20px;
+		text-align: center;
+		line-height: 1.4;
+	}
+	.subsel {
+		cursor: pointer;
+		font-size: 19px;
+		display: flex;
+		align-items: center;
+		padding: 7px 0;
+		img {
+			margin: 0;
+			width: 30px;
+			padding: 5px;
+			border: 1px solid #ffffff;
+			border-radius: 50%;
+			margin-right: 8px;
+		}
+		&.selected {
+			color: #ff0700;
+			img {
+				border: 1px solid #ff0700;
+			}
+		}
+	}
+
+	.closec {
+		width: 15px;
+		height: 15px;
+		position: absolute;
+		right: 20px;
+		top: 0;
 		bottom: 0;
-		top: auto;
-		position: fixed;
-		.hidden {
-			padding-top: 20px;
+		margin: auto;
+	}
+	.swb {
+		height: 50%;
+		text-align: center;
+		position: relative;
+		cursor: pointer;
+		background: #1b1b1b;
+		&:first-child {
+			border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		}
+		&.selected {
+			background-color: #d4130e;
+		}
+		svg {
+			width: 20px;
+			vertical-align: middle;
+			margin: auto;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			position: absolute;
+		}
+	}
+	.inpf {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		margin-top: 15px;
+		&.phone {
+			select,
+			input {
+				height: 45px;
+			}
+			select {
+				width: 75px;
+				margin-right: 3%;
+				font-size: 16px;
+			}
+			input {
+				width: 100%;
+			}
+		}
+		input,
+		select {
+			border-color: white;
+			background: none;
+			color: white;
+		}
+		input {
+			border-radius: 5px;
+			margin: 0;
+			padding: 8px 10px;
+			font-size: 19px;
+		}
+	}
+
+	button {
+		width: 100%;
+		border-radius: 5px;
+		padding: 6px 0;
+		margin-top: 20px;
+		svg {
+			width: 15px;
+			margin-right: 10px;
+		}
+	}
+
+	.notshow {
+		margin: 0;
+		position: absolute;
+		bottom: 20px;
+		width: 100%;
+		left: 0;
+		color: rgba(255, 255, 255, 0.5);
+		text-align: center;
+		cursor: pointer;
+		&:hover {
+			color: white;
 		}
 	}
 }
@@ -1023,17 +1126,6 @@ time {
 				animation: skeleton-loading 1.4s ease infinite;
 			}
 		}
-	}
-}
-
-.languages {
-	position: fixed;
-	left: 5px;
-	bottom: 30px;
-	select {
-		background: white;
-		border: 1px solid #fff;
-		box-shadow: 0px 0px 5px 1px #bcbcbc;
 	}
 }
 
@@ -1245,7 +1337,7 @@ span.cond {
 
 	h3 {
 		margin: 0;
-		margin-bottom: 10px;
+		margin-bottom: 5px;
 		&.clickable {
 			text-decoration: underline;
 		}

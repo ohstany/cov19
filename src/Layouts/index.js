@@ -33,14 +33,20 @@ export const MainBlock = memo(
 	({ children }) => {
 		const {
 			device,
-			store: { mapRef }
+			store: { mapRef, closer }
 		} = useContext(RootContext) || {};
 
 		const { resizer, mainBlock } = refs || {};
 
+		useEffect(() => {
+			if (closer !== undefined) {
+				toggle();
+			}
+		}, [closer]);
+
 		const toggle = e => {
 			if (!dragging) {
-				e.stopPropagation();
+				e && e.stopPropagation();
 				if (device === "pc") {
 					slide(posFix <= 100 ? "right" : "left");
 				} else {
@@ -51,6 +57,9 @@ export const MainBlock = memo(
 		};
 
 		const slide = (pos = "left") => {
+			mainBlock.classList.add("shifting");
+			mapRef.classList.add("shifting");
+
 			switch (pos) {
 				case "top":
 				case "left": {
@@ -69,7 +78,13 @@ export const MainBlock = memo(
 
 				case "bottom": {
 					posFix = menuH;
-					mainBlock.style.bottom = `-${menuH + 1}px`;
+					mainBlock.style.bottom = `-${menuH - 29}px`;
+					break;
+				}
+
+				case "half": {
+					posFix = menuH;
+					mainBlock.style.bottom = `-${menuH / 2}px`;
 					break;
 				}
 
@@ -80,7 +95,7 @@ export const MainBlock = memo(
 
 		const dragStart = e => {
 			e = e || window.event;
-			// e.preventDefault();
+			e.preventDefault();
 
 			mainBlock.classList.remove("shifting");
 			mapRef.classList.remove("shifting");
@@ -89,13 +104,11 @@ export const MainBlock = memo(
 				document.onmouseup = dragEnd;
 				document.onmousemove = dragAction;
 			}
-
-			resizer.onclick = toggle;
 		};
 
 		const dragAction = e => {
 			e = e || window.event;
-
+			e.preventDefault();
 			// mark true if dragging to distinguish between onclick & onmousedown
 
 			if (device === "pc") {
@@ -135,9 +148,7 @@ export const MainBlock = memo(
 		};
 
 		const dragEnd = e => {
-			mainBlock.classList.add("shifting");
-			mapRef.classList.add("shifting");
-
+			e.preventDefault();
 			if (device === "pc") {
 				if (posFix > menuW / 2) {
 					slide("right");
@@ -164,28 +175,36 @@ export const MainBlock = memo(
 		};
 
 		useEffect(() => {
-			if (mapRef) {
+			if (device && mapRef) {
 				if (device === "pc") {
 					menuW = mainBlock.offsetWidth;
 					bodyW = document.body.offsetWidth;
 				} else {
 					menuH = mainBlock.offsetHeight;
 					bodyH = document.body.scrollHeight;
-				}
 
-				resizer.onmousedown = dragStart;
-				resizer.addEventListener("touchstart", dragStart);
-				resizer.addEventListener("touchend", dragEnd);
-				resizer.addEventListener("touchmove", dragAction);
+					resizer.onmousedown = dragStart;
+					resizer.addEventListener("touchstart", dragStart);
+					resizer.addEventListener("touchend", dragEnd);
+					resizer.addEventListener("touchmove", dragAction);
+
+					slide("half");
+
+					return () => {
+						resizer.onmousedown = null;
+						resizer.removeEventListener("touchstart", dragStart);
+						resizer.removeEventListener("touchend", dragEnd);
+						resizer.removeEventListener("touchmove", dragAction);
+					};
+				}
 			}
-		}, [mapRef]);
+		}, [device, mapRef]);
 
 		return (
 			<section className="mainBlock" ref={i => createRef(i, "mainBlock")}>
-				<span className="resizer" ref={i => createRef(i, "resizer")}>
-					<Svg />
-				</span>
-
+				<span
+					className="resizer"
+					ref={i => createRef(i, "resizer")}></span>
 				<div className="hidden">{children}</div>
 			</section>
 		);

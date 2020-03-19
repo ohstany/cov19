@@ -6,12 +6,12 @@ import React, {
 	useEffect
 } from "react";
 import RootContext from "Context";
-import Popup from "Library/Popup";
+import Popup from "Templates/Popup";
 import { condition } from "Library/statuses.js";
 import { withTranslation } from "i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { trackEvent } from "Library/GoogleAnalytics";
+import { trackEvent } from "Templates/GoogleAnalytics";
 
 import { faThermometerThreeQuarters } from "@fortawesome/fontawesome-free-solid";
 
@@ -113,11 +113,10 @@ export default memo(
 						</button>
 					</div>
 				) : (
-					<div className="makeMark-mb">
-						<FontAwesomeIcon
-							onClick={togglePopup}
-							icon={faThermometerThreeQuarters}
-						/>
+					<div className="block makeMark">
+						<button onClick={togglePopup}>
+							{t("infectionReport")}
+						</button>
 					</div>
 				)}
 

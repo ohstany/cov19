@@ -8,13 +8,14 @@ import React, {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/fontawesome-free-solid";
 import RootContext from "Context";
+import Popup from "Templates/Popup";
 import { withTranslation } from "i18n";
 
 import phone from "./phone.png";
 import email from "./email.png";
 import phones from "Library/phoned.json";
 
-import { trackEvent } from "Library/GoogleAnalytics";
+import { trackEvent } from "Templates/GoogleAnalytics";
 
 const via = {
 	phone,
@@ -23,15 +24,15 @@ const via = {
 
 export default memo(
 	withTranslation()(({ t }) => {
-		const { api, store: { geo } = {} } = useContext(RootContext);
+		const { api, store: { geo, subscribe } = {}, setStore } = useContext(
+			RootContext
+		);
 		const [state, _state] = useState({
 			via: "phone",
 			num: phones[0].dial_code,
 			phone: "",
 			email: ""
 		});
-
-		const [sh, _sh] = useState(true);
 
 		useEffect(() => {
 			document.body.classList.add("subsc");
@@ -49,7 +50,6 @@ export default memo(
 		}, [geo]);
 
 		const [done, _done] = useState("0");
-		const [openNot, _openNot] = useState(false);
 
 		const submitForm = () => {
 			if (state.phone || state.email) {
@@ -97,25 +97,43 @@ export default memo(
 			_state(e => ({ ...e, via }));
 		}, []);
 
-		return sh ? (
-			<div className={"block subscribe" + (openNot ? " active" : "")}>
-				<div className="container tbf">
-					<span className="submb">
-						<img src={phone} onClick={() => _openNot(e => !e)} />
-					</span>
-					<h2 className="tbf-c titl">{t("leavecontacts")}</h2>
-					<div className="tbf-c sel">
+		const togglePopup = useCallback(
+			() => setStore({ subscribe: !subscribe }),
+			[subscribe]
+		);
+
+		useEffect(() => {
+			setTimeout(() => {
+				if (!localStorage.getItem("notshowsub")) {
+					togglePopup();
+				}
+			}, 3000);
+		}, []);
+
+		return (
+			<Popup className="subs" visible={subscribe} onClose={togglePopup}>
+				<div className="block subscribe">
+					<h2 className="titl">{t("leavecontacts")}</h2>
+					<div className="sel">
 						<div className="centrize">
-							{["phone", "email"].map((w, x) => {
+							{[
+								{
+									w: "phone",
+									text: "tonumber"
+								},
+								{ w: "email", text: "toemail" }
+							].map(({ w, text }, x) => {
 								return (
-									<img
+									<div
 										key={x}
-										className={
-											w === state.via ? "selected" : ""
-										}
-										src={via[w]}
 										onClick={() => setVia(w)}
-									/>
+										className={
+											"subsel" +
+											(w === state.via ? " selected" : "")
+										}>
+										<img src={via[w]} />
+										{t(text)}
+									</div>
 								);
 							})}
 
@@ -162,26 +180,27 @@ export default memo(
 										{t("subscrThank")}
 									</div>
 								)}
-								{done === "0" && (
-									<button onClick={submitForm}>
-										<FontAwesomeIcon icon={faCheck} />
-									</button>
-								)}
 							</div>
+
+							{done === "0" && (
+								<button onClick={submitForm}>
+									<FontAwesomeIcon icon={faCheck} />
+									{t("subscribe")}
+								</button>
+							)}
+
+							<label
+								className="notshow"
+								onClick={() => {
+									localStorage.setItem("notshowsub", true);
+									togglePopup();
+								}}>
+								{t("donotshow")}
+							</label>
 						</div>
 					</div>
 				</div>
-				<FontAwesomeIcon
-					className="closec"
-					icon={faTimes}
-					onClick={() => {
-						document.body.classList.remove("subsc");
-						_sh(e => !e);
-					}}
-				/>
-			</div>
-		) : (
-			""
+			</Popup>
 		);
 	}),
 	() => true

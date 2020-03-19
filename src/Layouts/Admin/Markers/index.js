@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, memo, useCallback } from "react";
 import { notification } from "Library";
 import { condition as cond, via as vi } from "Library/statuses";
 import RootContext from "Context";
-import Popup from "Library/Popup";
+import Popup from "Templates/Popup";
 import countries_a from "Library/countries-array.json";
 // import iso from "Library/iso-3166-2-object.json";
 import * as iso from "Library/iso-3166-2-object.js";

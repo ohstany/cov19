@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import Access from "Library/Login";
+import Access from "Templates/Login";
 import RootContext from "Context";
 import Header from "Layouts/Admin/Header";
 import Head from "next/head";

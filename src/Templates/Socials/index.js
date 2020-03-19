@@ -23,7 +23,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { withTranslation } from "i18n";
 
-import { trackEvent } from "Library/GoogleAnalytics";
+import { trackEvent } from "Templates/GoogleAnalytics";
 
 const share = (e, url, sc = "") => {
 	e.preventDefault();

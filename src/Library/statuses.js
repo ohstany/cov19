@@ -2,6 +2,7 @@ export const condition = {
 	none: "None",
 	suspicion: "Suspicion",
 	infected: "Infected",
+	cured: "Cured",
 	mortal: "Mortal"
 };
 

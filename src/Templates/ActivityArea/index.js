@@ -10,7 +10,6 @@ import {
 import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
-import Subscribe from "Templates/Subscribe";
 import RootContext from "Context";
 import countries from "Library/countries-array.json";
 import { sources } from "Library/statuses.js";
@@ -138,6 +137,7 @@ const RenderSource = ({ title = "Source", s }) => {
 
 const Activity = ({ t }) => {
 	const {
+		api,
 		actioner,
 		store: {
 			country_code,
@@ -270,7 +270,7 @@ const Activity = ({ t }) => {
 			return ID ? (
 				<div className={"author " + type}>
 					<h3 className={"atitle " + type}>
-						{`${sources[type]} #${ID}`}
+						{`${t(sources[type])} #${ID}`}
 					</h3>
 
 					<div className={"desc"}>{details.content}</div>
@@ -329,7 +329,7 @@ const Activity = ({ t }) => {
 	}, []);
 
 	return (
-		<div className={"block activityArea " + nav}>
+		<div id="activityArea" className={"block activityArea " + nav}>
 			<nav>
 				<ol>
 					{[
@@ -363,8 +363,6 @@ const Activity = ({ t }) => {
 
 			<div className={"activity"}>
 				<div id="sc-markers" className="bb b1">
-					<Subscribe />
-
 					<MakeMark />
 
 					<div className="filterNavi tbf">
@@ -447,6 +445,18 @@ const Activity = ({ t }) => {
 				</div>
 
 				<div id="sc-news" className="bb b3">
+					{/* <button
+						onClick={() => {
+							api({
+								method: "GET",
+								action: "crontest",
+								params: "action=parser"
+							}).then(r => {
+								console.log("SSS", r);
+							});
+						}}>
+						SSSS
+					</button> */}
 					<InfiniteScroll
 						dataLength={newsData.length}
 						next={fetchNews}

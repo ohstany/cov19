@@ -2,6 +2,7 @@ import { memo } from "react";
 import GoogleMaps from "Templates/GoogleMaps";
 import ActivityArea from "Templates/ActivityArea";
 import Socials from "Templates/Socials";
+import Subscribe from "Templates/Subscribe";
 import NavMenu from "Templates/NavMenu";
 import GoogleAnalytics from "Templates/GoogleAnalytics";
 import { MainBlock } from "Layouts";
@@ -38,6 +39,7 @@ const Home = memo(
 							</MainBlock>
 						</main>
 						<NavMenu />
+						<Subscribe />
 					</div>
 				</GoogleAnalytics>
 			</>

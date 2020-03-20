@@ -56,7 +56,7 @@ export default memo(
 		const url = `${protocol}://${origin}/`;
 
 		return (
-			<div className="socials">
+			<div id="socials" className="socials">
 				<div className="sct">{t("share")}</div>
 
 				<div className="share-links">

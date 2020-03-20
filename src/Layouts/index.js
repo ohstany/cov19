@@ -1,19 +1,6 @@
 import { useEffect, useContext, memo } from "react";
 import RootContext from "Context";
 
-const Svg = () => (
-	<svg
-		viewBox="64 64 896 896"
-		className=""
-		data-icon="align-left"
-		width="1em"
-		height="1em"
-		fill="currentColor"
-		aria-hidden="true">
-		<path d="M120 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm0 424h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm784 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path>
-	</svg>
-);
-
 const refs = {};
 
 const createRef = (input, id) => {
@@ -27,7 +14,13 @@ var curPos = 0,
 	bodyW = 0,
 	menuH = 0,
 	bodyH = 0,
-	dragging = false; // distinguish between onclick & onmousedown
+	startedPos = 0,
+	blockTop = 0,
+	lastScroll = 0,
+	scrollTo = "",
+	dragging = false,
+	social = null,
+	inner = null; // distinguish between onclick & onmousedown
 
 export const MainBlock = memo(
 	({ children }) => {
@@ -71,14 +64,14 @@ export const MainBlock = memo(
 
 				case "right": {
 					posFix = menuW;
-					mainBlock.style.right = `-${menuW + 1}px`;
+					mainBlock.style.right = `-${menuW}px`;
 					mapRef.style.width = bodyW + "px";
 					break;
 				}
 
 				case "bottom": {
 					posFix = menuH;
-					mainBlock.style.bottom = `-${menuH - 29}px`;
+					mainBlock.style.bottom = `-${menuH - 39}px`;
 					break;
 				}
 
@@ -95,81 +88,71 @@ export const MainBlock = memo(
 
 		const dragStart = e => {
 			e = e || window.event;
-			e.stopPropagation();
-			e.preventDefault();
 
 			mainBlock.classList.remove("shifting");
 			mapRef.classList.remove("shifting");
 
-			if (e.type !== "touchstart") {
-				document.onmouseup = dragEnd;
-				document.onmousemove = dragAction;
+			if (e.type === "touchstart" && device === "mobile") {
+				blockTop = mainBlock.offsetTop;
+				posFix = blockTop;
+				startedPos = e.touches[0].clientY;
 			}
 		};
 
 		const dragAction = e => {
 			e = e || window.event;
+
 			e.stopPropagation();
 			e.preventDefault();
-			// mark true if dragging to distinguish between onclick & onmousedown
 
-			if (device === "pc") {
-				if (e.type == "touchmove") {
-					curPos = e.touches[0].clientX;
-				} else {
-					curPos = e.clientX;
-				}
-				posFix = menuW - (bodyW - curPos);
-
-				if (posFix > 10 && menuW - posFix > 20) {
-					dragging = true;
-				}
-
-				mainBlock.style.right = posFix > 0 ? `-${posFix + 1}px` : "";
-				mapRef.style.width =
-					curPos >= bodyW - menuW ? curPos + "px" : "";
-			} else {
+			if (device === "mobile") {
 				if (e.type == "touchmove") {
 					curPos = e.touches[0].clientY;
 				} else {
 					curPos = e.clientY;
 				}
-				posFix = menuH - (bodyH - curPos);
 
-				if (posFix > 10 && menuH - posFix > 20) {
-					dragging = true;
+				if (curPos > lastScroll) {
+					scrollTo = "down";
+				} else if (curPos < lastScroll) {
+					scrollTo = "top";
+				} else {
+					scrollTo = "";
 				}
 
-				mainBlock.style.bottom =
-					posFix > 0 && posFix <= menuH
-						? `-${posFix + 1}px`
-						: posFix > menuH
-						? menuH + 1
-						: "";
+				lastScroll = curPos;
+
+				posFix = blockTop - (startedPos - curPos);
+
+				if (menuH - posFix < 200) {
+					social.classList.add("hide");
+				} else {
+					social.classList.remove("hide");
+				}
+
+				mainBlock.style.bottom = "-" + (posFix || 0) + "px";
 			}
 		};
 
 		const dragEnd = e => {
 			e.preventDefault();
 			e.stopPropagation();
-			if (device === "pc") {
-				if (posFix > menuW / 2) {
-					slide("right");
-				} else if (posFix <= menuW / 2) {
-					slide("left");
-				} else {
-					mainBlock.style.right = `-${posFix + 1}px`;
-					mapRef.style.width = curPos + "px";
-				}
-			} else {
+
+			if (device === "mobile") {
 				const half = menuH / 2;
 
 				if (posFix > half && menuH - posFix < 150) {
 					slide("bottom");
-				} else if (posFix < half && posFix < 100) {
+				} else if (posFix < half && posFix < 300) {
 					slide("top");
 				} else {
 					mainBlock.style.bottom = `-${posFix + 1}px`;
+				}
+
+				if (posFix < 100) {
+					removeEvents(mainBlock);
+				} else {
+					startEvents(mainBlock);
 				}
 			}
 
@@ -177,28 +160,37 @@ export const MainBlock = memo(
 			document.onmousemove = null;
 		};
 
+		const removeEvents = el => {
+			el.removeEventListener("touchstart", dragStart);
+			el.removeEventListener("touchend", dragEnd);
+			el.removeEventListener("touchmove", dragAction);
+		};
+
+		const startEvents = el => {
+			el.onmousedown = dragStart;
+			el.addEventListener("touchstart", dragStart);
+			el.addEventListener("touchend", dragEnd);
+			el.addEventListener("touchmove", dragAction);
+		};
+
 		useEffect(() => {
 			if (device && mapRef) {
-				if (device === "pc") {
-					menuW = mainBlock.offsetWidth;
-					bodyW = document.body.offsetWidth;
-				} else {
+				if (device === "mobile") {
 					menuH = mainBlock.offsetHeight;
 					bodyH = document.body.scrollHeight;
 
-					resizer.onmousedown = dragStart;
-					resizer.addEventListener("touchstart", dragStart);
-					resizer.addEventListener("touchend", dragEnd);
-					resizer.addEventListener("touchmove", dragAction);
+					inner = document.getElementById("activityArea");
+					social = document.getElementById("socials");
 
-					slide("half");
+					startEvents(mainBlock);
+					startEvents(resizer);
 
-					return () => {
-						resizer.onmousedown = null;
-						resizer.removeEventListener("touchstart", dragStart);
-						resizer.removeEventListener("touchend", dragEnd);
-						resizer.removeEventListener("touchmove", dragAction);
-					};
+					setTimeout(() => {
+						slide("half");
+					}, 800);
+				} else {
+					menuW = mainBlock.offsetWidth;
+					bodyW = document.body.offsetWidth;
 				}
 			}
 		}, [device, mapRef]);

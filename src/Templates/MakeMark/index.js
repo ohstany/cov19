@@ -9,17 +9,13 @@ import RootContext from "Context";
 import Popup from "Templates/Popup";
 import { condition } from "Library/statuses.js";
 import { withTranslation } from "i18n";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import { trackEvent } from "Templates/GoogleAnalytics";
-
-import { faThermometerThreeQuarters } from "@fortawesome/fontawesome-free-solid";
 
 const initialState = {
 	email: "",
 	address: "",
 	content: "",
-	condition: "",
+	condition: "none",
 	amount: undefined,
 	source: "",
 	source2: ""
@@ -163,21 +159,7 @@ export default memo(
 
 							<div className="selcond">
 								<h5>{t("caseb")}</h5>
-								<span
-									onClick={() =>
-										_state(e => ({
-											...e,
-											condition: ""
-										}))
-									}>
-									<input
-										name="condition"
-										type="radio"
-										value=""
-										checked={cond === ""}
-									/>
-									{t("none")}
-								</span>
+
 								{Object.keys(condition).map((r, rx) => {
 									return (
 										<span

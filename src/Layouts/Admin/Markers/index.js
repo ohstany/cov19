@@ -376,7 +376,7 @@ export default () => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (["locale", "region"].some(i => !state[i])) {
+		if (["locale"].some(i => !state[i])) {
 			alert("Please, fill out all required fields.");
 		} else {
 			actioner({
@@ -397,6 +397,11 @@ export default () => {
 
 	const ffg = useCallback(
 		(address, ID, action) => {
+			if (!address) {
+				alert("Must Input Address");
+				return false;
+			}
+
 			return fetch(
 				"https://maps.googleapis.com/maps/api/geocode/json?address=" +
 					encodeURIComponent(address) +
@@ -581,7 +586,6 @@ export default () => {
 							type="text"
 							name="region"
 							placeholder="Country region EX: 12"
-							required={true}
 							onChange={({ target: { value } }) =>
 								_state(p => ({
 									...p,

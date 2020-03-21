@@ -102,13 +102,13 @@ export default memo(
 			[subscribe]
 		);
 
-		useEffect(() => {
-			setTimeout(() => {
-				if (!localStorage.getItem("notshowsub")) {
-					togglePopup();
-				}
-			}, 3000);
-		}, []);
+		// useEffect(() => {
+		// 	setTimeout(() => {
+		// 		if (!localStorage.getItem("notshowsub")) {
+		// 			togglePopup();
+		// 		}
+		// 	}, 3000);
+		// }, []);
 
 		return (
 			<Popup className="subs" visible={subscribe} onClose={togglePopup}>

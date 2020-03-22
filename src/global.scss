@@ -401,7 +401,45 @@ input {
 	overflow: auto !important;
 	padding: 0;
 	width: 200px;
-	min-height: 100px;
+	min-height: 165px;
+}
+
+.infinite-scroll-component {
+	padding: 20px;
+	margin: -20px;
+}
+.ininfo {
+	background: white;
+	margin-bottom: 15px;
+	padding: 15px;
+	border: 1px solid #e1e1e1;
+	padding-top: 7px;
+	box-shadow: 1px 3px 6px 0px rgba(0, 0, 0, 0.1);
+	.hd {
+		color: #8e8e8e;
+      margin-bottom: 10px;
+      b {
+			display: block;
+			font-size: 20px;
+			color: #ed1813;
+		}
+	}
+	li {
+		margin: 0;
+		padding: 3px 0;
+		list-style: none;
+		text-align: right;
+		.b.circ {
+			width: 10px;
+			height: 10px;
+			vertical-align: initial;
+			margin-right: 3px;
+		}
+		span {
+			float: left;
+			margin-right: 5px;
+		}
+	}
 }
 
 .infw {
@@ -409,11 +447,38 @@ input {
 	width: 100%;
 	height: 100%;
 	padding: 15px 10px;
-	font-size: 14px;
+	font-size: 12px;
 	.stat {
-		&.all {
-			b {
-				color: #ca1119;
+		.cc {
+			padding-bottom: 7px;
+			.city {
+				font-weight: 700;
+			}
+		}
+		.hd {
+			border-bottom: 1px dashed #ececec;
+			padding-bottom: 4px;
+			margin-bottom: 4px;
+			&.all {
+				b {
+					color: #ca1119;
+				}
+			}
+		}
+		.bd {
+			margin: 0;
+			li {
+				margin: 0;
+				padding: 3px 0;
+				.b.circ {
+					width: 10px;
+					height: 10px;
+					vertical-align: initial;
+					margin-right: 3px;
+				}
+				span {
+					margin-right: 5px;
+				}
 			}
 		}
 	}
@@ -421,8 +486,8 @@ input {
 		cursor: pointer;
 		width: 15px;
 		position: absolute;
-		right: 5px;
-		top: 5px;
+		right: 10px;
+		top: 10px;
 		img {
 			width: 100%;
 		}

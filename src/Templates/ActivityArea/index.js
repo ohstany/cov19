@@ -75,7 +75,8 @@ const News = memo(
 							e.preventDefault();
 							e.stopPropagation();
 							_sh(e => !e);
-						}}>
+						}}
+					>
 						{title}
 					</a>
 				</h3>
@@ -92,7 +93,8 @@ const News = memo(
 							className={"cont"}
 							dangerouslySetInnerHTML={{
 								__html: content
-							}}></div>
+							}}
+						></div>
 					</div>
 				)}
 
@@ -147,7 +149,8 @@ const Activity = ({ t }) => {
 			news,
 			newsLimit,
 			activity,
-			activityLimit
+			activityLimit,
+			mapMarkers
 		},
 		setStore
 	} = useContext(RootContext) || {};
@@ -160,6 +163,47 @@ const Activity = ({ t }) => {
 	const rkey = region_code || "other";
 	const markerKey = `${country_code}_${rkey}`;
 	const { regions = false } = cpos || {};
+
+	const GetInfo = useCallback(
+		({ cc, rc }) => {
+			const index =
+				cc && rc
+					? mapMarkers.findIndex(
+							i => i.region === rc && i.locale === cc
+					  )
+					: cc
+					? mapMarkers.findIndex(i => i.locale === cc)
+					: false;
+
+			console.log("index", index, cc, rc);
+
+			return index >= 0 && mapMarkers[index] ? (
+				<div className="ininfo">
+					<div className="hd">
+						{t("allcases") + ": "}
+						<b>{numComma(mapMarkers[index].infections)}</b>
+					</div>
+
+					{Object.keys(condition).map((k, ki) => {
+						return k !== "none" ? (
+							<li key={ki}>
+								<span className={`cond ${k}`}>
+									<b class={`b circ ${k}`}></b>
+									{" " + t(condition[k])}
+								</span>
+								{mapMarkers[index][k]}
+							</li>
+						) : (
+							""
+						);
+					})}
+				</div>
+			) : (
+				""
+			);
+		},
+		[mapMarkers]
+	);
 
 	const newsData = useMemo(
 		() => (country_code && news[country_code] ? news[country_code] : []),
@@ -353,7 +397,8 @@ const Activity = ({ t }) => {
 									if (m.id === "local" && index === undefined)
 										return;
 									navigation(m.id);
-								}}>
+								}}
+							>
 								{m.title}
 							</li>
 						);
@@ -396,7 +441,10 @@ const Activity = ({ t }) => {
 							)
 						}
 						endMessage={<NoContent text={t("nodata")} />}
-						scrollableTarget="sc-markers">
+						scrollableTarget="sc-markers"
+					>
+						<GetInfo cc={country_code} rc={region_code} />
+
 						{infections && infections.length
 							? infections.map((a, ax) => {
 									return (
@@ -463,7 +511,8 @@ const Activity = ({ t }) => {
 						hasMore={!newsLimited}
 						loader={<Skeleton1 row={5} />}
 						endMessage={<NoContent />}
-						scrollableTarget="sc-news">
+						scrollableTarget="sc-news"
+					>
 						{newsData.map((a, ax) => (
 							<News key={ax} data={a} ax={ax} t={t} />
 						))}

@@ -425,12 +425,16 @@ input {
 		float: left;
 		text-align: center;
 		margin: 0;
-		padding: 4px;
+      padding: 4px;
+      @include md {
+         width: 50%;
+      }
 		.innr {
 			background: white;
 			box-shadow: 1px 3px 6px 0px rgba(0, 0, 0, 0.1);
 			border: 1px solid #e1e1e1;
-			padding: 10px 5px;
+         padding: 10px 0;
+         height: 65px;
 		}
 		.b.circ {
 			width: 10px;
@@ -439,7 +443,6 @@ input {
 			margin-right: 3px;
 		}
 		span {
-			margin-right: 5px;
 			&.cnt {
             display: block;
             font-size: 20px;

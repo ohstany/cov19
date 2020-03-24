@@ -185,13 +185,17 @@ const Activity = ({ t }) => {
 		const cases =
 			country_code && !region_code
 				? mapMarkers.reduce(
-						(ac, v) => {
-							if (v.locale === country_code) {
-								ac.infections += v.infections;
-								ac.infected += v.infected;
-								ac.suspicion += v.suspicion;
-								ac.cured += v.cured;
-								ac.mortal += v.mortal;
+						(
+							ac,
+							{ locale, infected, suspicion, cured, mortal }
+						) => {
+							if (locale === country_code) {
+								ac.infections +=
+									infected + suspicion + cured + mortal;
+								ac.infected += infected;
+								ac.suspicion += suspicion;
+								ac.cured += cured;
+								ac.mortal += mortal;
 							}
 							return ac;
 						},

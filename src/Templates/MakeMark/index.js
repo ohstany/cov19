@@ -15,7 +15,7 @@ const initialState = {
 	email: "",
 	address: "",
 	content: "",
-	condition: "none",
+	condition: "suspicion",
 	amount: undefined,
 	source: "",
 	source2: ""
@@ -161,7 +161,7 @@ export default memo(
 								<h5>{t("caseb")}</h5>
 
 								{Object.keys(condition).map((r, rx) => {
-									return (
+									return r !== "none" ? (
 										<span
 											key={rx}
 											onClick={() =>
@@ -169,7 +169,8 @@ export default memo(
 													...e,
 													condition: r
 												}))
-											}>
+											}
+										>
 											<input
 												name="condition"
 												type="radio"
@@ -178,6 +179,8 @@ export default memo(
 											/>
 											{t(condition[r])}
 										</span>
+									) : (
+										""
 									);
 								})}
 							</div>

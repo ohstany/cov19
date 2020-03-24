@@ -1674,6 +1674,15 @@ span.cond {
 					display: table;
 					width: 100%;
 					table-layout: fixed;
+					.editablef {
+                  padding: 10px 15px;
+                  background: #f9f9f9;
+                  border: 1px dashed #e4e4e4;
+						textarea,
+						input {
+							margin: 0;
+						}
+					}
 					.blc {
 						display: table-cell;
 						padding-right: 40px;
@@ -1709,6 +1718,18 @@ span.cond {
 					display: table-cell;
 					padding: 10px;
 					vertical-align: middle;
+					input {
+						margin: 0;
+						padding: 0;
+						background: none;
+						border: 0;
+					}
+					.b {
+						input {
+							color: white;
+						}
+					}
+
 					&.cl {
 						width: 50px;
 						text-align: center;

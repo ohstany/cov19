@@ -1,4 +1,4 @@
-import { getUrlParams } from "Library";
+import { getUrlParams, mergeDeep } from "Library";
 
 /**
  * STORE REDUCER (separate component data, categories, coures etc.)
@@ -120,13 +120,14 @@ export const root_store_reducer = (s, a, params = false) => {
 
 			const kk = locale || "other";
 
+			if (!markers[kk]) {
+				markers[kk] = [];
+			}
+
 			const index = markers[kk].findIndex(i => i.ID === ID);
 
 			if (index >= 0) {
-				markers[kk][index] = {
-					...markers[kk][index],
-					...modify
-				};
+				markers[kk][index] = mergeDeep(markers[kk][index], modify);
 			}
 
 			return {
@@ -249,8 +250,8 @@ export const root_store_initial_state = {
 	userdata: {},
 	country_code: undefined,
 	region_code: undefined,
-   index: undefined,
-   subscribe: false,
+	index: undefined,
+	subscribe: false,
 	fetched: false,
 	cpos: false,
 	geo: false,

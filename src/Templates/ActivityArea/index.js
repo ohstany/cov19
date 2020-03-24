@@ -205,15 +205,6 @@ const Activity = ({ t }) => {
 				? mapMarkers[index] || { ...caseDef }
 				: { ...caseDef };
 
-		console.log(
-			"index",
-			mapMarkers,
-			cases,
-			mapMarkers[index],
-			country_code,
-			region_code
-		);
-
 		return (
 			<div className="ininfo">
 				<li className="infobox hd">

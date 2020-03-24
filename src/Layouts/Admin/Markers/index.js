@@ -7,6 +7,13 @@ import countries_a from "Library/countries-array.json";
 // import iso from "Library/iso-3166-2-object.json";
 import * as iso from "Library/iso-3166-2-object.js";
 
+const defV = {
+	k: "",
+	v: "",
+	s: false,
+	d: false
+};
+
 const Content = memo(
 	({
 		modifyMarker,
@@ -31,6 +38,36 @@ const Content = memo(
 	}) => {
 		const [s, _s] = useState(false);
 		const [block, _block] = useState(false);
+		const [u, _u] = useState(defV);
+
+		const updateMarker = useCallback(
+			update => {
+				_u(p => ({ ...p, d: true }));
+
+				if (Object.keys(update)[0] === "") {
+					_u(defV);
+					return false;
+				}
+
+				modifyMarker(ID, { ...update }, locale).then(() => {
+					_u(defV);
+				});
+			},
+			[ID, locale]
+		);
+
+		const focusOnItem = i => {
+			const item = Object.keys(i)[0];
+			_u(p => ({ ...p, k: item, v: i[item], s: true }));
+
+			setTimeout(() => {
+				if (document.getElementById("c-" + item)) {
+					document.getElementById("c-" + item).focus();
+				}
+			}, 200);
+
+			return false;
+		};
 
 		const isodata = locale ? iso[locale] : false;
 
@@ -46,12 +83,80 @@ const Content = memo(
 					</li>
 					<li className="id">#{ID}</li>
 					<li>{email}</li>
-					<li>{date}</li>
-					<li>{locale ? isodata.name : "~"}</li>
 					<li>
-						{region && locale && isodata.regions[region]
-							? isodata.regions[region].name
-							: "~"}
+						<span onDoubleClick={() => focusOnItem({ date })}>
+							{u.k === "date" && u.s ? (
+								<input
+									id="c-date"
+									value={u.v}
+									disabled={u.d}
+									onBlur={() => updateMarker({ [u.k]: u.v })}
+									onKeyDown={e => {
+										if (e.key === "Enter") {
+											updateMarker({ [u.k]: u.v });
+										}
+									}}
+									onChange={({ target: value }) =>
+										_u(p => ({ ...p, v: value.value }))
+									}
+								/>
+							) : (
+								date
+							)}
+						</span>
+					</li>
+					<li>
+						<span onDoubleClick={() => focusOnItem({ locale })}>
+							{u.k === "locale" && u.s ? (
+								<CountrySelect
+									id="c-locale"
+									onBlur={e => {
+										updateMarker({
+											[u.k]: u.v,
+											region: ""
+										});
+									}}
+									controlled={false}
+									value={u.v}
+									onUpdate={value => {
+										updateMarker({
+											locale: value,
+											region: ""
+										});
+									}}
+								/>
+							) : locale ? (
+								isodata.name
+							) : (
+								"~"
+							)}
+						</span>
+					</li>
+					<li>
+						<span onDoubleClick={() => focusOnItem({ region })}>
+							{u.k === "region" && u.s ? (
+								<RegionSelect
+									id="c-region"
+									onBlur={e => {
+										updateMarker({
+											[u.k]: u.v
+										});
+									}}
+									controlled={false}
+									locale={locale}
+									value={u.v}
+									onUpdate={value => {
+										updateMarker({
+											[u.k]: value
+										});
+									}}
+								/>
+							) : region && locale && isodata.regions[region] ? (
+								isodata.regions[region].name
+							) : (
+								"~"
+							)}
+						</span>
 					</li>
 					<li>
 						{latlng && latlng.length
@@ -59,7 +164,29 @@ const Content = memo(
 							: "~"}
 					</li>
 					<li className="id">
-						<span className={"b"}>{number}</span>
+						<span
+							className={"b"}
+							onDoubleClick={() => focusOnItem({ number })}
+						>
+							{u.k === "number" && u.s ? (
+								<input
+									id="c-number"
+									value={u.v}
+									disabled={u.d}
+									onBlur={() => updateMarker({ [u.k]: u.v })}
+									onKeyDown={e => {
+										if (e.key === "Enter") {
+											updateMarker({ [u.k]: u.v });
+										}
+									}}
+									onChange={({ target: value }) =>
+										_u(p => ({ ...p, v: value.value }))
+									}
+								/>
+							) : (
+								number
+							)}
+						</span>
 					</li>
 					<li>
 						<span className={"b " + via}>{vi[via]}</span>
@@ -75,7 +202,8 @@ const Content = memo(
 										notification("Address Fetched");
 									});
 								}
-							}}>
+							}}
+						>
 							GET
 						</button>
 					</li>
@@ -91,7 +219,8 @@ const Content = memo(
 											locale
 										);
 									}
-								}}>
+								}}
+							>
 								{Object.keys(cond).map((i, ix) => (
 									<option key={ix} value={i}>
 										{cond[i]}
@@ -112,7 +241,8 @@ const Content = memo(
 											locale
 										);
 									}
-								}}>
+								}}
+							>
 								<option value="witness">Witness</option>
 								<option value="source">Source</option>
 								<option value="osource">Of.Source</option>
@@ -131,7 +261,8 @@ const Content = memo(
 											locale
 										);
 									}
-								}}>
+								}}
+							>
 								<option value="hidden">Hidden</option>
 								<option value="published">Publish</option>
 							</select>
@@ -144,40 +275,161 @@ const Content = memo(
 						<div className="innerc">
 							<div className="blc">
 								<h5># Content</h5>
-								<p
-									dangerouslySetInnerHTML={{
-										__html: content || ""
-									}}
-								/>
+
+								<div
+									className="editablef"
+									onDoubleClick={() =>
+										focusOnItem({ content })
+									}
+								>
+									{u.k === "content" && u.s ? (
+										<textarea
+											id="c-content"
+											value={u.v}
+											disabled={u.d}
+											onBlur={() =>
+												updateMarker({
+													details: { [u.k]: u.v }
+												})
+											}
+											onKeyDown={e => {
+												if (e.key === "Enter") {
+													updateMarker({
+														details: { [u.k]: u.v }
+													});
+												}
+											}}
+											onChange={({ target: value }) =>
+												_u(p => ({
+													...p,
+													v: value.value
+												}))
+											}
+										/>
+									) : (
+										<div
+											dangerouslySetInnerHTML={{
+												__html: content || ""
+											}}
+										/>
+									)}
+								</div>
 								<br />
 								<b>#1 Source</b>
-								{source ? (
-									<>
-										<br />
+								<div
+									className="editablef"
+									onDoubleClick={() =>
+										focusOnItem({ source })
+									}
+								>
+									{u.k === "source" && u.s ? (
+										<input
+											id="c-source"
+											value={u.v}
+											disabled={u.d}
+											onBlur={() =>
+												updateMarker({
+													details: { [u.k]: u.v }
+												})
+											}
+											onKeyDown={e => {
+												if (e.key === "Enter") {
+													updateMarker({
+														details: { [u.k]: u.v }
+													});
+												}
+											}}
+											onChange={({ target: value }) =>
+												_u(p => ({
+													...p,
+													v: value.value
+												}))
+											}
+										/>
+									) : source ? (
 										<a href={source} target="_blank">
 											{source}
 										</a>
-									</>
-								) : (
-									"~"
-								)}
+									) : (
+										"~"
+									)}
+								</div>
 								<br />
 								<b>#2 Source</b>
-								{source2 ? (
-									<>
-										<br />
+								<div
+									className="editablef"
+									onDoubleClick={() =>
+										focusOnItem({ source2 })
+									}
+								>
+									{u.k === "source2" && u.s ? (
+										<input
+											id="c-source2"
+											value={u.v}
+											disabled={u.d}
+											onBlur={() =>
+												updateMarker({
+													details: { [u.k]: u.v }
+												})
+											}
+											onKeyDown={e => {
+												if (e.key === "Enter") {
+													updateMarker({
+														details: { [u.k]: u.v }
+													});
+												}
+											}}
+											onChange={({ target: value }) =>
+												_u(p => ({
+													...p,
+													v: value.value
+												}))
+											}
+										/>
+									) : source2 ? (
 										<a href={source2} target="_blank">
 											{source2}
 										</a>
-									</>
-								) : (
-									"~"
-								)}
+									) : (
+										"~"
+									)}
+								</div>
 							</div>
 
 							<div className="blc">
 								<h5># Address:</h5>
-								<p>{address}</p>
+								<div
+									className="editablef"
+									onDoubleClick={() =>
+										focusOnItem({ address })
+									}
+								>
+									{u.k === "address" && u.s ? (
+										<textarea
+											id="c-address"
+											value={u.v}
+											disabled={u.d}
+											onBlur={() =>
+												updateMarker({ [u.k]: u.v })
+											}
+											onKeyDown={e => {
+												if (e.key === "Enter") {
+													updateMarker({
+														[u.k]: u.v
+													});
+												}
+											}}
+											onChange={({ target: value }) =>
+												_u(p => ({
+													...p,
+													v: value.value
+												}))
+											}
+										/>
+									) : (
+										address
+									)}
+								</div>
 							</div>
 
 							<div className="blc">
@@ -211,7 +463,8 @@ const Content = memo(
 									"~"}`}
 								<button
 									className="mkdel"
-									onClick={() => deleteMarker(ID, locale)}>
+									onClick={() => deleteMarker(ID, locale)}
+								>
 									Delete
 								</button>
 							</div>
@@ -238,11 +491,14 @@ const initialState = {
 	status: "hidden"
 };
 
-const CountrySelect = ({ controlled = true, value, onUpdate }) => {
+const CountrySelect = ({ id, onBlur, controlled = true, value, onUpdate }) => {
 	return (
 		<select
+			{...(id ? { id } : {})}
+			{...(onBlur ? { onBlur } : {})}
 			value={value}
-			onChange={({ target: { value } }) => onUpdate(value)}>
+			onChange={({ target: { value } }) => onUpdate(value)}
+		>
 			{controlled ? (
 				<>
 					<option value="all">All</option>
@@ -277,7 +533,8 @@ const RegionSelect = ({ locale, value, onUpdate }) => {
 	return (
 		<select
 			value={value}
-			onChange={({ target: { value } }) => onUpdate(value)}>
+			onChange={({ target: { value } }) => onUpdate(value)}
+		>
 			<option value="">Select Region</option>
 			{locale &&
 				regions.map((c, ci) => {
@@ -301,8 +558,6 @@ export default () => {
 	const [refr, _refr] = useState(false);
 	const [popup, _popup] = useState(false);
 	const [state, _state] = useState(initialState);
-
-	console.log("state", state);
 
 	const marks =
 		markers && markers[byc]
@@ -342,7 +597,7 @@ export default () => {
 
 	const modifyMarker = useCallback(
 		(ID, modify, locale) => {
-			actioner({
+			return actioner({
 				reduce: "MODIFY_MARKER",
 				method: "UPDATE",
 				action: "markers",
@@ -459,8 +714,6 @@ export default () => {
 							}
 						};
 
-						console.log("reres", address);
-
 						return actioner({
 							reduce: "UPDATE_LOCATION",
 							method: "UPDATE",
@@ -489,7 +742,8 @@ export default () => {
 					background: "#056dc6",
 					marginRight: 20
 				}}
-				onClick={() => _popup(e => !e)}>
+				onClick={() => _popup(e => !e)}
+			>
 				+ Add new
 			</button>
 
@@ -504,7 +758,8 @@ export default () => {
 					if (!refr) {
 						refreshs();
 					}
-				}}>
+				}}
+			>
 				{refr ? "Refreshing..." : "Refresh"}
 			</button>
 
@@ -664,7 +919,8 @@ export default () => {
 						value={state.status}
 						onChange={({ target: { value: status } }) =>
 							_state(e => ({ ...e, status }))
-						}>
+						}
+					>
 						<option value="hidden">Hidden</option>
 						<option value="published">Published</option>
 					</select>
@@ -675,7 +931,8 @@ export default () => {
 						value={state.type}
 						onChange={({ target: { value: type } }) =>
 							_state(e => ({ ...e, type }))
-						}>
+						}
+					>
 						<option value="witness">Witness</option>
 						<option value="source">Source</option>
 						<option value="osource">Of.Source</option>

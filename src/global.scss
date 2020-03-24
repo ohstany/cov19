@@ -446,10 +446,10 @@ input {
 				font-size: 17px;
 				font-weight: 600;
 				margin-bottom: 2px;
-         }
-         &.ttl {
-            font-size: 13px;
-         }
+			}
+			&.ttl {
+				font-size: 13px;
+			}
 		}
 	}
 }
@@ -1283,7 +1283,6 @@ time {
 }
 
 .contentCooking {
-	padding: 20px;
 	text-align: center;
 	font-weight: bold;
 	color: #848484;
@@ -1299,7 +1298,7 @@ time {
 		width: 100%;
 		bottom: 31px;
 		left: 0;
-		padding: 10px 0;
+		padding: 5px 0;
 		font-weight: 200;
 	}
 }

@@ -230,7 +230,7 @@ const Activity = ({ t }) => {
 						<li className="infobox" key={ki}>
 							<div className="innr">
 								<span className={`cnt cond ${k}`}>
-									{cases[k]}
+									{numComma(cases[k])}
 								</span>
 								<span className={`ttl`}>
 									{" " + t(condition[k])}

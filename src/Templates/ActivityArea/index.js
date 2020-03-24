@@ -137,6 +137,14 @@ const RenderSource = ({ title = "Source", s }) => {
 	);
 };
 
+const caseDef = {
+	infections: 0,
+	infected: 0,
+	cured: 0,
+	suspicion: 0,
+	mortal: 0
+};
+
 const Activity = ({ t }) => {
 	const {
 		api,
@@ -164,46 +172,65 @@ const Activity = ({ t }) => {
 	const markerKey = `${country_code}_${rkey}`;
 	const { regions = false } = cpos || {};
 
-	const GetInfo = useCallback(
-		({ cc, rc }) => {
-			const index =
-				cc && rc
-					? mapMarkers.findIndex(
-							i => i.region === rc && i.locale === cc
-					  )
-					: cc
-					? mapMarkers.findIndex(i => i.locale === cc)
-					: false;
+	const GetInfo = useCallback(() => {
+		const index =
+			country_code && region_code
+				? mapMarkers.findIndex(
+						i =>
+							"" + i.region === "" + region_code &&
+							"" + i.locale === "" + country_code
+				  )
+				: false;
 
-			console.log("index", index, cc, rc);
+		const cases =
+			country_code && !region_code
+				? mapMarkers.reduce(
+						(ac, v) => {
+							if (v.locale === country_code) {
+								ac.infections += v.infections;
+								ac.infected += v.infected;
+								ac.suspicion += v.suspicion;
+								ac.cured += v.cured;
+								ac.mortal += v.mortal;
+							}
+							return ac;
+						},
+						{ ...caseDef }
+				  )
+				: country_code && region_code
+				? mapMarkers[index] || { ...caseDef }
+				: { ...caseDef };
 
-			return index >= 0 && mapMarkers[index] ? (
-				<div className="ininfo">
-					<div className="hd">
-						{t("allcases") + ": "}
-						<b>{numComma(mapMarkers[index].infections)}</b>
+		return (
+			<ul className="ininfo">
+				<li className="infobox hd">
+					<div className="innr">
+						<span className="cnt">
+							{numComma(cases.infections)}
+						</span>
+						<span className="ttl">{t("allcases")}</span>
 					</div>
+				</li>
 
-					{Object.keys(condition).map((k, ki) => {
-						return k !== "none" ? (
-							<li key={ki}>
-								<span className={`cond ${k}`}>
-									<b class={`b circ ${k}`}></b>
+				{["infected", "cured", "suspicion", "mortal"].map((k, ki) => {
+					return k !== "none" ? (
+						<li className="infobox" key={ki}>
+							<div className="innr">
+								<span className={`cnt cond ${k}`}>
+									{cases[k]}
+								</span>
+								<span className={`ttl`}>
 									{" " + t(condition[k])}
 								</span>
-								{mapMarkers[index][k]}
-							</li>
-						) : (
-							""
-						);
-					})}
-				</div>
-			) : (
-				""
-			);
-		},
-		[mapMarkers]
-	);
+							</div>
+						</li>
+					) : (
+						""
+					);
+				})}
+			</ul>
+		);
+	}, [mapMarkers, country_code, region_code]);
 
 	const newsData = useMemo(
 		() => (country_code && news[country_code] ? news[country_code] : []),
@@ -443,7 +470,7 @@ const Activity = ({ t }) => {
 						endMessage={<NoContent text={t("nodata")} />}
 						scrollableTarget="sc-markers"
 					>
-						<GetInfo cc={country_code} rc={region_code} />
+						<GetInfo />
 
 						{infections && infections.length
 							? infections.map((a, ax) => {

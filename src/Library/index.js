@@ -1,3 +1,6 @@
+import { memo } from "react";
+import { withTranslation } from "i18n";
+
 let not = 0;
 
 export const notification = (text, close = 2000) => {
@@ -20,6 +23,18 @@ export const notification = (text, close = 2000) => {
 
 	not++;
 };
+
+export const CountryName = memo(
+	withTranslation("countries")(({ t, value }) => {
+		return value ? <div className="country">{t(value)}</div> : "";
+	})
+);
+
+export const CityName = memo(
+	withTranslation("cities")(({ t, value }) => {
+		return value ? <div className="city">{t(value)}</div> : "";
+	})
+);
 
 export const numComma = x => {
 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

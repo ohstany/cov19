@@ -10,7 +10,7 @@ import React, {
 import markerImg from "./m2.png";
 import styles from "./mapStyling.json";
 import * as locations from "Library/iso-3166-2-object.js";
-import { reducer, numComma } from "Library";
+import { reducer, numComma, CountryName, CityName } from "Library";
 import RootContext from "Context";
 import {
 	withScriptjs,
@@ -38,14 +38,6 @@ const markerSizes = size => {
 	const s = size * 10;
 	return s - (size >= 3 ? 20 : 0);
 };
-
-export const CountryName = withTranslation("countries")(({ t, locale }) => {
-	return locale ? <div className="country">{t(locale)}</div> : "";
-});
-
-export const CityName = withTranslation("cities")(({ t, region }) => {
-	return region ? <div className="city">{t(region)}</div> : "";
-});
 
 const MapCover = withTranslation("common")(
 	withScriptjs(
@@ -220,10 +212,10 @@ const MapCover = withTranslation("common")(
 											<div className="stat all">
 												<div className="cc">
 													<CountryName
-														locale={cpos.name}
+														value={cpos.name}
 													/>
 													<CityName
-														region={
+														value={
 															cpos.regions &&
 															cpos.regions[region]
 																? cpos.regions[
@@ -249,7 +241,7 @@ const MapCover = withTranslation("common")(
 																		className={`cond ${k}`}
 																	>
 																		<b
-																			class={`b circ ${k}`}
+																			className={`b circ ${k}`}
 																		></b>
 																		{" " +
 																			t(

@@ -211,7 +211,7 @@ const Activity = ({ t }) => {
 		);
 
 		return (
-			<ul className="ininfo">
+			<div className="ininfo">
 				<li className="infobox hd">
 					<div className="innr">
 						<span className="cnt">
@@ -237,7 +237,7 @@ const Activity = ({ t }) => {
 						""
 					);
 				})}
-			</ul>
+			</div>
 		);
 	}, [mapMarkers, country_code, region_code]);
 

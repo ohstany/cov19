@@ -315,9 +315,15 @@ export default memo(
 												id="c-make"
 												placeholder="Write your comment"
 												value={comment}
-												onChange={({ target: value }) =>
-													_comment(value.value)
-												}
+												onChange={({
+													target: value
+												}) => {
+													if (
+														value.value.length < 500
+													) {
+														_comment(value.value);
+													}
+												}}
 												onKeyDown={e => {
 													if (e.key === "Enter") {
 														if (!pushingComment) {
@@ -486,9 +492,15 @@ export default memo(
 														over: false
 													}))
 												}
-												onChange={({ target: value }) =>
-													_comment(value.value)
-												}
+												onChange={({
+													target: value
+												}) => {
+													if (
+														value.value.length < 500
+													) {
+														_comment(value.value);
+													}
+												}}
 												onKeyDown={e => {
 													if (e.key === "Enter") {
 														if (!pushingComment) {

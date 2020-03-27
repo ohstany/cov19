@@ -1,9 +1,14 @@
-import { getUrlParams, mergeDeep } from "Library";
+import { getUrlParams, mergeDeep, notification } from "Library";
 
 /**
  * STORE REDUCER (separate component data, categories, coures etc.)
  * PARAMS: s - store, a - data object (action, data and so on)
  */
+const codes = {
+	100: "Due to spam activity you are temporary blocked, please coma back later.",
+	101: " Your comment is under moderation. Please, wait for a while."
+};
+
 export const root_store_reducer = (s, a, params = false) => {
 	const { data = [], reduce } = a || {};
 
@@ -19,16 +24,26 @@ export const root_store_reducer = (s, a, params = false) => {
 		case "PUSH_COMMENT": {
 			const { chats, chatReplies } = s;
 
-			const { parent, country } = params.data || {};
-
-			const index = chats[country].data.findIndex(i => i.ID === parent);
-
-			if (index >= 0) {
-				chats[country].data[index].count =
-					chats[country].data[index].count + 1;
+			if (typeof data === "object" && data.error) {
+				notification(codes[data.code]);
+				return {};
 			}
 
+			console.log("DATA", data);
+
 			if (data && data.ID) {
+				const { parent, country } = params.data || {};
+
+				const index = chats[country].data.findIndex(
+					i => i.ID === parent
+				);
+
+				if (index >= 0) {
+					chats[country].data[index].count =
+						chats[country].data[index].count + 1;
+					chats[country].count = chats[country].count + 1;
+				}
+
 				if (data.parent) {
 					if (!chatReplies[data.parent]) {
 						chatReplies[data.parent] = [];
@@ -95,6 +110,10 @@ export const root_store_reducer = (s, a, params = false) => {
 						? [...data, ...chats[country].data]
 						: [...chats[country].data, ...data];
 
+				if (chats[country].data.length) {
+					chats[country].count = chats[country].count + data.length;
+				}
+
 				if (limit && data.length < limit) {
 					chats[country].limit = true;
 				} else {
@@ -126,6 +145,11 @@ export const root_store_reducer = (s, a, params = false) => {
 					get === "new"
 						? [...data, ...chatReplies[parent]]
 						: [...chatReplies[parent], ...data];
+
+				if (chatReplies[parent].data.length) {
+					chatReplies[parent].count =
+						chatReplies[parent].count + data.length;
+				}
 
 				if (limit && data.length < limit) {
 					chatLimit[parent] = true;

@@ -8,7 +8,7 @@ import {
 } from "react";
 import RootContext from "Context";
 import { Skeleton1 } from "Templates/Skeleton";
-import Popup from "Templates/popup";
+import Popup from "Templates/Popup";
 import Access from "Templates/Login/LoginForm";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";

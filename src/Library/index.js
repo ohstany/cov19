@@ -1,3 +1,4 @@
+import ReactDOM from "react-dom";
 import { memo } from "react";
 import { withTranslation } from "i18n";
 
@@ -24,25 +25,60 @@ export const mergeDeep = (target, source) => {
 let not = 0;
 
 export const notification = (text, close = 2000) => {
+	let timer = 0;
+	let count = 0;
 	const idd = "not" + not;
-	var node = document.createElement("div");
-	var textnode = document.createTextNode(text);
-	node.appendChild(textnode);
+	const node = document.createElement("div");
 	node.id = idd;
-	node.classList.add("notif");
-	document.body.appendChild(node);
 
-	document.getElementById(idd).style.top = "20px";
+	ReactDOM.render(
+		<div
+			className="notif"
+			onMouseOver={() => clearInt()}
+			onMouseOut={() => startInt()}
+		>
+			{text}
+		</div>,
+		document.body.appendChild(node)
+	);
+
+	const n = document.getElementById(idd);
+
+	const clearInt = () => clearInterval(timer);
+
+	const startInt = () => {
+		timer = setInterval(() => {
+			count = count + 1000;
+
+			if (count === close) {
+				n.firstChild.style.top =
+					"-" + (n.firstChild.offsetHeight + 5) + "px";
+
+				clearInt();
+
+				setTimeout(() => {
+					n.remove();
+				}, 1000);
+			}
+		}, 1000);
+	};
 
 	setTimeout(() => {
-		document.getElementById(idd).style.top = "-50px";
-		setTimeout(() => {
-			document.getElementById(idd).remove();
-		}, 1000);
-	}, close);
+		n.firstChild.style.top = "10px";
+	}, 0);
+
+	startInt();
 
 	not++;
 };
+
+export const Notifications = withTranslation("common")(({ t, code }) => {
+	return {
+		100: t("temporaryBlocked"),
+		101: t("commentModerating"),
+		def: ""
+	}[code || "def"];
+});
 
 export const CountryName = memo(
 	withTranslation("countries")(({ t, value }) => {

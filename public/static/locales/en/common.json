@@ -51,5 +51,20 @@
 	"tonumber": "To Cellphone Number",
 	"toemail": "To Email",
 	"subscribe": "Subscribe",
-	"donotshow": "Do not show anymore"
+	"donotshow": "Do not show anymore",
+	"temporaryBlocked": "You are blocked for 5 minutes due to spam activity.",
+	"commentModerating": "Your comment is awaiting moderation. Please, wait for a while.",
+	"Comments": "Comments",
+	"chatBeFirst": "Be the first to comment",
+	"writeComment": "Write your comment",
+	"Login": "Login",
+	"toLeaveComment": "to leave comment",
+	"Replies": "Replies",
+	"Reply": "Reply",
+	"replyingTo": "Replying to",
+	"Author": "Author",
+	"emailOrId": "Email or ID",
+	"ipassword": "Input Password",
+	"alreadyLogged": "You are logged in",
+	"idnandpassword": "Must input login ID and password"
 }

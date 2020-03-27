@@ -51,5 +51,16 @@
 	"tonumber": "휴대전화로 발송",
 	"toemail": "이메일로 발송",
 	"subscribe": "구독하기",
-	"donotshow": "더 이상 보지 않기"
+	"donotshow": "더 이상 보지 않기",
+	"temporaryBlocked": "You are blocked for 5 minutes due to spam activity.",
+	"commentModerating": "Your comment is awaiting moderation. Please, wait for a while.",
+	"Comments": "Comments",
+	"chatBeFirst": "Be the first to comment",
+	"writeComment": "Write your comment",
+	"Login": "Login",
+	"toLeaveComment": "to leave comment",
+	"Replies": "Replies",
+	"Reply": "Reply",
+	"replyingTo": "Replying to",
+	"Author": "Author"
 }

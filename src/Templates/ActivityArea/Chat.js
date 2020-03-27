@@ -9,6 +9,7 @@ import {
 import RootContext from "Context";
 import { Skeleton1 } from "Templates/Skeleton";
 import Popup from "Templates/Popup";
+import NoContent from "Templates/NoContent";
 import Access from "Templates/Login/LoginForm";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -35,6 +36,8 @@ export default memo(
 				chatLimit
 			}
 		} = useContext(RootContext);
+
+		console.log("fetchChatMessages", chats);
 
 		const [comment, _comment] = useState("");
 		const [showReply, _showReply] = useState({ show: false, over: false });
@@ -135,8 +138,7 @@ export default memo(
 		}, [visible, country_code]);
 
 		useEffect(() => {
-			if (visible && country_code) {
-				console.log("1st FETCH");
+			if (visible && country_code && countryChat.length === 0) {
 				fetchChatMessages(25);
 			}
 		}, [visible, country_code]);
@@ -277,19 +279,41 @@ export default memo(
 			[]
 		);
 
+		const DoLogin = useCallback(() => {
+			return (
+				<div className="c-login">
+					<span className="do" onClick={() => _popup(p => !p)}>
+						{t("Login")}
+					</span>{" "}
+					{t("toLeaveComment")}
+				</div>
+			);
+		}, []);
+
 		const closePopup = useCallback(() => {
 			_popup(p => false);
 		}, []);
 
 		return (
-			<div className={"chatArea" + (visible ? " visible" : "")}>
+			<div
+				className={[
+					"chatArea",
+					loginStatus ? "online" : "offline",
+					visible ? "visible" : "hidden"
+				].join(" ")}
+			>
 				<Popup visible={popup} onClose={closePopup}>
-					<Access />
+					<Access
+						onAuth={() => {
+							closePopup();
+						}}
+					/>
 				</Popup>
 
 				<div className="comments">
 					<div className="filters">
-						Comments: {chatCount || 0}
+						{t("Comments") + ": "}
+						<span className="chatCount">{chatCount || 0}</span>
 						<img
 							onClick={() => toggle()}
 							src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224px%22%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23000000%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M19%206.41L17.59%205%2012%2010.59%206.41%205%205%206.41%2010.59%2012%205%2017.59%206.41%2019%2012%2013.41%2017.59%2019%2019%2017.59%2013.41%2012z%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fsvg%3E%0A"
@@ -297,11 +321,17 @@ export default memo(
 					</div>
 					<div id="cm-author" className="cm-inner">
 						<InfiniteScroll
-							dataLength={countryChat ? countryChat.length : 0}
+							dataLength={countryChat.length}
 							next={() => fetchChatMessages(10, "old")}
 							hasMore={!chatsLimited}
 							loader={country_code ? <Skeleton1 row={5} /> : ""}
-							endMessage={""}
+							endMessage={
+								countryChat.length == 0 ? (
+									<NoContent text={t("chatBeFirst")} />
+								) : (
+									""
+								)
+							}
 							scrollableTarget="cm-author"
 						>
 							<div className="comment add">
@@ -313,7 +343,7 @@ export default memo(
 										<div className="c-content">
 											<input
 												id="c-make"
-												placeholder="Write your comment"
+												placeholder={t("writeComment")}
 												value={comment}
 												onChange={({
 													target: value
@@ -354,15 +384,7 @@ export default memo(
 										</div>
 									</>
 								) : (
-									<div className="c-login">
-										<span
-											className="do"
-											onClick={() => _popup(p => !p)}
-										>
-											Login
-										</span>{" "}
-										to leave comment
-									</div>
+									<DoLogin />
 								)}
 							</div>
 
@@ -408,7 +430,7 @@ export default memo(
 															)
 														}
 													>
-														{c.count} Replies
+														{c.count} {t("Replies")}
 													</span>
 												) : (
 													""
@@ -426,7 +448,7 @@ export default memo(
 														);
 													}}
 												>
-													&#8618; Reply
+													&#8618; {t("Reply")}
 												</span>
 											</div>
 										</div>
@@ -439,7 +461,7 @@ export default memo(
 				<div className={"replies" + (showReply.show ? " visible" : "")}>
 					<div className="comments">
 						<div className="filters">
-							Replies
+							{t("Replies")}
 							<img
 								onClick={() => {
 									_showReply(p => ({
@@ -462,7 +484,7 @@ export default memo(
 											showReply.ID !==
 												showReply.replyTo && (
 												<div className="repto">
-													Replying to
+													{t("replyingTo")}
 													<span className="rto">
 														<span className="toname">
 															<UserName
@@ -478,7 +500,7 @@ export default memo(
 										<div style={{ position: "relative" }}>
 											<input
 												id="c-reply"
-												placeholder="Write your comment"
+												placeholder={t("writeComment")}
 												value={comment}
 												onFocus={() =>
 													_showReply(p => ({
@@ -540,15 +562,7 @@ export default memo(
 									</div>
 								</>
 							) : (
-								<div className="c-login">
-									<span
-										className="do"
-										onClick={() => _popup(p => !p)}
-									>
-										Login
-									</span>{" "}
-									to leave comment
-								</div>
+								<DoLogin />
 							)}
 						</div>
 
@@ -560,9 +574,7 @@ export default memo(
 									)}
 
 									<InfiniteScroll
-										dataLength={
-											replyItem ? replyItem.length : 0
-										}
+										dataLength={replyItem.length}
 										next={() => {
 											fetchReplies("old");
 										}}
@@ -574,7 +586,15 @@ export default memo(
 												""
 											)
 										}
-										endMessage={""}
+										endMessage={
+											replyItem.length == 0 ? (
+												<NoContent
+													text={t("chatBeFirst")}
+												/>
+											) : (
+												""
+											)
+										}
 										scrollableTarget="cm-replies"
 									>
 										<div className="comment owner">
@@ -589,7 +609,7 @@ export default memo(
 											<div className="c-content">
 												<div className="c-meta">
 													<span className="c-author">
-														Author
+														{t("Author")}
 													</span>
 													<span className="c-name">
 														<UserName
@@ -625,7 +645,7 @@ export default memo(
 														)
 													}
 												>
-													&#8618; Reply
+													&#8618; {t("Reply")}
 												</span>
 											</div>
 										</div>

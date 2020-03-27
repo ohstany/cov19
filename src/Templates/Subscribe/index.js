@@ -130,7 +130,8 @@ export default memo(
 										className={
 											"subsel" +
 											(w === state.via ? " selected" : "")
-										}>
+										}
+									>
 										<img src={via[w]} />
 										{t(text)}
 									</div>
@@ -145,11 +146,13 @@ export default memo(
 												<select
 													name="num"
 													value={state.num}
-													onChange={updateState}>
+													onChange={updateState}
+												>
 													{phones.map((p, px) => (
 														<option
 															key={px}
-															value={p.dial_code}>
+															value={p.dial_code}
+														>
 															{p.dial_code} (
 															{p.name})
 														</option>
@@ -194,7 +197,8 @@ export default memo(
 								onClick={() => {
 									localStorage.setItem("notshowsub", true);
 									togglePopup();
-								}}>
+								}}
+							>
 								{t("donotshow")}
 							</label>
 						</div>

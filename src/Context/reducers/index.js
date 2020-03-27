@@ -1,13 +1,8 @@
-import { getUrlParams, mergeDeep, notification } from "Library";
-
+import { getUrlParams, mergeDeep, notification, Notifications } from "Library";
 /**
  * STORE REDUCER (separate component data, categories, coures etc.)
  * PARAMS: s - store, a - data object (action, data and so on)
  */
-const codes = {
-	100: "Due to spam activity you are temporary blocked, please coma back later.",
-	101: " Your comment is under moderation. Please, wait for a while."
-};
 
 export const root_store_reducer = (s, a, params = false) => {
 	const { data = [], reduce } = a || {};
@@ -25,7 +20,7 @@ export const root_store_reducer = (s, a, params = false) => {
 			const { chats, chatReplies } = s;
 
 			if (typeof data === "object" && data.error) {
-				notification(codes[data.code], 5000);
+				notification(<Notifications code={data.code} />, 5000);
 				return {};
 			}
 
@@ -74,7 +69,8 @@ export const root_store_reducer = (s, a, params = false) => {
 			if (!chats[country]) {
 				chats[country] = {
 					data: [],
-					count: 0
+					count: 0,
+					limit: false
 				};
 			}
 
@@ -100,15 +96,13 @@ export const root_store_reducer = (s, a, params = false) => {
 				};
 			}
 
-			if (data instanceof Array === false) return {};
-
 			if (data) {
 				chats[country].data =
 					get === "new"
 						? [...data, ...chats[country].data]
 						: [...chats[country].data, ...data];
 
-				if (chats[country].data.length) {
+				if (get === "new" && chats[country].data.length) {
 					chats[country].count =
 						parseInt(chats[country].count) + data.length;
 				}
@@ -137,15 +131,13 @@ export const root_store_reducer = (s, a, params = false) => {
 				chatLimit[parent] = false;
 			}
 
-			if (data instanceof Array === false) return {};
-
 			if (data) {
 				chatReplies[parent] =
 					get === "new"
 						? [...data, ...chatReplies[parent]]
 						: [...chatReplies[parent], ...data];
 
-				if (chatReplies[parent].data.length) {
+				if (get === "new" && chatReplies[parent].data.length) {
 					chatReplies[parent].count =
 						parseInt(chatReplies[parent].count) + data.length;
 				}

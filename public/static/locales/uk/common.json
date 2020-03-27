@@ -51,5 +51,16 @@
 	"tonumber": "На номер телефону",
 	"toemail": "На імейл",
 	"subscribe": "Підписатися",
-	"donotshow": "Більше не показувати"
+	"donotshow": "Більше не показувати",
+	"temporaryBlocked": "You are blocked for 5 minutes due to spam activity.",
+	"commentModerating": "Your comment is awaiting moderation. Please, wait for a while.",
+	"Comments": "Comments",
+	"chatBeFirst": "Be the first to comment",
+	"writeComment": "Write your comment",
+	"Login": "Login",
+	"toLeaveComment": "to leave comment",
+	"Replies": "Replies",
+	"Reply": "Reply",
+	"replyingTo": "Replying to",
+	"Author": "Author"
 }

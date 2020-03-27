@@ -853,10 +853,30 @@ body.subsc {
 				position: relative;
 				width: 100%;
 				height: auto;
+				padding-left: 0;
+				padding-right: 0;
 			}
 			.login .form {
 				margin-top: 20px;
 				border: 0;
+			}
+			.c-login {
+				.do {
+					color: #ffffff;
+					cursor: pointer;
+					text-decoration: underline;
+					font-weight: bold;
+					font-size: 15px;
+					&:hover {
+						color: #ffd0d0;
+					}
+				}
+			}
+			&.offline {
+				.comment.add {
+					background: #ed1813;
+					color: white;
+				}
 			}
 			&.visible {
 				right: 100%;
@@ -991,16 +1011,6 @@ body.subsc {
 						display: inline-block;
 						border-radius: 5px;
 						color: white;
-					}
-				}
-			}
-			.c-login {
-				.do {
-					color: #dc0500;
-					cursor: pointer;
-					text-decoration: underline;
-					&:hover {
-						color: #ff3834;
 					}
 				}
 			}
@@ -2019,12 +2029,16 @@ span.cond {
 	background: white;
 	box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.2);
 	padding: 12px 20px;
-	top: -50px;
+	top: -100%;
 	font-weight: bold;
 	border: none;
 	color: white;
 	color: #484848;
 	transition: all 0.5s;
+}
+
+.soclogin {
+	margin-top: 15px;
 }
 
 @keyframes skeleton-loading {

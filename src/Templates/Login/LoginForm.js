@@ -1,7 +1,9 @@
 import { useState, useCallback, useEffect, useContext } from "react";
 import RootContext from "Context";
+import { withTranslation } from "i18n";
+import FacebookLogin from "react-facebook-login";
 
-export default () => {
+export default withTranslation("common")(({ t, onAuth = false }) => {
 	const {
 		actioner,
 		store: { loginStatus, geo }
@@ -13,6 +15,8 @@ export default () => {
 	});
 
 	const [error, _error] = useState("");
+
+	const [logged, _logged] = useState(false);
 
 	const updateState = useCallback(e => {
 		const {
@@ -33,7 +37,7 @@ export default () => {
 		e.stopPropagation();
 
 		if (["username", "password"].some(i => !params[i])) {
-			_error("Must input login and password");
+			_error(t("idnandpassword"));
 		} else {
 			actioner({
 				reduce: "LOGIN",
@@ -43,9 +47,17 @@ export default () => {
 					geo,
 					...params
 				}
+			}).then(() => {
+				_logged(true);
 			});
 		}
 	};
+
+	useEffect(() => {
+		if (logged && loginStatus && onAuth) {
+			onAuth();
+		}
+	}, [loginStatus, logged]);
 
 	useEffect(() => {
 		if (error) {
@@ -55,13 +67,17 @@ export default () => {
 		}
 	}, [error]);
 
+	const responseFacebook = response => {
+		console.log(response);
+	};
+
 	const { username, password } = params;
 
 	return !loginStatus ? (
 		<div className="login">
 			<div className="lgc">
 				<div id="form" className="form">
-					<h2>LOGIN</h2>
+					<h2>{t("Login")}</h2>
 
 					<form>
 						{error && <div className="error">{error}</div>}
@@ -69,7 +85,7 @@ export default () => {
 						<input
 							type="input"
 							name="username"
-							placeholder="Email or ID"
+							placeholder={t("emailOrId")}
 							onChange={updateState}
 							required={true}
 							value={username}
@@ -78,20 +94,29 @@ export default () => {
 						<input
 							type="password"
 							name="password"
-							placeholder="Input Password"
+							placeholder={t("ipassword")}
 							required={true}
 							onChange={updateState}
 							value={password}
 						/>
 
 						<button onClick={submitForm} type="submit">
-							Login
+							{t("Login")}
 						</button>
+
+						<div className="soclogin">
+							<FacebookLogin
+								appId="2911448168917098"
+								autoLoad={false}
+								fields="name,email,picture"
+								callback={responseFacebook}
+							/>
+						</div>
 					</form>
 				</div>
 			</div>
 		</div>
 	) : (
-		"You are logged in"
+		t("alreadyLogged")
 	);
-};
+});

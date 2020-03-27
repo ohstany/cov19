@@ -25,7 +25,7 @@ export const root_store_reducer = (s, a, params = false) => {
 			const { chats, chatReplies } = s;
 
 			if (typeof data === "object" && data.error) {
-				notification(codes[data.code]);
+				notification(codes[data.code], 5000);
 				return {};
 			}
 

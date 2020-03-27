@@ -117,8 +117,6 @@ export default memo(
 
 		useEffect(() => {
 			if (visible && country_code) {
-				fetchChatMessages(10);
-
 				if (!chats[country_code]) {
 					setTimeout(() => {
 						actioner({
@@ -134,6 +132,13 @@ export default memo(
 			}
 
 			return () => stopTimer();
+		}, [visible, country_code]);
+
+		useEffect(() => {
+			if (visible && country_code) {
+				console.log("1st FETCH");
+				fetchChatMessages(25);
+			}
 		}, [visible, country_code]);
 
 		const startAuthors = useCallback(() => {

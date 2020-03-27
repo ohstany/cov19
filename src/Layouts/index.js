@@ -199,8 +199,9 @@ export const MainBlock = memo(
 			<section className="mainBlock" ref={i => createRef(i, "mainBlock")}>
 				<span
 					className="resizer"
-					ref={i => createRef(i, "resizer")}></span>
-				<div className="hidden">{children}</div>
+					ref={i => createRef(i, "resizer")}
+				></span>
+				<div className="layout">{children}</div>
 			</section>
 		);
 	},

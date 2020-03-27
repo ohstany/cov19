@@ -16,6 +16,132 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 		}
 
+		case "PUSH_COMMENT": {
+			const { chats, chatReplies } = s;
+
+			const { parent, country } = params.data || {};
+
+			const index = chats[country].data.findIndex(i => i.ID === parent);
+
+			if (index >= 0) {
+				chats[country].data[index].count =
+					chats[country].data[index].count + 1;
+			}
+
+			if (data && data.ID) {
+				if (data.parent) {
+					if (!chatReplies[data.parent]) {
+						chatReplies[data.parent] = [];
+					}
+
+					chatReplies[data.parent].unshift(data);
+				} else {
+					if (!chats[data.locale]) {
+						chats[data.locale] = {
+							data: [],
+							count: 0,
+							limit: false
+						};
+					}
+
+					chats[data.locale].data.unshift(data);
+				}
+			}
+
+			return {
+				chats
+			};
+		}
+
+		case "SET_CHAT_COUNT": {
+			const { chats } = s;
+
+			const { country } = getUrlParams("?" + params.params);
+
+			if (!chats[country]) {
+				chats[country] = {
+					data: [],
+					count: 0
+				};
+			}
+
+			if (data >= 0) {
+				chats[country].count = data || 0;
+			}
+
+			return {
+				chats
+			};
+		}
+
+		case "FETCH_CHAT": {
+			const { chats } = s;
+
+			const { limit, country, get } = getUrlParams("?" + params.params);
+
+			if (!chats[country]) {
+				chats[country] = {
+					data: [],
+					count: 0,
+					limit: false
+				};
+			}
+
+			if (data instanceof Array === false) return {};
+
+			if (data) {
+				chats[country].data =
+					get === "new"
+						? [...data, ...chats[country].data]
+						: [...chats[country].data, ...data];
+
+				if (limit && data.length < limit) {
+					chats[country].limit = true;
+				} else {
+					chats[country].limit = false;
+				}
+			} else {
+				chats[country].limit = true;
+			}
+
+			return {
+				chats
+			};
+		}
+
+		case "FETCH_REPLY": {
+			const { chatReplies, chatLimit } = s;
+
+			const { limit, parent, get } = getUrlParams("?" + params.params);
+
+			if (!chatReplies[parent]) {
+				chatReplies[parent] = [];
+				chatLimit[parent] = false;
+			}
+
+			if (data instanceof Array === false) return {};
+
+			if (data) {
+				chatReplies[parent] =
+					get === "new"
+						? [...data, ...chatReplies[parent]]
+						: [...chatReplies[parent], ...data];
+
+				if (limit && data.length < limit) {
+					chatLimit[parent] = true;
+				} else {
+					chatLimit[parent] = false;
+				}
+			} else {
+				chatLimit[parent] = true;
+			}
+
+			return {
+				chatReplies,
+				chatLimit
+			};
+		}
+
 		case "SET_NEWS": {
 			const { news, newsLimit } = s;
 
@@ -71,24 +197,6 @@ export const root_store_reducer = (s, a, params = false) => {
 				activityLimit
 			};
 		}
-
-		// case "SET_ACTIVITY": {
-		// 	const { activity } = s;
-
-		// 	const { country, city, limit } = getUrlParams("?" + params.params);
-
-		// 	if (!activity[country]) {
-		// 		activity[country] = {};
-		// 	}
-
-		// 	const key = city || "other";
-
-		// 	activity[country][key] = data || [];
-
-		// 	return {
-		// 		activity
-		// 	};
-		// }
 
 		case "SET_MAP_MARKERS": {
 			return {
@@ -257,6 +365,10 @@ export const root_store_initial_state = {
 	geo: false,
 	loginStatus: false,
 	mapRef: null,
+	chatInfo: {},
+	chatLimit: {},
+	chats: {},
+	chatReplies: {},
 	options: {},
 	settings: {},
 	activityLimit: {},

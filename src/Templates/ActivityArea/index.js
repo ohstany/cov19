@@ -6,7 +6,6 @@ import {
 	memo,
 	useMemo
 } from "react";
-// import Pin from "Assets/images/pin.svg";
 import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
@@ -15,6 +14,7 @@ import countries from "Library/countries-array.json";
 import { sources } from "Library/statuses.js";
 import { condition } from "Library/statuses";
 import { numComma } from "Library";
+import Chat from "./Chat";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -147,7 +147,6 @@ const caseDef = {
 
 const Activity = ({ t }) => {
 	const {
-		api,
 		actioner,
 		store: {
 			country_code,
@@ -164,10 +163,9 @@ const Activity = ({ t }) => {
 	} = useContext(RootContext) || {};
 
 	const [nav, _nav] = useState("acts");
+	const [ch, _ch] = useState(false);
 	const [fetchingNews, _fetchingNews] = useState(false);
 	const [fetchingMarkers, _fetchingMarkers] = useState(false);
-
-	const active = false;
 	const rkey = region_code || "other";
 	const markerKey = `${country_code}_${rkey}`;
 	const { regions = false } = cpos || {};
@@ -207,15 +205,6 @@ const Activity = ({ t }) => {
 
 		return (
 			<div className="ininfo">
-				<li className="infobox hd">
-					<div className="innr">
-						<span className="cnt">
-							{numComma(cases.infections)}
-						</span>
-						<span className="ttl">{t("allcases")}</span>
-					</div>
-				</li>
-
 				{["infected", "cured", "suspicion", "mortal"].map((k, ki) => {
 					return k !== "none" ? (
 						<li className="infobox" key={ki}>
@@ -405,149 +394,118 @@ const Activity = ({ t }) => {
 
 	return (
 		<div id="activityArea" className={"block activityArea " + nav}>
-			<nav>
-				<ol>
-					{[
-						// {
-						// 	id: "local",
-						// 	className: "pin",
-						// 	title: <Pin />
-						// },
-						{ id: "acts", title: t("infections") },
-						{ id: "news", title: t("news") }
-					].map((m, mx) => {
-						return (
-							<li
-								key={mx}
-								className={
-									"navi " +
-									(m.className || "") +
-									(m.id === nav ? " active" : "")
-								}
-								onClick={() => {
-									if (m.id === "local" && index === undefined)
-										return;
-									navigation(m.id);
-								}}
-							>
-								{m.title}
-							</li>
-						);
-					})}
-				</ol>
-			</nav>
+			<Chat visible={ch} toggle={() => _ch(p => !p)} />
 
-			<div className={"activity"}>
-				<div id="sc-markers" className="bb b1">
-					<MakeMark />
+			<div className="hidden">
+				<nav>
+					<ol>
+						{[
+							{
+								id: "chat",
+								className: "pin",
+								title: (
+									<>
+										<span className="chatlive" />
+										{t("chat")}
+									</>
+								)
+							},
+							{ id: "acts", title: t("infections") },
+							{ id: "news", title: t("news") }
+						].map((m, mx) => {
+							return (
+								<li
+									key={mx}
+									className={
+										"navi " +
+										(m.className || "") +
+										(m.id === nav || (m.id == "chat" && ch)
+											? " active"
+											: "")
+									}
+									onClick={() => {
+										if (m.id === "chat") {
+											_ch(p => !p);
+										} else {
+											navigation(m.id);
+										}
+									}}
+								>
+									{m.title}
+								</li>
+							);
+						})}
+					</ol>
+				</nav>
 
-					<div className="filterNavi tbf">
-						<div className="fitem tbf-c">
-							<CountryList
-								value={country_code}
-								onChange={setCountry}
-							/>
+				<div className={"activity"}>
+					<div id="sc-markers" className="bb b1">
+						<MakeMark />
+
+						<div className="filterNavi tbf">
+							<div className="fitem tbf-c">
+								<CountryList
+									value={country_code}
+									onChange={setCountry}
+								/>
+							</div>
+
+							<div className="sep" />
+
+							<div className="fitem tbf-c">
+								<CityList
+									value={region_code}
+									onChange={setCity}
+									regions={builtRegions}
+								/>
+							</div>
 						</div>
 
-						<div className="sep" />
+						<InfiniteScroll
+							dataLength={infections ? infections.length : 0}
+							next={fetchMarkers}
+							hasMore={!activityLimited}
+							loader={
+								region_code ? (
+									<Skeleton1 row={5} />
+								) : (
+									<NoContent text={t("selectCity")} />
+								)
+							}
+							endMessage={<NoContent text={t("nodata")} />}
+							scrollableTarget="sc-markers"
+						>
+							<GetInfo />
 
-						<div className="fitem tbf-c">
-							<CityList
-								value={region_code}
-								onChange={setCity}
-								regions={builtRegions}
-							/>
-						</div>
+							{infections && infections.length
+								? infections.map((a, ax) => {
+										return (
+											<SingleItem
+												nav={nav}
+												key={ax}
+												a={a}
+												ax={ax}
+											/>
+										);
+								  })
+								: ""}
+						</InfiniteScroll>
 					</div>
 
-					<InfiniteScroll
-						dataLength={infections ? infections.length : 0}
-						next={fetchMarkers}
-						hasMore={!activityLimited}
-						loader={
-							region_code ? (
-								<Skeleton1 row={5} />
-							) : (
-								<NoContent text={t("selectCity")} />
-							)
-						}
-						endMessage={<NoContent text={t("nodata")} />}
-						scrollableTarget="sc-markers"
-					>
-						<GetInfo />
-
-						{infections && infections.length
-							? infections.map((a, ax) => {
-									return (
-										<SingleItem
-											nav={nav}
-											key={ax}
-											a={a}
-											ax={ax}
-										/>
-									);
-							  })
-							: ""}
-					</InfiniteScroll>
-				</div>
-
-				<div className="bb b2">
-					<SingleItem nav={nav} a={active} ax={0} />
-					{active && (
-						<div className="comments">
-							{/* <h3>Comments ({comments.length || 0})</h3> */}
-							{/* {comments
-									? comments.map((c, cx) => {
-											return (
-												<div
-													className="cm author"
-													key={cx}>
-													<div className="chead">
-														<b>{c.user}</b>
-														{c.date ? (
-															<span>
-																{" - " + c.date}
-															</span>
-														) : (
-															""
-														)}
-													</div>
-													<div className="cbody">
-														{c.content}
-													</div>
-												</div>
-											);
-									  })
-									: "There are no comments"} */}
-						</div>
-					)}
-				</div>
-
-				<div id="sc-news" className="bb b3">
-					{/* <button
-						onClick={() => {
-							api({
-								method: "GET",
-								action: "crontest",
-								params: "action=parser"
-							}).then(r => {
-								console.log("SSS", r);
-							});
-						}}>
-						SSSS
-					</button> */}
-					<InfiniteScroll
-						dataLength={newsData.length}
-						next={fetchNews}
-						hasMore={!newsLimited}
-						loader={<Skeleton1 row={5} />}
-						endMessage={<NoContent />}
-						scrollableTarget="sc-news"
-					>
-						{newsData.map((a, ax) => (
-							<News key={ax} data={a} ax={ax} t={t} />
-						))}
-					</InfiniteScroll>
+					<div id="sc-news" className="bb b2">
+						<InfiniteScroll
+							dataLength={newsData.length}
+							next={fetchNews}
+							hasMore={!newsLimited}
+							loader={<Skeleton1 row={5} />}
+							endMessage={<NoContent />}
+							scrollableTarget="sc-news"
+						>
+							{newsData.map((a, ax) => (
+								<News key={ax} data={a} ax={ax} t={t} />
+							))}
+						</InfiniteScroll>
+					</div>
 				</div>
 			</div>
 		</div>

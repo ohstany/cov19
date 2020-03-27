@@ -6,7 +6,7 @@ import Head from "next/head";
 import "global.scss";
 
 export default ({ children }) => {
-	const { actioner, setStore, store, logout } = useContext(RootContext);
+	const { logout } = useContext(RootContext);
 
 	return (
 		<>
@@ -19,7 +19,7 @@ export default ({ children }) => {
 				/>
 			</Head>
 
-			<Access actioner={actioner} store={store} set={setStore}>
+			<Access>
 				<div className="awrapper">
 					<Header logout={logout} />
 

@@ -29,8 +29,6 @@ export const root_store_reducer = (s, a, params = false) => {
 				return {};
 			}
 
-			console.log("DATA", data);
-
 			if (data && data.ID) {
 				const { parent, country } = params.data || {};
 
@@ -111,7 +109,8 @@ export const root_store_reducer = (s, a, params = false) => {
 						: [...chats[country].data, ...data];
 
 				if (chats[country].data.length) {
-					chats[country].count = chats[country].count + data.length;
+					chats[country].count =
+						parseInt(chats[country].count) + data.length;
 				}
 
 				if (limit && data.length < limit) {
@@ -148,7 +147,7 @@ export const root_store_reducer = (s, a, params = false) => {
 
 				if (chatReplies[parent].data.length) {
 					chatReplies[parent].count =
-						chatReplies[parent].count + data.length;
+						parseInt(chatReplies[parent].count) + data.length;
 				}
 
 				if (limit && data.length < limit) {

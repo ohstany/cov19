@@ -185,9 +185,9 @@ export const MainBlock = memo(
 					startEvents(mainBlock);
 					startEvents(resizer);
 
-					setTimeout(() => {
-						slide("half");
-					}, 800);
+					// setTimeout(() => {
+					// 	slide("half");
+					// }, 800);
 				} else {
 					menuW = mainBlock.offsetWidth;
 					bodyW = document.body.offsetWidth;

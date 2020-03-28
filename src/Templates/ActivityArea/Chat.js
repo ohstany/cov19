@@ -29,15 +29,17 @@ export default memo(
 			actioner,
 			store: {
 				loginStatus,
-				userdata: { avatar: mya },
+				userdata: {
+					avatar: mya,
+					geo,
+					user_roles: [role = "none"] = []
+				} = {},
 				country_code,
 				chats,
 				chatReplies,
 				chatLimit
 			}
 		} = useContext(RootContext);
-
-		console.log("fetchChatMessages", chats);
 
 		const [comment, _comment] = useState("");
 		const [showReply, _showReply] = useState({ show: false, over: false });
@@ -242,6 +244,7 @@ export default memo(
 						reduce: "PUSH_COMMENT",
 						action: "comments",
 						method: "POST",
+						t,
 						data: {
 							parent,
 							replyto,
@@ -336,53 +339,68 @@ export default memo(
 						>
 							<div className="comment add">
 								{loginStatus ? (
-									<>
-										<div className="c-avatar">
-											<img src={mya || "/avatar.png"} />
-										</div>
-										<div className="c-content">
-											<input
-												id="c-make"
-												placeholder={t("writeComment")}
-												value={comment}
-												onChange={({
-													target: value
-												}) => {
-													if (
-														value.value.length < 500
-													) {
-														_comment(value.value);
-													}
-												}}
-												onKeyDown={e => {
-													if (e.key === "Enter") {
-														if (!pushingComment) {
-															pushComment(
-																false,
-																false,
-																comment
-															);
-														}
-													}
-												}}
-											/>
-											{comment && (
+									geo && geo.country_code === country_code ? (
+										<>
+											<div className="c-avatar">
 												<img
-													src="/send2.png"
-													alt=""
-													onClick={() => {
-														if (!pushingComment) {
-															pushComment(
-																false,
-																false,
-																comment
+													src={mya || "/avatar.png"}
+												/>
+											</div>
+											<div className="c-content">
+												<input
+													id="c-make"
+													placeholder={t(
+														"writeComment"
+													)}
+													value={comment}
+													onChange={({
+														target: value
+													}) => {
+														if (
+															value.value.length <
+															500
+														) {
+															_comment(
+																value.value
 															);
 														}
 													}}
+													onKeyDown={e => {
+														if (e.key === "Enter") {
+															if (
+																!pushingComment
+															) {
+																pushComment(
+																	false,
+																	false,
+																	comment
+																);
+															}
+														}
+													}}
 												/>
-											)}
-										</div>
-									</>
+												{comment && (
+													<img
+														src="/send2.png"
+														alt=""
+														onClick={() => {
+															if (
+																!pushingComment
+															) {
+																pushComment(
+																	false,
+																	false,
+																	comment
+																);
+															}
+														}}
+													/>
+												)}
+											</div>
+										</>
+									) : (
+										""
+									)
 								) : (
 									<DoLogin />
 								)}
@@ -475,92 +493,107 @@ export default memo(
 
 						<div className="comment add">
 							{loginStatus ? (
-								<>
-									<div className="c-avatar">
-										<img src={mya || "/avatar.png"} />
-									</div>
-									<div className="c-content">
-										{showReply.replyTo &&
-											showReply.ID !==
-												showReply.replyTo && (
-												<div className="repto">
-													{t("replyingTo")}
-													<span className="rto">
-														<span className="toname">
-															<UserName
-																value={
-																	showReply.replyName
-																}
-															/>
+								geo && geo.country_code === country_code ? (
+									<>
+										<div className="c-avatar">
+											<img src={mya || "/avatar.png"} />
+										</div>
+										<div className="c-content">
+											{showReply.replyTo &&
+												showReply.ID !==
+													showReply.replyTo && (
+													<div className="repto">
+														{t("replyingTo")}
+														<span className="rto">
+															<span className="toname">
+																<UserName
+																	value={
+																		showReply.replyName
+																	}
+																/>
+															</span>
 														</span>
-													</span>
-												</div>
-											)}
+													</div>
+												)}
 
-										<div style={{ position: "relative" }}>
-											<input
-												id="c-reply"
-												placeholder={t("writeComment")}
-												value={comment}
-												onFocus={() =>
-													_showReply(p => ({
-														...p,
-														over: true
-													}))
-												}
-												onBlur={() =>
-													_showReply(p => ({
-														...p,
-														over: false
-													}))
-												}
-												onChange={({
-													target: value
-												}) => {
-													if (
-														value.value.length < 500
-													) {
-														_comment(value.value);
+											<div
+												style={{ position: "relative" }}
+											>
+												<input
+													id="c-reply"
+													placeholder={t(
+														"writeComment"
+													)}
+													value={comment}
+													onFocus={() =>
+														_showReply(p => ({
+															...p,
+															over: true
+														}))
 													}
-												}}
-												onKeyDown={e => {
-													if (e.key === "Enter") {
-														if (!pushingComment) {
-															pushComment(
-																showReply.ID,
-																showReply.replyTo &&
-																	showReply.replyTo !==
-																		showReply.ID
-																	? showReply.replyTo
-																	: false,
-																comment
-															);
-														}
+													onBlur={() =>
+														_showReply(p => ({
+															...p,
+															over: false
+														}))
 													}
-												}}
-											/>
-											{comment && (
-												<img
-													src="/send2.png"
-													alt=""
-													onClick={() => {
-														if (!pushingComment) {
-															pushComment(
-																showReply.ID,
-																showReply.replyTo &&
-																	showReply.replyTo !==
-																		showReply.ID
-																	? showReply.replyTo
-																	: false,
-																comment
+													onChange={({
+														target: value
+													}) => {
+														if (
+															value.value.length <
+															500
+														) {
+															_comment(
+																value.value
 															);
 														}
 													}}
+													onKeyDown={e => {
+														if (e.key === "Enter") {
+															if (
+																!pushingComment
+															) {
+																pushComment(
+																	showReply.ID,
+																	showReply.replyTo &&
+																		showReply.replyTo !==
+																			showReply.ID
+																		? showReply.replyTo
+																		: false,
+																	comment
+																);
+															}
+														}
+													}}
 												/>
-											)}
+												{comment && (
+													<img
+														src="/send2.png"
+														alt=""
+														onClick={() => {
+															if (
+																!pushingComment
+															) {
+																pushComment(
+																	showReply.ID,
+																	showReply.replyTo &&
+																		showReply.replyTo !==
+																			showReply.ID
+																		? showReply.replyTo
+																		: false,
+																	comment
+																);
+															}
+														}}
+													/>
+												)}
+											</div>
 										</div>
-									</div>
-								</>
+									</>
+								) : (
+									""
+								)
 							) : (
 								<DoLogin />
 							)}

@@ -58,7 +58,7 @@ export default memo(
 					action: "subscribe",
 					data: state
 				}).then(res => {
-					console.log("res", res);
+					// console.log("res", res);
 					if (res || res === "-1") {
 						trackEvent(
 							"click",

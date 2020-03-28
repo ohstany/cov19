@@ -13,10 +13,9 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 		username: "",
 		password: ""
 	});
-
 	const [error, _error] = useState("");
-
 	const [logged, _logged] = useState(false);
+	const [loading, _loading] = useState(false);
 
 	const updateState = useCallback(e => {
 		const {
@@ -67,8 +66,19 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 		}
 	}, [error]);
 
-	const responseFacebook = response => {
-		console.log(response);
+	const responseFacebook = callback => {
+		_loading(true);
+		console.log(callback);
+		actioner({
+			reduce: "LOGIN_SOCIAL",
+			method: "POST",
+			action: "clogin",
+			data: {
+				geo,
+				provider: "facebook",
+				callback
+			}
+		});
 	};
 
 	const { username, password } = params;
@@ -108,9 +118,27 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 							<FacebookLogin
 								appId="2911448168917098"
 								autoLoad={false}
+								isDisabled={loading}
 								fields="name,email,picture"
 								callback={responseFacebook}
 							/>
+							{/* <button
+								onClick={() => {
+									console.log("FB..");
+									actioner({
+										reduce: "LOGIN_SOCIAL",
+										method: "POST",
+										action: "clogin",
+										data: {
+											geo,
+											provider: "facebook",
+											callback: require("./fb.json")
+										}
+									});
+								}}
+							>
+								FACEBOOK
+							</button> */}
 						</div>
 					</form>
 				</div>

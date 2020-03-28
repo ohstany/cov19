@@ -1,0 +1,19 @@
+{
+	"name": "Stas Ohstany",
+	"email": "ohstany@gmail.com",
+	"picture": {
+		"data": {
+			"height": 50,
+			"is_silhouette": false,
+			"url": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=3336342756380956&height=50&width=50&ext=1587942708&hash=AeR-rQJZnK_80VCf",
+			"width": 50
+		}
+	},
+	"id": "3336342756380956",
+	"accessToken": "EAApX8lnj6GoBAMXIJNRWYWLaGVU5LV3MoSbHmWtbXxc43qBikHjv03PEoBdoEiFyocE0InO4DCQ7EzLxg6ugw1EJhZBCKQZADjr8qck5CkD46ZCcouCDEkeyNLLmN9I8P3TSdEynZCZCZBXBVf1ZAZBL0HC0RCRrFnZCRZCeb3Sy7zTl8MefB22sFtWpYjNjWxCxuaYNB3xOYzqgZDZD",
+	"userID": "3336342756380956",
+	"expiresIn": 6493,
+	"signedRequest": "2f98LdA1IAbO4LVsQ5aF9LK0nsuB_0YJFI9RFofzPoU.eyJ1c2VyX2lkIjoiMzMzNjM0Mjc1NjM4MDk1NiIsImNvZGUiOiJBUUJ4RmJPb1lvdFhfeXVoWkRvOEMzMC1wNEFQeWVXdXg0SVBsNjFFVk91MF85aktQaGMzVkw0dGF4UjZmdmVzQWRVX29NWFBMV2hIZENjVmRFVUtXelRDQ21QR3lhLWJVamRLOEwtLVRrX3B0Rlg5YUVjM3ZQSXJaR0gwVERuVmxvWk0tVDFoRGxXQzE3RXhpRmFtdlJQTmNVd1VEWjlQamZXb3pRRG81S3ktRElxa1c3QS1QVUhZbnI1eDFkM3BsXy1ZTkl5Zmc2eUtzYjQ2bVNSUUU3eEswa19SR0x6U0xVWUpZMm5vZ3ptNm1ITGxYeW0zcl81c1ZJbWQyMUNMY0djRGxHaXcwSFdhcjNuNFlYQmFTWUZnb0hnRjRjNGNqUWdVRTVqN2JEVm5rR2ZZQ1RFcmxNWm1NSWtUYU1jN2VDelFpTHFBaU5rMGp4WHA5dUFJOGxaUSIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjoxNTg1MzUwNzA3fQ",
+	"graphDomain": "facebook",
+	"data_access_expiration_time": 1593126707
+}

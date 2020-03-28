@@ -63,7 +63,7 @@ export default memo(
 						}
 					}
 				}).then(res => {
-					console.log("res", res);
+					// console.log("res", res);
 					if (res || res === "-1") {
 						trackEvent("click", "usermark");
 						_done(res);

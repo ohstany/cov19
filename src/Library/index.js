@@ -72,10 +72,11 @@ export const notification = (text, close = 2000) => {
 	not++;
 };
 
-export const Notifications = withTranslation("common")(({ t, code }) => {
+export const Notifications = memo(({ t, code }) => {
 	return {
 		100: t("temporaryBlocked"),
 		101: t("commentModerating"),
+		102: t("cannotCommentCountry"),
 		def: ""
 	}[code || "def"];
 });

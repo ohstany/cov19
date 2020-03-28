@@ -62,5 +62,10 @@
 	"Replies": "Replies",
 	"Reply": "Reply",
 	"replyingTo": "Replying to",
-	"Author": "Author"
+	"Author": "Author",
+	"emailOrId": "Email or ID",
+	"ipassword": "Input Password",
+	"alreadyLogged": "You are logged in",
+	"idnandpassword": "Must input login ID and password",
+	"cannotCommentCountry": "Comments are not allowed"
 }

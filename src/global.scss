@@ -577,24 +577,6 @@ body.subsc {
 		height: 100%;
 	}
 
-	@include md {
-		display: block;
-		width: 100%;
-		max-width: 100%;
-		height: 100%;
-		bottom: 0;
-		top: auto;
-		position: fixed;
-		border: 0;
-		border-top-right-radius: 10px;
-		border-top-left-radius: 10px;
-		box-shadow: 0px -1px 10px -3px rgba(0, 0, 0, 0.2);
-		z-index: 100;
-		.hidden {
-			padding-top: $resizer;
-		}
-	}
-
 	.resizer {
 		display: none;
 		position: absolute;
@@ -604,19 +586,20 @@ body.subsc {
 		color: white;
 		padding: 10px;
 		cursor: pointer;
-		z-index: 10;
+		z-index: 100;
 		border-top-right-radius: 10px;
 		border-top-left-radius: 10px;
 		@include md {
 			display: block;
 			top: 0;
-			height: $resizer;
+			height: $resizer + 1;
 			text-align: center;
 			padding: 0;
 			left: 0;
 			right: 0;
 			margin: auto;
 			width: 100%;
+			border-bottom: 1px solid #e6e6e6;
 			svg {
 				display: none;
 			}
@@ -872,14 +855,22 @@ body.subsc {
 					}
 				}
 			}
-			&.offline {
-				.comment.add {
-					background: #ed1813;
-					color: white;
-				}
-			}
 			&.visible {
 				right: 100%;
+			}
+			@include md {
+				right: auto;
+				left: -100%;
+				top: 0;
+				z-index: 101;
+				.replies {
+					width: 100%;
+				}
+				&.visible {
+					right: auto;
+					left: 0;
+					width: 100%;
+				}
 			}
 			.filters {
 				position: absolute;
@@ -1058,6 +1049,13 @@ body.subsc {
 					z-index: 1;
 				}
 			}
+			&.offline {
+				.comment.add {
+					background: #ed1813;
+					color: white;
+					border-color: #d40500;
+				}
+			}
 		}
 		.activity {
 			transition: all 0.5s;
@@ -1206,6 +1204,31 @@ body.subsc {
 		}
 		@include md {
 			border-top: 1px solid #d0d0d0;
+		}
+	}
+
+	@include md {
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		height: 100%;
+		bottom: 0;
+		top: auto;
+		position: fixed;
+		border: 0;
+		border-top-right-radius: 10px;
+		border-top-left-radius: 10px;
+		box-shadow: 0px -1px 10px -3px rgba(0, 0, 0, 0.2);
+		z-index: 100;
+		.hidden {
+			padding-top: $resizer;
+			border: 0;
+		}
+		.activityArea {
+			border: 0;
+			.hidden {
+				border: 0;
+			}
 		}
 	}
 
@@ -1555,7 +1578,7 @@ time {
 	}
 	.form {
 		min-height: auto;
-		height: 300px;
+		height: 400px;
 		top: 0;
 		bottom: 0;
 		margin: auto;

@@ -16,11 +16,22 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 		}
 
+		case "LOGIN_SOCIAL": {
+			if (data && data.ID) {
+				return { userdata: data, loginStatus: true, fetched: true };
+			} else {
+				return { fetched: true };
+			}
+		}
+
 		case "PUSH_COMMENT": {
 			const { chats, chatReplies } = s;
 
 			if (typeof data === "object" && data.error) {
-				notification(<Notifications code={data.code} />, 5000);
+				notification(
+					<Notifications t={params.t} code={data.code} />,
+					5000
+				);
 				return {};
 			}
 

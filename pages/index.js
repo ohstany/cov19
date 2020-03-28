@@ -6,7 +6,7 @@ import Subscribe from "Templates/Subscribe";
 import NavMenu from "Templates/NavMenu";
 import GoogleAnalytics from "Templates/GoogleAnalytics";
 import { MainBlock } from "Layouts";
-import { withTranslation, i18n } from "i18n";
+import { withTranslation } from "i18n";
 import { NextSeo } from "next-seo";
 import "global.scss";
 

@@ -1591,7 +1591,7 @@ time {
 	}
 	.form {
 		min-height: auto;
-		height: 400px;
+		height: 500px;
 		top: 0;
 		bottom: 0;
 		margin: auto;
@@ -2074,7 +2074,38 @@ span.cond {
 }
 
 .soclogin {
-	margin-top: 15px;
+	margin-top: 40px;
+	position: relative;
+	&:before {
+		content: "OR";
+		position: absolute;
+		left: 0;
+		right: 0;
+		margin: auto;
+		top: -28px;
+		width: 40px;
+		text-align: center;
+		font-size: 13px;
+		color: #464646;
+		font-weight: bold;
+	}
+	.lgbtn {
+		&:not(:last-child) {
+			margin-bottom: 10px;
+		}
+		&.google {
+			button {
+				opacity: 1 !important;
+				border: 0 !important;
+				box-shadow: none !important;
+				padding: 4px 10px !important;
+				border: 1px solid #9e9e9e !important;
+				span {
+					font-size: 20px;
+				}
+			}
+		}
+	}
 }
 
 @keyframes skeleton-loading {

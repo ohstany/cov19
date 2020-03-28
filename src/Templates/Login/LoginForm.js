@@ -63,7 +63,7 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 
 	const responseFacebook = callback => {
 		_loading(true);
-		console.log(callback);
+		// console.log(callback);
 		actioner({
 			reduce: "LOGIN_SOCIAL",
 			method: "POST",
@@ -74,12 +74,27 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 				callback
 			}
 		}).then(() => {
+			_loading(false);
 			_logged(true);
 		});
 	};
 
 	const responseGoogle = callback => {
+		_loading(true);
 		console.log(callback);
+		actioner({
+			reduce: "LOGIN_SOCIAL",
+			method: "POST",
+			action: "clogin",
+			data: {
+				geo,
+				provider: "google",
+				callback
+			}
+		}).then(() => {
+			_loading(false);
+			_logged(true);
+		});
 	};
 
 	useEffect(() => {
@@ -122,7 +137,7 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 						</button>
 
 						<div className="soclogin">
-							<div className="lgbtn">
+							<div className="lgbtn fb">
 								<FacebookLogin
 									appId="2911448168917098"
 									autoLoad={false}
@@ -132,34 +147,17 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 								/>
 							</div>
 
-							<div className="lgbtn">
+							<div className="lgbtn google">
 								<GoogleLogin
 									clientId="987013950710-p1pfu35k0iq927ne44u1ppbnd5uasets.apps.googleusercontent.com"
 									autoLoad={false}
+									disabled={loading}
 									buttonText="LOGIN WITH GOOGLE"
 									onSuccess={responseGoogle}
 									onFailure={responseGoogle}
 									cookiePolicy={"single_host_origin"}
 								/>
 							</div>
-
-							{/* <button
-								onClick={() => {
-									console.log("FB..");
-									actioner({
-										reduce: "LOGIN_SOCIAL",
-										method: "POST",
-										action: "clogin",
-										data: {
-											geo,
-											provider: "facebook",
-											callback: require("./fb.json")
-										}
-									});
-								}}
-							>
-								FACEBOOK
-							</button> */}
 						</div>
 					</form>
 				</div>

@@ -858,20 +858,6 @@ body.subsc {
 			&.visible {
 				right: 100%;
 			}
-			@include md {
-				right: auto;
-				left: -100%;
-				top: 0;
-				z-index: 101;
-				.replies {
-					width: 100%;
-				}
-				&.visible {
-					right: auto;
-					left: 0;
-					width: 100%;
-				}
-			}
 			.filters {
 				position: absolute;
 				background: white;
@@ -1054,6 +1040,33 @@ body.subsc {
 					background: #ed1813;
 					color: white;
 					border-color: #d40500;
+				}
+			}
+			@include md {
+				right: auto;
+				left: -100%;
+				top: 0;
+				z-index: 101;
+				.comments {
+					position: absolute;
+					top: 0;
+				}
+				.cm-inner {
+					padding-top: 48px;
+				}
+				.c-login {
+					padding: 10px 0;
+				}
+				.filters {
+					padding: 15px 10px;
+				}
+				.replies {
+					width: 100%;
+				}
+				&.visible {
+					right: auto;
+					left: 0;
+					width: 100%;
 				}
 			}
 		}

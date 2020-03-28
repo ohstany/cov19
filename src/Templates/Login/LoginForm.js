@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useContext } from "react";
 import RootContext from "Context";
 import { withTranslation } from "i18n";
 import FacebookLogin from "react-facebook-login";
+import GoogleLogin from "react-google-login";
 
 export default withTranslation("common")(({ t, onAuth = false }) => {
 	const {
@@ -53,12 +54,6 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 	};
 
 	useEffect(() => {
-		if (logged && loginStatus && onAuth) {
-			onAuth();
-		}
-	}, [loginStatus, logged]);
-
-	useEffect(() => {
 		if (error) {
 			setTimeout(() => {
 				_error("");
@@ -78,8 +73,20 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 				provider: "facebook",
 				callback
 			}
+		}).then(() => {
+			_logged(true);
 		});
 	};
+
+	const responseGoogle = callback => {
+		console.log(callback);
+	};
+
+	useEffect(() => {
+		if (logged && loginStatus && onAuth) {
+			onAuth();
+		}
+	}, [loginStatus, logged]);
 
 	const { username, password } = params;
 
@@ -115,13 +122,27 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 						</button>
 
 						<div className="soclogin">
-							<FacebookLogin
-								appId="2911448168917098"
-								autoLoad={false}
-								isDisabled={loading}
-								fields="name,email,picture"
-								callback={responseFacebook}
-							/>
+							<div className="lgbtn">
+								<FacebookLogin
+									appId="2911448168917098"
+									autoLoad={false}
+									isDisabled={loading}
+									fields="name,email,picture"
+									callback={responseFacebook}
+								/>
+							</div>
+
+							<div className="lgbtn">
+								<GoogleLogin
+									clientId="987013950710-p1pfu35k0iq927ne44u1ppbnd5uasets.apps.googleusercontent.com"
+									autoLoad={false}
+									buttonText="LOGIN WITH GOOGLE"
+									onSuccess={responseGoogle}
+									onFailure={responseGoogle}
+									cookiePolicy={"single_host_origin"}
+								/>
+							</div>
+
 							{/* <button
 								onClick={() => {
 									console.log("FB..");

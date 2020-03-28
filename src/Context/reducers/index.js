@@ -148,7 +148,7 @@ export const root_store_reducer = (s, a, params = false) => {
 						? [...data, ...chatReplies[parent]]
 						: [...chatReplies[parent], ...data];
 
-				if (get === "new" && chatReplies[parent].data.length) {
+				if (get === "new" && chatReplies[parent].length) {
 					chatReplies[parent].count =
 						parseInt(chatReplies[parent].count) + data.length;
 				}

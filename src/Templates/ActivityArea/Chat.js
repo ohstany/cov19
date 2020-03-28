@@ -339,7 +339,9 @@ export default memo(
 						>
 							<div className="comment add">
 								{loginStatus ? (
-									geo && geo.country_code === country_code ? (
+									(geo &&
+										geo.country_code === country_code) ||
+									role === "developer" ? (
 										<>
 											<div className="c-avatar">
 												<img
@@ -493,7 +495,8 @@ export default memo(
 
 						<div className="comment add">
 							{loginStatus ? (
-								geo && geo.country_code === country_code ? (
+								(geo && geo.country_code === country_code) ||
+								role === "developer" ? (
 									<>
 										<div className="c-avatar">
 											<img src={mya || "/avatar.png"} />

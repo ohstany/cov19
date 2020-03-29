@@ -39,10 +39,10 @@
 	"share": "Share, protect your friends and family.",
 	"copy": "Copied!",
 	"None": "None",
-	"Suspicion": "Suspicion",
-	"Infected": "Infected",
-	"Mortal": "Mortal",
-	"Cured": "Cured",
+	"Suspicion": "Suspected",
+	"Infected": "Confirmed",
+	"Mortal": "Deaths",
+	"Cured": "Recovered",
 	"Witness": "Witness",
 	"Official Source": "Official Source",
 	"Source": "Source",
@@ -67,5 +67,8 @@
 	"ipassword": "Input Password",
 	"alreadyLogged": "You are logged in",
 	"idnandpassword": "Must input login ID and password",
-	"cannotCommentCountry": "Comments are not allowed"
+	"cannotCommentCountry": "Comments are not allowed",
+	"Go Back": "Go Back",
+	"showMore": "Show More",
+	"showLess": "Show Less"
 }

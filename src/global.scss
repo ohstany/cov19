@@ -294,7 +294,7 @@ footer {
 button {
 	font-size: 15px;
 	border: 0;
-	background: #ed1813;
+	background: #e64234;
 	color: white;
 	padding: 5px 10px;
 	font-weight: 300;
@@ -766,7 +766,7 @@ body.subsc {
 						margin-right: 5px;
 					}
 					&.active {
-						background: #f32b26;
+						background: #e64234;
 						color: white;
 						&:after {
 							display: none;
@@ -868,6 +868,19 @@ body.subsc {
 				width: 100%;
 				margin-right: -4px;
 				z-index: 10;
+				svg {
+					max-width: 40px;
+				}
+				.goback {
+					position: absolute;
+					right: 10px;
+					top: 8px;
+					cursor: pointer;
+					svg {
+						width: 6px;
+						margin-right: 5px;
+					}
+				}
 				img {
 					position: absolute;
 					right: 7px;
@@ -915,21 +928,46 @@ body.subsc {
 					}
 					.openreply,
 					.repcount {
-						padding-top: 5px;
 						display: inline-block;
-						font-size: 13px;
+						text-transform: uppercase;
 						color: #565656;
 						font-weight: 600;
 						cursor: pointer;
 					}
 					.repcount {
 						float: right;
+						margin-top: 2px;
 					}
 					.openreply {
 						color: #c30400;
 						margin-top: 1px;
+						margin-left: 18px;
 					}
-
+					.actions {
+						color: #717171;
+						margin-top: 7px;
+						font-size: 12px;
+						.likes {
+							display: inline-block;
+							margin: 0 7px;
+							cursor: pointer;
+							&:first-child {
+								margin-left: 0;
+							}
+							&:hover {
+								color: #c30400;
+							}
+							svg {
+								width: 10px;
+							}
+							.lc {
+								margin-left: 2px;
+							}
+						}
+						@include md {
+							font-size: 13px;
+						}
+					}
 					&.owner {
 						background: #f1eeee;
 						border-bottom: 1px solid #e4e4e4;
@@ -943,6 +981,8 @@ body.subsc {
 					img {
 						margin: 0;
 						width: 30px;
+						border-radius: 50px;
+						overflow: hidden;
 					}
 				}
 				.c-meta {
@@ -965,7 +1005,25 @@ body.subsc {
 					}
 				}
 				.c-message {
+					position: relative;
 					cursor: pointer;
+					&.hd {
+						overflow: hidden;
+						text-overflow: ellipsis;
+						display: -webkit-box;
+						-webkit-box-orient: vertical;
+						-webkit-line-clamp: 3;
+					}
+				}
+				.moreLess {
+					font-weight: bold;
+					color: #636363;
+					cursor: pointer;
+					margin-bottom: 10px;
+					margin-top: 2px;
+					&:hover {
+						color: #dc0500;
+					}
 				}
 				.c-content {
 					padding-left: 45px;
@@ -1037,7 +1095,7 @@ body.subsc {
 			}
 			&.offline {
 				.comment.add {
-					background: #ed1813;
+					background: #e64234;
 					color: white;
 					border-color: #d40500;
 				}
@@ -1681,7 +1739,7 @@ $source2: #be146b;
 $osource: #902fcc;
 $osource2: #7d15be;
 $suspicion: #ed6200;
-$infected: #ed1813;
+$infected: #e64234;
 $witness: #02c094;
 $witness2: #008e6d;
 $published: #26b95a;
@@ -2093,6 +2151,11 @@ span.cond {
 		&:not(:last-child) {
 			margin-bottom: 10px;
 		}
+		&.fb {
+			button {
+				font-size: 15px;
+			}
+		}
 		&.google {
 			button {
 				opacity: 1 !important;
@@ -2100,8 +2163,18 @@ span.cond {
 				box-shadow: none !important;
 				padding: 4px 10px !important;
 				border: 1px solid #9e9e9e !important;
+				display: flex !important;
+				justify-content: center !important;
+				align-items: center !important;
+				> div {
+					padding: 10px 7px !important;
+					margin-right: 0 !important;
+					svg {
+						margin-top: 3px;
+					}
+				}
 				span {
-					font-size: 20px;
+					font-size: 15px;
 				}
 			}
 		}

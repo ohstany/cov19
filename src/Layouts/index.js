@@ -149,11 +149,11 @@ export const MainBlock = memo(
 					mainBlock.style.bottom = `-${posFix + 1}px`;
 				}
 
-				if (posFix < 100) {
-					removeEvents(mainBlock);
-				} else {
-					startEvents(mainBlock);
-				}
+				// if (posFix < 100) {
+				// 	removeEvents(mainBlock);
+				// } else {
+				// 	startEvents(mainBlock);
+				// }
 			}
 
 			document.onmouseup = null;
@@ -182,7 +182,7 @@ export const MainBlock = memo(
 					inner = document.getElementById("activityArea");
 					social = document.getElementById("socials");
 
-					startEvents(mainBlock);
+					// startEvents(mainBlock);
 					startEvents(resizer);
 
 					// setTimeout(() => {

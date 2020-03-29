@@ -16,6 +16,35 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 		}
 
+		case "SET_LIKE": {
+			const { chats } = s;
+			const { c, item, status, type } = getUrlParams("?" + params.params);
+
+			const index = chats[c].data.findIndex(i => "" + i.ID === "" + item);
+
+			if (type === "author") {
+				if (index >= 0) {
+					if (data === 1) {
+						if (status === "1") {
+							chats[c].data[index].like++;
+						} else {
+							chats[c].data[index].dislike++;
+						}
+					} else if (data === 2) {
+						if (status === "1") {
+							chats[c].data[index].like++;
+							chats[c].data[index].dislike--;
+						} else {
+							chats[c].data[index].like--;
+							chats[c].data[index].dislike++;
+						}
+					}
+				}
+			}
+
+			return { chats };
+		}
+
 		case "LOGIN_SOCIAL": {
 			if (data && data.ID) {
 				return { userdata: data, loginStatus: true, fetched: true };
@@ -43,9 +72,8 @@ export const root_store_reducer = (s, a, params = false) => {
 				);
 
 				if (index >= 0) {
-					chats[country].data[index].count =
-						chats[country].data[index].count + 1;
-					chats[country].count = chats[country].count + 1;
+					chats[country].data[index].count++;
+					chats[country].count++;
 				}
 
 				if (data.parent) {
@@ -108,15 +136,15 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 
 			if (data) {
-				chats[country].data =
-					get === "new"
-						? [...data, ...chats[country].data]
-						: [...chats[country].data, ...data];
-
 				if (get === "new" && chats[country].data.length) {
 					chats[country].count =
 						parseInt(chats[country].count) + data.length;
 				}
+
+				chats[country].data =
+					get === "new"
+						? [...data, ...chats[country].data]
+						: [...chats[country].data, ...data];
 
 				if (limit && data.length < limit) {
 					chats[country].limit = true;
@@ -143,15 +171,15 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 
 			if (data) {
-				chatReplies[parent] =
-					get === "new"
-						? [...data, ...chatReplies[parent]]
-						: [...chatReplies[parent], ...data];
-
 				if (get === "new" && chatReplies[parent].length) {
 					chatReplies[parent].count =
 						parseInt(chatReplies[parent].count) + data.length;
 				}
+
+				chatReplies[parent] =
+					get === "new"
+						? [...data, ...chatReplies[parent]]
+						: [...chatReplies[parent], ...data];
 
 				if (limit && data.length < limit) {
 					chatLimit[parent] = true;
@@ -382,6 +410,7 @@ export const root_store_reducer = (s, a, params = false) => {
 
 export const root_store_initial_state = {
 	userdata: {},
+	language: "en",
 	country_code: undefined,
 	region_code: undefined,
 	index: undefined,

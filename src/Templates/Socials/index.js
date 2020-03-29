@@ -1,4 +1,4 @@
-import { useContext, memo } from "react";
+import { useContext, memo, useMemo } from "react";
 import RootContext from "Context";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -50,135 +50,140 @@ export default memo(
 		const {
 			origin,
 			protocol,
-			siteMeta: { title }
+			siteMeta: { title },
+			store: { country_code }
 		} = useContext(RootContext) || {};
 
 		const url = `${protocol}://${origin}/`;
+
+		const socialButtons = useMemo(() => {
+			return [
+				{
+					url: "https://www.facebook.com/sharer.php?u=" + url,
+					id: "facebook",
+					className: "fb",
+					allow: "",
+					exclude: "",
+					icon: faFacebook,
+					main: true
+				},
+				{
+					url: `https://twitter.com/intent/tweet?text=${title}&amp;url=${url}`,
+					id: "twitter",
+					className: "tw",
+					allow: "",
+					exclude: "UA",
+					icon: faTwitter,
+					main: true
+				},
+				{
+					url: `https://www.linkedin.com/shareArticle?mini=true&amp;url=${url}&amp;title=${title}`,
+					id: "linkedin",
+					className: "ld",
+					allow: "",
+					exclude: "UA",
+					icon: faLinkedin,
+					main: true
+				},
+				{
+					url: `https://vk.com/share.php?url=${url}`,
+					id: "vk",
+					className: "vk",
+					allow: "RU,KZ,BY,UZ,KG,GE,AZ,AM",
+					exclude: "",
+					icon: faVk,
+					main: false
+				},
+				{
+					url: `https://connect.ok.ru/dk?st.cmd=WidgetSharePreview&amp;st.shareUrl=${url}&amp;description=${title}&amp;media=http://asiandaily.co.kr/wp-content/uploads/2020/02/지하철11-1-677x470.jpg`,
+					id: "connect",
+					className: "od",
+					allow: "RU,KZ,BY,UZ,KG,GE,AZ,AM",
+					exclude: "",
+					icon: faOdnoklassniki,
+					main: false
+				},
+				{
+					url: `https://api.whatsapp.com/send?text=${title}%20${url}`,
+					id: "whatsapp",
+					className: "whatsapp",
+					allow: "",
+					exclude: "UA",
+					icon: faWhatsapp,
+					main: true
+				},
+				{
+					url: `https://telegram.me/share/url?url=${url}&amp;text=${title}`,
+					id: "telegram",
+					className: "telegram",
+					allow: "",
+					exclude: "",
+					icon: faPaperPlane,
+					main: true
+				},
+				{
+					url: `viber://forward?text=${title}%20${url}`,
+					id: "viber",
+					className: "viber",
+					allow: "UA,RU,KZ,BY,UZ,KG,GE,AZ,AM",
+					exclude: "",
+					icon: faViber,
+					main: false
+				},
+				{
+					url: `https://web.skype.com/share?url=${url}&amp;text=${title}`,
+					id: "skype",
+					className: "skype",
+					allow: "",
+					exclude: "",
+					icon: faSkype,
+					main: true
+				},
+				{
+					url: `https://reddit.com/submit?url=${url}&amp;title=${title}`,
+					id: "reddit",
+					className: "reddit",
+					allow: "",
+					exclude: "",
+					icon: faReddit,
+					main: false
+				},
+				{
+					url: `https://getpocket.com/save?title=${title}&amp;url=${url}`,
+					id: "pocket",
+					className: "pocket",
+					allow: "",
+					exclude: "",
+					icon: faGetPocket,
+					main: false
+				}
+			];
+		});
 
 		return (
 			<div id="socials" className="socials">
 				<div className="sct">{t("share")}</div>
 
 				<div className="share-links">
-					<a
-						href="#"
-						onClick={e =>
-							share(
-								e,
-								"https://www.facebook.com/sharer.php?u=" + url,
-								"facebook"
-							)
-						}
-						rel="external noopener"
-						className="fb">
-						<FontAwesomeIcon icon={faFacebook} />
-					</a>
-					<a
-						href="#"
-						onClick={e =>
-							share(
-								e,
-								`https://twitter.com/intent/tweet?text=${title}&amp;url=${url}`,
-								"twitter"
-							)
-						}
-						rel="external noopener"
-						className="tw">
-						<FontAwesomeIcon icon={faTwitter} />
-					</a>
-					<a
-						href="#"
-						onClick={e =>
-							share(
-								e,
-								`https://www.linkedin.com/shareArticle?mini=true&amp;url=${url}&amp;title=${title}`,
-								"linkedin"
-							)
-						}
-						rel="external noopener"
-						className="ld">
-						<span className="fa fa-linkedin"></span>
-						<FontAwesomeIcon icon={faLinkedin} />
-					</a>
-					{/* <a
-						href={`https://reddit.com/submit?url=${url}&amp;title=${title}`}
-						rel="external noopener"
-						target="_blank"
-						className="rdd">
-						<FontAwesomeIcon icon={faReddit} />
-					</a> */}
-					<a
-						href="#"
-						onClick={e =>
-							share(
-								e,
-								`https://vk.com/share.php?url=${url}`,
-								"vk"
-							)
-						}
-						rel="external noopener"
-						className="vk">
-						<FontAwesomeIcon icon={faVk} />
-					</a>
-					{/* <a
-						href={`https://connect.ok.ru/dk?st.cmd=WidgetSharePreview&amp;st.shareUrl=${url}&amp;description=${title}&amp;media=http://asiandaily.co.kr/wp-content/uploads/2020/02/지하철11-1-677x470.jpg`}
-						rel="external noopener"
-						target="_blank"
-						className="od">
-						<FontAwesomeIcon icon={faOdnoklassniki} />
-					</a> */}
-					{/* <a
-						href={`https://getpocket.com/save?title=${title}&amp;url=${url}`}
-						rel="external noopener"
-						target="_blank"
-						className="pocket">
-						<FontAwesomeIcon icon={faGetPocket} />
-					</a> */}
-					{/* <a
-						href={`https://web.skype.com/share?url=${url}&amp;text=${title}`}
-						rel="external noopener"
-						target="_blank"
-						className="skype">
-						<FontAwesomeIcon icon={faSkype} />
-					</a> */}
-					<a
-						onClick={e =>
-							share(
-								e,
-								`https://api.whatsapp.com/send?text=${title}%20${url}`,
-								"whatsapp"
-							)
-						}
-						rel="external noopener"
-						className="whatsapp">
-						<FontAwesomeIcon icon={faWhatsapp} />
-					</a>
-					<a
-						href="#"
-						onClick={e =>
-							share(
-								e,
-								`https://telegram.me/share/url?url=${url}&amp;text=${title}`,
-								"telegram"
-							)
-						}
-						rel="external noopener"
-						className="telegram">
-						<FontAwesomeIcon icon={faPaperPlane} />
-					</a>
-					<a
-						href="#"
-						onClick={e =>
-							share(
-								e,
-								`viber://forward?text=${title}%20${url}`,
-								"viber"
-							)
-						}
-						rel="external noopener"
-						className="viber">
-						<FontAwesomeIcon icon={faViber} />
-					</a>
+					{socialButtons.map((i, ix) => {
+						return (i.main &&
+							i.exclude.indexOf(country_code) === -1) ||
+							(i.allow.indexOf(country_code) >= 0 &&
+								i.exclude.indexOf(country_code) === -1) ? (
+							<a
+								key={ix}
+								href="#"
+								onClick={e => share(e, i.url, i.id)}
+								rel="external noopener"
+								className={i.className}
+							>
+								<FontAwesomeIcon icon={i.icon} />
+							</a>
+						) : (
+							""
+						);
+					})}
+
 					<a
 						href="#"
 						onClick={e =>
@@ -189,12 +194,14 @@ export default memo(
 							)
 						}
 						rel="external noopener"
-						className="email">
+						className="email"
+					>
 						<FontAwesomeIcon icon={faEnvelope} />
 					</a>
 					<a
 						className="custom copyurl"
-						onClick={e => copy(e, url, t("copy"))}>
+						onClick={e => copy(e, url, t("copy"))}
+					>
 						<FontAwesomeIcon icon={faCopy} />
 					</a>
 				</div>

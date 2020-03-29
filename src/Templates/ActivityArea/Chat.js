@@ -11,11 +11,35 @@ import { Skeleton1 } from "Templates/Skeleton";
 import Popup from "Templates/Popup";
 import NoContent from "Templates/NoContent";
 import Access from "Templates/Login/LoginForm";
+import { numComma } from "Library";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
+import moment from "moment";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+	faThumbsUp,
+	faThumbsDown,
+	faChevronLeft
+} from "@fortawesome/fontawesome-free-solid";
 
 const UserName = ({ prefix = "User", value }) =>
 	prefix + (1000 + parseInt(value));
+
+const LikesCounter = ({ value }) => {
+	if (!value) return "";
+	const n = numComma(value).split(",");
+	return (
+		<span className="lc">
+			{n.length === 3
+				? `${parseInt(n[0])}M ${parseInt(n[1])}K ${parseInt(n[2])}`
+				: n.length === 2
+				? `${parseInt(n[0])}K ${parseInt(n[1])}`
+				: parseInt(n[0])}
+		</span>
+	);
+};
 
 var timer = null;
 var timer2 = null;
@@ -28,6 +52,7 @@ export default memo(
 		const {
 			actioner,
 			store: {
+				language,
 				loginStatus,
 				userdata: {
 					avatar: mya,
@@ -49,6 +74,22 @@ export default memo(
 		const [autoFetchAuthors, _autoFetchAuthors] = useState(false);
 		const [autoFetchReplies, _autoFetchReplies] = useState(false);
 		const [popup, _popup] = useState(false);
+		const [updater, _updater] = useState(false);
+
+		useEffect(() => {
+			if (showReply.ID) {
+				const index = chats[country_code].data.findIndex(
+					i => i.ID === showReply.ID
+				);
+
+				if (index >= 0) {
+					_showReply(p => ({
+						...p,
+						...chats[country_code].data[index]
+					}));
+				}
+			}
+		}, [updater]);
 
 		const countryChat = useMemo(
 			() =>
@@ -84,6 +125,17 @@ export default memo(
 					: false,
 			[country_code, fetchingReplies]
 		);
+
+		const setLikes = (ID, status, type) => {
+			actioner({
+				reduce: "SET_LIKE",
+				action: "likes",
+				method: "POST",
+				params: `item=${ID}&status=${status}&c=${country_code}&type=${type}`
+			}).then(() => {
+				_updater(p => p + 1);
+			});
+		};
 
 		useEffect(() => {
 			if (autoFetchAuthors) {
@@ -254,6 +306,7 @@ export default memo(
 					}).then(() => {
 						_comment("");
 						_pushingComment(false);
+						parent && _updater(p => p + 1);
 					});
 				}
 			},
@@ -296,6 +349,165 @@ export default memo(
 		const closePopup = useCallback(() => {
 			_popup(p => false);
 		}, []);
+
+		const Actions = useCallback(
+			({ type, item, action, showCount = true }) => {
+				const { like, dislike, ID, count } = item || {};
+				return (
+					<div className="actions">
+						<div
+							className="likes l"
+							onClick={() => setLikes(ID, 1, type)}
+						>
+							<FontAwesomeIcon icon={faThumbsUp} />
+							<LikesCounter value={like} />
+						</div>
+
+						<div
+							className="likes d"
+							onClick={() => setLikes(ID, 0, type)}
+						>
+							<FontAwesomeIcon icon={faThumbsDown} />
+							<LikesCounter value={dislike} />
+						</div>
+
+						<span className="openreply" onClick={action}>
+							{t("Reply")}
+						</span>
+
+						{showCount && count ? (
+							<span
+								className="repcount"
+								onClick={() => fetchReplies("new", item)}
+							>
+								{count} {t("Replies")}
+							</span>
+						) : (
+							""
+						)}
+					</div>
+				);
+			}
+		);
+
+		const Comment = useCallback(
+			({ c }) => {
+				const [cont, _cont] = useState(false);
+
+				const len = c.content.length;
+
+				return (
+					<div className="comment">
+						<div className="c-avatar">
+							<img src={c.avatar || "/avatar.png"} />
+						</div>
+						<div className="c-content">
+							<div className="c-meta">
+								<span className="c-name">
+									<UserName value={c.name} />
+								</span>
+								<span className="c-when">
+									{c.date
+										? moment(c.date)
+												.lang(language || "en")
+												.fromNow()
+										: ""}
+								</span>
+							</div>
+
+							<div
+								className={
+									"c-message" +
+									(len && len > 100
+										? cont
+											? " vs"
+											: " hd"
+										: "")
+								}
+								onDoubleClick={() => {
+									fetchReplies("new", c);
+								}}
+							>
+								{c.content}
+							</div>
+
+							{len && len > 100 ? (
+								<div
+									className="moreLess"
+									onClick={() => _cont(p => !p)}
+								>
+									{t(cont ? "showLess" : "showMore")}
+								</div>
+							) : (
+								""
+							)}
+
+							<Actions
+								item={c}
+								type="author"
+								action={() => {
+									fetchReplies("new", c);
+									repliesWindow(false, false, true, 500);
+								}}
+							/>
+						</div>
+					</div>
+				);
+			},
+			[country_code]
+		);
+
+		const Reply = useCallback(
+			({ c }) => {
+				const [cont, _cont] = useState(false);
+
+				const len = c.content.length;
+
+				return (
+					<div className="comment">
+						<div className="c-avatar">
+							<img src={c.avatar || "/avatar.png"} />
+						</div>
+						<div className="c-content">
+							<div className="c-meta">
+								<span className="c-name">
+									<UserName value={c.name} />
+								</span>
+								<span className="c-when">{c.date}</span>
+							</div>
+
+							<div
+								className={
+									"c-message" +
+									(len && len > 100
+										? cont
+											? " vs"
+											: " hd"
+										: "")
+								}
+								onDoubleClick={() => {
+									repliesWindow(c.ID, c.name, true, 0);
+								}}
+							>
+								{c.content}
+							</div>
+
+							{len && len > 100 ? (
+								<div
+									className="moreLess"
+									onClick={() => _cont(p => !p)}
+								>
+									{t(cont ? "showLess" : "showMore")}
+								</div>
+							) : (
+								""
+							)}
+						</div>
+					</div>
+				);
+			},
+			[country_code]
+		);
 
 		return (
 			<div
@@ -410,68 +622,7 @@ export default memo(
 
 							{countryChat && countryChat.length
 								? countryChat.map((c, cx) => (
-										<div key={cx} className="comment">
-											<div className="c-avatar">
-												<img
-													src={
-														c.avatar ||
-														"/avatar.png"
-													}
-												/>
-											</div>
-											<div className="c-content">
-												<div className="c-meta">
-													<span className="c-name">
-														<UserName
-															value={c.name}
-														/>
-													</span>
-													<span className="c-when">
-														{c.date}
-													</span>
-												</div>
-
-												<div
-													className="c-message"
-													onDoubleClick={() => {
-														fetchReplies("new", c);
-													}}
-												>
-													{c.content}
-												</div>
-
-												{c.count ? (
-													<span
-														className="repcount"
-														onClick={() =>
-															fetchReplies(
-																"new",
-																c
-															)
-														}
-													>
-														{c.count} {t("Replies")}
-													</span>
-												) : (
-													""
-												)}
-
-												<span
-													className="openreply"
-													onClick={() => {
-														fetchReplies("new", c);
-														repliesWindow(
-															false,
-															false,
-															true,
-															500
-														);
-													}}
-												>
-													&#8618; {t("Reply")}
-												</span>
-											</div>
-										</div>
+										<Comment c={c} key={cx} />
 								  ))
 								: ""}
 						</InfiniteScroll>
@@ -481,16 +632,22 @@ export default memo(
 				<div className={"replies" + (showReply.show ? " visible" : "")}>
 					<div className="comments">
 						<div className="filters">
-							{t("Replies")}
-							<img
+							{t("Replies") + ": "}
+							<span className="chatCount">
+								{replyItem.length || 0}
+							</span>
+							<div
+								className="goback"
 								onClick={() => {
 									_showReply(p => ({
 										...p,
 										show: false
 									}));
 								}}
-								src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224px%22%20height%3D%2224px%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23000000%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M19%206.41L17.59%205%2012%2010.59%206.41%205%205%206.41%2010.59%2012%205%2017.59%206.41%2019%2012%2013.41%2017.59%2019%2019%2017.59%2013.41%2012z%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%0A%3C%2Fsvg%3E%0A"
-							/>
+							>
+								<FontAwesomeIcon icon={faChevronLeft} />
+								{t("Go Back")}
+							</div>
 						</div>
 
 						<div className="comment add">
@@ -671,63 +828,24 @@ export default memo(
 													{showReply.content}
 												</div>
 
-												<span
-													className="openreply"
-													onClick={() =>
+												<Actions
+													type="author"
+													item={showReply}
+													showCount={false}
+													action={() => {
 														repliesWindow(
 															false,
 															false,
 															true
-														)
-													}
-												>
-													&#8618; {t("Reply")}
-												</span>
+														);
+													}}
+												/>
 											</div>
 										</div>
 
 										{replyItem
 											? replyItem.map((c, cx) => (
-													<div
-														key={cx}
-														className="comment"
-													>
-														<div className="c-avatar">
-															<img
-																src={
-																	c.avatar ||
-																	"/avatar.png"
-																}
-															/>
-														</div>
-														<div className="c-content">
-															<div className="c-meta">
-																<span className="c-name">
-																	<UserName
-																		value={
-																			c.name
-																		}
-																	/>
-																</span>
-																<span className="c-when">
-																	{c.date}
-																</span>
-															</div>
-															<div
-																className="c-message"
-																onDoubleClick={() => {
-																	repliesWindow(
-																		c.ID,
-																		c.name,
-																		true,
-																		0
-																	);
-																}}
-															>
-																{c.content}
-															</div>
-														</div>
-													</div>
+													<Reply c={c} key={cx} />
 											  ))
 											: ""}
 									</InfiniteScroll>

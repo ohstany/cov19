@@ -65,20 +65,20 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 
 			if (data && data.ID) {
-				const { parent, country } = params.data || {};
-
-				const index = chats[country].data.findIndex(
-					i => i.ID === parent
-				);
-
-				if (index >= 0) {
-					chats[country].data[index].count++;
-					chats[country].count++;
-				}
+				const { country } = params.data || {};
 
 				if (data.parent) {
 					if (!chatReplies[data.parent]) {
 						chatReplies[data.parent] = [];
+					}
+
+					const index = chats[country].data.findIndex(
+						i => "" + i.ID === "" + data.parent
+					);
+
+					if (index >= 0) {
+						chats[country].data[index].count =
+							(chats[country].data[index].count || 0) + 1;
 					}
 
 					chatReplies[data.parent].unshift(data);
@@ -90,6 +90,8 @@ export const root_store_reducer = (s, a, params = false) => {
 							limit: false
 						};
 					}
+
+					chats[country].count++;
 
 					chats[data.locale].data.unshift(data);
 				}

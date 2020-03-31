@@ -3,12 +3,12 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"build_s": "cross-env SUBPATHS='none' PROTOCOL='https' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 next build",
-		"dev_s": "cross-env SUBPATHS='none' PROTOCOL='https' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=development PORT=3000 node index.js",
-		"pro_s": "cross-env SUBPATHS='none' PROTOCOL='https' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 node index.js",
-		"build": "cross-env SUBPATHS='none' PROTOCOL='http' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 next build",
-		"dev": "cross-env SUBPATHS='none' PROTOCOL='http' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=development PORT=3000 node index.js",
-		"pro": "cross-env SUBPATHS='none' PROTOCOL='http' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 node index.js"
+		"build_s": "cross-env SUBPATHS='all' PROTOCOL='https' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 next build",
+		"dev_s": "cross-env SUBPATHS='all' PROTOCOL='https' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=development PORT=3000 node index.js",
+		"pro_s": "cross-env SUBPATHS='all' PROTOCOL='https' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 node index.js",
+		"build": "cross-env SUBPATHS='all' PROTOCOL='http' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 next build",
+		"dev": "cross-env SUBPATHS='all' PROTOCOL='http' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=development PORT=3000 node index.js",
+		"pro": "cross-env SUBPATHS='all' PROTOCOL='http' API_HOST='api.cov19.online' API_PREFIX='/tk-api/v2/' NODE_ENV=production PORT=3000 node index.js"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome": "^1.1.8",

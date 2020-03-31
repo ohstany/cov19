@@ -10,30 +10,48 @@ import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
 import RootContext from "Context";
-import countries from "Library/countries-array.json";
+import countries from "Library/countries-object.json";
 import { sources } from "Library/statuses.js";
 import { condition } from "Library/statuses";
 import { numComma } from "Library";
 import Chat from "./Chat";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
+import moment from "moment";
 
 const CountryList = withTranslation("countries")(
-	({ t, value, onChange = () => false, markers }) => {
+	({ t, value, onChange = () => false, markers, usersCc = false }) => {
+		const f = markers
+			.reduce((p, n) => {
+				if (usersCc && p.indexOf(usersCc) === -1) {
+					p.unshift(usersCc);
+				}
+
+				if (p.indexOf(n.locale) === -1) {
+					p.push(n.locale);
+				}
+				return p;
+			}, [])
+			.map(cc => {
+				return {
+					locale: cc,
+					infections: markers
+						.filter(i => i.locale === cc)
+						.reduce((p, n) => (p += n.infected), 0)
+				};
+			})
+			.sort((a, b) => {
+				return b.infections - a.infections;
+			});
+
 		return (
 			<select value={value || ""} onChange={onChange}>
 				><option value="">{t("selectCountry")}</option>
-				{countries.map((c, ci) => {
-					const infections = markers
-						.filter(i => i.locale === c.country_code)
-						.reduce((p, n) => (p += n.infected), 0);
-
-					return infections ? (
-						<option key={ci} value={c.country_code}>
-							{`${t(c.name)} (${infections})`}
+				{f.map((c, ci) => {
+					return (
+						<option key={ci} value={c.locale}>
+							{`${t(countries[c.locale].name)} (${c.infections})`}
 						</option>
-					) : (
-						""
 					);
 				})}
 			</select>
@@ -46,21 +64,27 @@ const CityList = withTranslation("cities")(
 		return (
 			<select value={value} onChange={onChange}>
 				<option value="">{t("selectCity")}</option>
-				{(regions || []).map((r, ri) => {
-					const infections = markers
-						.filter(
-							i =>
-								i.locale === country_code &&
-								"" + i.region === "" + r.region_code
-						)
-						.reduce((p, n) => (p += n.infections), 0);
-
-					return (
-						<option key={ri} value={r.region_code}>
-							{`${t(r.name)} (${infections})`}
-						</option>
-					);
-				})}
+				{(regions || [])
+					.map((r, ri) => {
+						r.inf = markers
+							.filter(
+								i =>
+									i.locale === country_code &&
+									"" + i.region === "" + r.region_code
+							)
+							.reduce((p, n) => (p += n.infections), 0);
+						return r;
+					})
+					.sort((a, b) => {
+						return b.inf - a.inf;
+					})
+					.map((r, ri) => {
+						return (
+							<option key={ri} value={r.region_code}>
+								{`${t(r.name)} (${r.inf})`}
+							</option>
+						);
+					})}
 			</select>
 		);
 	}
@@ -163,6 +187,8 @@ const Activity = ({ t }) => {
 	const {
 		actioner,
 		store: {
+			geo,
+			language,
 			country_code,
 			region_code,
 			cpos,
@@ -175,6 +201,8 @@ const Activity = ({ t }) => {
 		},
 		setStore
 	} = useContext(RootContext) || {};
+
+	const usersCc = geo ? geo.country_code : false;
 
 	const [nav, _nav] = useState("acts");
 	const [ch, _ch] = useState(false);
@@ -349,32 +377,15 @@ const Activity = ({ t }) => {
 
 	const SingleItem = useCallback(
 		({ a: { ID, condition: cond, type, number, details, date } = {} }) => {
+			const [cont, _cont] = useState(false);
+
+			const len = details.content ? details.content.length : 0;
+
 			return ID ? (
 				<div className={"author " + type}>
-					<h3 className={"atitle " + type}>
-						{`${t(sources[type])} #${ID}`}
-					</h3>
-
-					<div className={"desc"}>{details.content}</div>
-
-					<div className="resource">
-						{details.source && (
-							<RenderSource
-								title={t("source")}
-								s={details.source}
-							/>
-						)}
-						{details.source2 && (
-							<RenderSource
-								title={t("source")}
-								s={details.source2}
-							/>
-						)}
-					</div>
-
-					<div className={"infc"}>
+					<div className="infc">
 						{number >= 1 && (
-							<span>
+							<span className="cases">
 								<b className="b">{numComma(number)}</b>{" "}
 								{number > 1 ? t("cases") : t("case")}
 							</span>
@@ -387,7 +398,61 @@ const Activity = ({ t }) => {
 							</span>
 						)}
 
-						<time dateTime={date}>{date}</time>
+						<time dateTime={date}>
+							{date
+								? moment(date)
+										.lang(language || "en")
+										.fromNow()
+								: ""}
+						</time>
+					</div>
+
+					{len ? (
+						<>
+							<div
+								className={
+									"desc" +
+									(len > 100 ? (cont ? " vs" : " hd") : "")
+								}
+								onClick={() => _cont(true)}
+							>
+								{details.content}
+							</div>
+
+							{len > 100 ? (
+								<div
+									className="moreLess"
+									onClick={() => _cont(p => !p)}
+								>
+									{t(cont ? "showLess" : "showMore")}
+								</div>
+							) : (
+								""
+							)}
+						</>
+					) : (
+						""
+					)}
+
+					<div className={"atitle " + type}>
+						<img src={`/${type}.png`} alt="" />
+						{`${t(sources[type])} #${ID}`}
+					</div>
+
+					<div className="resource">
+						{details.source && (
+							<RenderSource
+								title={t("source")}
+								s={details.source}
+							/>
+						)}
+
+						{details.source2 && (
+							<RenderSource
+								title={t("source")}
+								s={details.source2}
+							/>
+						)}
 					</div>
 				</div>
 			) : (
@@ -466,6 +531,7 @@ const Activity = ({ t }) => {
 									markers={mapMarkers}
 									value={country_code}
 									onChange={setCountry}
+									usersCc={usersCc}
 								/>
 							</div>
 

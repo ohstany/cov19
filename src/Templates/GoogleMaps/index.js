@@ -232,31 +232,32 @@ const MapCover = withTranslation("common")(
 													</b>
 												</div>
 												<ul className="bd">
-													{Object.keys(condition).map(
-														(k, ki) => {
-															return k !==
-																"none" ? (
-																<li key={ki}>
-																	<span
-																		className={`cond ${k}`}
-																	>
-																		<b
-																			className={`b circ ${k}`}
-																		></b>
-																		{" " +
-																			t(
-																				condition[
-																					k
-																				]
-																			)}
-																	</span>
-																	{value[k]}
-																</li>
-															) : (
-																""
-															);
-														}
-													)}
+													{[
+														"infected",
+														"cured",
+														"mortal"
+													].map((k, ki) => {
+														return k !== "none" ? (
+															<li key={ki}>
+																<span
+																	className={`cond ${k}`}
+																>
+																	<b
+																		className={`b circ ${k}`}
+																	></b>
+																	{" " +
+																		t(
+																			condition[
+																				k
+																			]
+																		)}
+																</span>
+																{value[k]}
+															</li>
+														) : (
+															""
+														);
+													})}
 												</ul>
 											</div>
 										</div>

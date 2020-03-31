@@ -9,7 +9,7 @@ import {
 } from "react";
 import { withTranslation, i18n } from "i18n";
 import langs from "languages.json";
-
+import Router from "next/router";
 import phone from "../Subscribe/phone.png";
 
 const Svg = () => (
@@ -20,7 +20,8 @@ const Svg = () => (
 		width="1em"
 		height="1em"
 		fill="currentColor"
-		aria-hidden="true">
+		aria-hidden="true"
+	>
 		<path d="M120 230h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm0 424h496c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm784 140H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-424H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path>
 	</svg>
 );
@@ -32,7 +33,8 @@ const Select = ({ visible, value, onChange, options = [] }) => {
 				<div
 					key={ix}
 					className={"lo" + (value === i.value ? " sel" : "")}
-					onClick={() => onChange(i.value)}>
+					onClick={() => onChange(i.value)}
+				>
 					{i.label}
 				</div>
 			))}
@@ -100,7 +102,8 @@ export default memo(
 						<span
 							id="langc"
 							className="langc"
-							onClick={() => _l(p => !p)}>
+							onClick={() => _l(p => !p)}
+						>
 							{(i18n.language || "en").toUpperCase()}
 						</span>
 					</div>
@@ -110,6 +113,15 @@ export default memo(
 					visible={l}
 					value={i18n.language}
 					onChange={value => {
+						const pathname = window.history.state.as.replace(
+							`/${i18n.language}/`,
+							`/${value}/`
+						);
+
+						Router.push(Router.pathname, pathname, {
+							shallow: true
+						});
+
 						setStore({ language: value });
 						i18n.changeLanguage(value);
 					}}

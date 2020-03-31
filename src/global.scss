@@ -313,6 +313,9 @@ button {
 	justify-content: center;
 	background: rgba(0, 0, 0, 0.4);
 	overflow-x: auto;
+	button {
+		width: 100%;
+	}
 }
 
 .mapArea {
@@ -2127,10 +2130,10 @@ span.cond {
 	border: none;
 	color: white;
 	color: #484848;
-   transition: all 0.5s;
-   p {
-      margin: 0;
-   }
+	transition: all 0.5s;
+	p {
+		margin: 0;
+	}
 	h2 {
 		font-size: 18px;
 		font-weight: 700;

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Access from "Templates/Login";
 import RootContext from "Context";
-import Header from "Layouts/Admin/Header";
+import Header from "Templates/Admin/Header";
 import Head from "next/head";
 import "global.scss";
 

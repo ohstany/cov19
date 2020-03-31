@@ -298,7 +298,6 @@ button {
 	color: white;
 	padding: 5px 10px;
 	font-weight: 300;
-	width: 100%;
 	cursor: pointer;
 }
 
@@ -1920,7 +1919,7 @@ span.cond {
 	.aheader {
 		width: 200px;
 		background: white;
-		position: absolute;
+		position: fixed;
 		height: 100%;
 		border-right: 1px solid #dcdcdc;
 		z-index: 10;
@@ -2128,7 +2127,18 @@ span.cond {
 	border: none;
 	color: white;
 	color: #484848;
-	transition: all 0.5s;
+   transition: all 0.5s;
+   p {
+      margin: 0;
+   }
+	h2 {
+		font-size: 18px;
+		font-weight: 700;
+	}
+	h3 {
+		font-size: 17px;
+		font-weight: 700;
+	}
 }
 
 .soclogin {

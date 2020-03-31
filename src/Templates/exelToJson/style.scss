@@ -1,0 +1,52 @@
+.exeluploads {
+	.lg9 {
+		display: inline-block;
+		width: 24%;
+		margin-right: 4%;
+	}
+	.lg15 {
+		display: inline-block;
+		width: 72%;
+		vertical-align: top;
+	}
+	button {
+		border-radius: 25px;
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+	.uploads {
+		padding: 10px;
+		border: 2px dashed #ccc;
+		text-align: center;
+		font-size: 15px;
+		font-weight: 600;
+		color: #5f5f5f;
+		width: 100%;
+		min-height: 100px;
+		align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+	}
+	.uploadedFiles {
+		img {
+			width: 24px;
+			margin-right: 5px;
+		}
+		.filename {
+			margin-right: 10px;
+		}
+		button {
+			padding: 4px 10px;
+			font-size: 13px;
+		}
+		.uplf {
+			border-bottom: 1px dashed #dcdcdc;
+			padding: 8px 0;
+		}
+		margin-top: 15px;
+		border-top: 1px solid #dcdcdc;
+		padding-top: 11px;
+	}
+}

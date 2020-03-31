@@ -1,4 +1,4 @@
-import AdminCover from "Layouts/Admin/Cover";
+import AdminCover from "Templates/Admin/Cover";
 
 export default () => (
 	<AdminCover>

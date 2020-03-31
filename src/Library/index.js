@@ -93,6 +93,13 @@ export const CityName = memo(
 	})
 );
 
+export const swapKeyValue = data => {
+	return Object.keys(data).reduce(
+		(obj, key) => Object.assign({}, obj, { [data[key]]: key }),
+		{}
+	);
+};
+
 export const numComma = x => {
 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };

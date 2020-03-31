@@ -19,15 +19,21 @@ import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const CountryList = withTranslation("countries")(
-	({ t, value, onChange = () => false }) => {
+	({ t, value, onChange = () => false, markers }) => {
 		return (
 			<select value={value || ""} onChange={onChange}>
 				><option value="">{t("selectCountry")}</option>
 				{countries.map((c, ci) => {
-					return (
+					const infections = markers
+						.filter(i => i.locale === c.country_code)
+						.reduce((p, n) => (p += n.infected), 0);
+
+					return infections ? (
 						<option key={ci} value={c.country_code}>
-							{t(c.name)}
+							{`${t(c.name)} (${infections})`}
 						</option>
+					) : (
+						""
 					);
 				})}
 			</select>
@@ -36,14 +42,22 @@ const CountryList = withTranslation("countries")(
 );
 
 const CityList = withTranslation("cities")(
-	({ t, value, regions, onChange = () => false }) => {
+	({ t, value, regions, onChange = () => false, markers, country_code }) => {
 		return (
 			<select value={value} onChange={onChange}>
 				<option value="">{t("selectCity")}</option>
 				{(regions || []).map((r, ri) => {
+					const infections = markers
+						.filter(
+							i =>
+								i.locale === country_code &&
+								"" + i.region === "" + r.region_code
+						)
+						.reduce((p, n) => (p += n.infections), 0);
+
 					return (
 						<option key={ri} value={r.region_code}>
-							{t(r.name)}
+							{`${t(r.name)} (${infections})`}
 						</option>
 					);
 				})}
@@ -182,30 +196,34 @@ const Activity = ({ t }) => {
 
 		const cases =
 			country_code && !region_code
-				? mapMarkers.reduce(
-						(
-							ac,
-							{ locale, infected, suspicion, cured, mortal }
-						) => {
-							if (locale === country_code) {
-								ac.infections +=
-									infected + suspicion + cured + mortal;
+				? mapMarkers
+						.filter(i => i.locale === country_code)
+						.reduce(
+							(ac, { infected, cured, mortal }) => {
+								ac.infections += infected + cured + mortal;
 								ac.infected += infected;
-								ac.suspicion += suspicion;
 								ac.cured += cured;
 								ac.mortal += mortal;
-							}
-							return ac;
-						},
-						{ ...caseDef }
-				  )
+								return ac;
+							},
+							{ ...caseDef }
+						)
 				: country_code && region_code
 				? mapMarkers[index] || { ...caseDef }
 				: { ...caseDef };
 
 		return (
 			<div className="ininfo">
-				{["infected", "cured", "suspicion", "mortal"].map((k, ki) => {
+				<li className="infobox">
+					<div className="innr">
+						<span className={`cnt cond all`}>
+							{numComma(cases.infections)}
+						</span>
+						<span className={`ttl`}>{" " + t("allcases")}</span>
+					</div>
+				</li>
+
+				{["infected", "cured", "mortal"].map((k, ki) => {
 					return k !== "none" ? (
 						<li className="infobox" key={ki}>
 							<div className="innr">
@@ -445,6 +463,7 @@ const Activity = ({ t }) => {
 						<div className="filterNavi tbf">
 							<div className="fitem tbf-c">
 								<CountryList
+									markers={mapMarkers}
 									value={country_code}
 									onChange={setCountry}
 								/>
@@ -454,7 +473,9 @@ const Activity = ({ t }) => {
 
 							<div className="fitem tbf-c">
 								<CityList
+									markers={mapMarkers}
 									value={region_code}
+									country_code={country_code}
 									onChange={setCity}
 									regions={builtRegions}
 								/>

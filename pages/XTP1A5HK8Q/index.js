@@ -1,6 +1,6 @@
 import { memo } from "react";
-import AdminCover from "Layouts/Admin/Cover";
-import Markers from "Layouts/Admin/Markers";
+import AdminCover from "Templates/Admin/Cover";
+import Markers from "Templates/Admin/Markers";
 
 export default memo(() => (
 	<AdminCover>

@@ -4,8 +4,10 @@ import { condition as cond, via as vi } from "Library/statuses";
 import RootContext from "Context";
 import Popup from "Templates/Popup";
 import countries_a from "Library/countries-array.json";
+import countries_o from "Library/countries-object.json";
 // import iso from "Library/iso-3166-2-object.json";
 import * as iso from "Library/iso-3166-2-object.js";
+import ExelToJson from "Templates/exelToJson";
 
 const defV = {
 	k: "",
@@ -33,7 +35,7 @@ const Content = memo(
 			type,
 			condition,
 			details: { content, source, source2 } = {},
-			meta_data: { country_code, region_code, geo } = {}
+			meta_data: { country_code, region_code, geo = {} } = {}
 		}
 	}) => {
 		const [s, _s] = useState(false);
@@ -73,7 +75,8 @@ const Content = memo(
 
 		const isodata2 = country_code ? iso[country_code] : false;
 
-		const isodata3 = geo.country_code ? iso[geo.country_code] : false;
+		const isodata3 =
+			geo && geo.country_code ? iso[geo.country_code] : false;
 
 		return (
 			<div className="amko">
@@ -557,6 +560,7 @@ export default () => {
 	const [byc, _byc] = useState("all");
 	const [refr, _refr] = useState(false);
 	const [popup, _popup] = useState(false);
+	const [uploaded, _uploaded] = useState(false);
 	const [state, _state] = useState(initialState);
 
 	const marks =
@@ -736,34 +740,49 @@ export default () => {
 		<>
 			<h1>Markers</h1>
 
-			<button
-				style={{
-					width: 100,
-					background: "#056dc6",
-					marginRight: 20
-				}}
-				onClick={() => _popup(e => !e)}
-			>
-				+ Add new
-			</button>
+			<div className="a-actions">
+				<button
+					style={{
+						width: 100,
+						background: "#056dc6",
+						marginRight: 20
+					}}
+					onClick={() => _popup(e => !e)}
+				>
+					+ Add new
+				</button>
 
-			<button
-				style={{
-					width: 110,
-					float: "right",
-					marginTop: -10
-				}}
-				disabled={refr}
-				onClick={() => {
-					if (!refr) {
-						refreshs();
-					}
-				}}
-			>
-				{refr ? "Refreshing..." : "Refresh"}
-			</button>
+				<button
+					style={{
+						width: 110,
+						float: "right",
+						marginTop: -10
+					}}
+					disabled={refr}
+					onClick={() => {
+						if (!refr) {
+							refreshs();
+						}
+					}}
+				>
+					{refr ? "Refreshing..." : "Refresh"}
+				</button>
 
-			<CountrySelect value={byc} onUpdate={_byc} />
+				<CountrySelect value={byc} onUpdate={_byc} />
+
+				<ExelToJson
+					type={"markers"}
+					uploaded={uploaded}
+					country_code={byc}
+					cname={byc !== "all" ? countries_o[byc].name : false}
+					onFinish={() => {
+						_uploaded(true);
+						setTimeout(() => {
+							_uploaded(false);
+						}, 200);
+					}}
+				/>
+			</div>
 
 			<div className="content">
 				<div className="amarkers">

@@ -74,7 +74,10 @@ const Activity = ({ t }) => {
 			? "regional"
 			: false;
 	const rkey = region_code || "other";
-	const markerKey = mType === "regional" ? mType : `${country_code}_${rkey}`;
+	const markerKey =
+		mType === "regional"
+			? `${country_code}_${mType}`
+			: `${country_code}_${rkey}`;
 	const [nav, _nav] = useState("acts");
 	const [ch, _ch] = useState(false);
 	const [fetchingNews, _fetchingNews] = useState(false);

@@ -235,7 +235,9 @@ export const root_store_reducer = (s, a, params = false) => {
 			if (!country) return {};
 
 			const rkey =
-				type === "regional" ? type : `${country}_${city || "other"}`;
+				type === "regional"
+					? `${country}_${type}`
+					: `${country}_${city || "other"}`;
 
 			if (!activity[rkey]) {
 				activity[rkey] = [];
@@ -434,8 +436,8 @@ export const root_store_initial_state = {
 	language: "en",
 	country_code: undefined,
 	region_code: undefined,
-   index: undefined,
-   contactUs: false,
+	index: undefined,
+	contactUs: false,
 	subscribe: false,
 	fetched: false,
 	cpos: false,

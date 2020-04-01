@@ -72,7 +72,10 @@ export default memo(
 				api({
 					method: "POST",
 					action: "subscribe",
-					data: state
+					data: {
+						...state,
+						geo
+					}
 				}).then(res => {
 					// console.log("res", res);
 					if (res || res === "-1") {

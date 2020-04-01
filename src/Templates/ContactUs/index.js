@@ -12,8 +12,6 @@ import Popup from "Templates/Popup";
 import { notification, validateEmail } from "Library";
 import { withTranslation } from "i18n";
 
-import phone from "./phone.png";
-
 import { trackEvent } from "Templates/GoogleAnalytics";
 
 export default memo(
@@ -47,7 +45,10 @@ export default memo(
 			api({
 				method: "POST",
 				action: "contactus",
-				data: state
+				data: {
+					...state,
+					geo
+				}
 			}).then(res => {
 				// console.log("res", res);
 				if (res || res === "-1") {

@@ -73,5 +73,11 @@
 	"showLess": "Показать меньше",
 	"privacyAgree": "Я даю свое согласие на обработку персональных данных и принимаю условия",
 	"privacyPolicy": "пользовательского соглашения",
-	"mustAgree": "Необходимо принять условия пользовательского соглашения"
+	"mustAgree": "Необходимо принять условия пользовательского соглашения",
+	"contactUsTitle": "If you have any question or suggestion, feel free to reach us.",
+	"leaveMessage": "Write your message",
+	"contactThank": "Thank you for contacting us. We'll reply very soon.",
+	"send": "Send",
+	"wrongEmailFormat": "Please check your email format.",
+	"contentRequired": "Must write a message."
 }

@@ -18,7 +18,7 @@ const logPageView = (url = false) => {
 export const trackEvent = (category, action, label = "") => {
 	if (typeof window === "undefined") return;
 
-	if (!window.GA_INITIALIZED && category && action) {
+	if (window.GA_INITIALIZED && category && action) {
 		try {
 			ReactGA.event({
 				category,

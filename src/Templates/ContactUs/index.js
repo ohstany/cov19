@@ -31,8 +31,6 @@ export default memo(
 
 		const [done, _done] = useState("0");
 
-		console.log("state", state);
-
 		const submitForm = () => {
 			if (state.email && !validateEmail(state.email)) {
 				notification(t("wrongEmailFormat"));

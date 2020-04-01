@@ -68,6 +68,15 @@ export default memo(
 					main: true
 				},
 				{
+					url: `viber://forward?text=${title}%20${url}`,
+					id: "viber",
+					className: "viber",
+					allow: "UA,RU,KZ,BY,UZ,KG,GE,AZ,AM",
+					exclude: "",
+					icon: faViber,
+					main: false
+				},
+				{
 					url: `https://twitter.com/intent/tweet?text=${title}&amp;url=${url}`,
 					id: "twitter",
 					className: "tw",
@@ -120,15 +129,6 @@ export default memo(
 					exclude: "",
 					icon: faPaperPlane,
 					main: true
-				},
-				{
-					url: `viber://forward?text=${title}%20${url}`,
-					id: "viber",
-					className: "viber",
-					allow: "UA,RU,KZ,BY,UZ,KG,GE,AZ,AM",
-					exclude: "",
-					icon: faViber,
-					main: false
 				},
 				{
 					url: `https://web.skype.com/share?url=${url}&amp;text=${title}`,
@@ -184,20 +184,22 @@ export default memo(
 						);
 					})}
 
-					<a
-						href="#"
-						onClick={e =>
-							share(
-								e,
-								`mailto:?subject=${title}&amp;body=${url}`,
-								"email"
-							)
-						}
-						rel="external noopener"
-						className="email"
-					>
-						<FontAwesomeIcon icon={faEnvelope} />
-					</a>
+					{["UA"].indexOf(country_code) === -1 && (
+						<a
+							href="#"
+							onClick={e =>
+								share(
+									e,
+									`mailto:?subject=${title}&amp;body=${url}`,
+									"email"
+								)
+							}
+							rel="external noopener"
+							className="email"
+						>
+							<FontAwesomeIcon icon={faEnvelope} />
+						</a>
+					)}
 
 					<a
 						className="custom copyurl"

@@ -131,15 +131,6 @@ export default memo(
 					main: true
 				},
 				{
-					url: `https://web.skype.com/share?url=${url}&amp;text=${title}`,
-					id: "skype",
-					className: "skype",
-					allow: "",
-					exclude: "UA",
-					icon: faSkype,
-					main: true
-				},
-				{
 					url: `https://reddit.com/submit?url=${url}&amp;title=${title}`,
 					id: "reddit",
 					className: "reddit",
@@ -184,7 +175,7 @@ export default memo(
 						);
 					})}
 
-					{["UA"].indexOf(country_code) === -1 && (
+					{/* {["UA"].indexOf(country_code) === -1 && (
 						<a
 							href="#"
 							onClick={e =>
@@ -199,7 +190,7 @@ export default memo(
 						>
 							<FontAwesomeIcon icon={faEnvelope} />
 						</a>
-					)}
+					)} */}
 
 					<a
 						className="custom copyurl"

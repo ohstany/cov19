@@ -93,7 +93,7 @@ export default memo(
 
 					<div className="submb">
 						<img
-							src={phone}
+							src="/bell.png"
 							onClick={() => setStore({ subscribe: true })}
 						/>
 					</div>

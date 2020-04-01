@@ -180,15 +180,30 @@ img {
 
 	.submb {
 		padding: 10px 0;
+		position: relative;
 		img {
 			cursor: pointer;
-			border: 1px solid #ffffff;
 			background: #272727;
 			box-shadow: 0 0 0 #ed1812;
 			animation: pulse 2s infinite;
-			width: 33px;
-			padding: 5px;
+			width: 37px;
+			padding: 4px;
 			border-radius: 50%;
+		}
+		&:after {
+			content: "2";
+			position: absolute;
+			width: 14px;
+			height: 14px;
+			line-height: 14px;
+			font-size: 11px;
+			top: 12px;
+			right: 14px;
+			border-radius: 50%;
+			background: #ff5454;
+			color: black;
+			font-weight: bold;
+			border: 1px solid #272727;
 		}
 	}
 }

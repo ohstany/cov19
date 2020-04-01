@@ -179,6 +179,11 @@ export const validateEmail = email => {
 	return re.test(String(email).toLowerCase());
 };
 
+export const validateNumber = value => {
+	var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+	return re.test(value);
+};
+
 export const getUrlParams = url => {
 	// get query string from url (optional) or window
 	var queryString = url ? url.split("?")[1] : window.location.search.slice(1);

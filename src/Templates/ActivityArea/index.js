@@ -10,153 +10,25 @@ import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
 import RootContext from "Context";
-import countries from "Library/countries-object.json";
 import { sources } from "Library/statuses.js";
 import { condition } from "Library/statuses";
 import { numComma } from "Library";
 import Chat from "./Chat";
+import News from "./News";
+import { CountryList, CityList } from "./CountryList";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
 import moment from "moment";
 
-const CountryList = withTranslation("countries")(
-	({ t, value, onChange = () => false, markers, usersCc = false }) => {
-		const f = markers
-			.reduce((p, n) => {
-				if (usersCc && p.indexOf(usersCc) === -1) {
-					p.unshift(usersCc);
-				}
+const caseDef = {
+	infections: 0,
+	infected: 0,
+	cured: 0,
+	suspicion: 0,
+	mortal: 0
+};
 
-				if (p.indexOf(n.locale) === -1) {
-					p.push(n.locale);
-				}
-				return p;
-			}, [])
-			.map(cc => {
-				return {
-					locale: cc,
-					infections: markers
-						.filter(i => i.locale === cc)
-						.reduce((p, n) => (p += n.infected), 0)
-				};
-			})
-			.sort((a, b) => {
-				return b.infections - a.infections;
-			});
-
-		return (
-			<select value={value || ""} onChange={onChange}>
-				><option value="">{t("selectCountry")}</option>
-				{f.map((c, ci) => {
-					return (
-						<option key={ci} value={c.locale}>
-							{`${t(countries[c.locale].name)} (${c.infections})`}
-						</option>
-					);
-				})}
-			</select>
-		);
-	}
-);
-
-const CityList = withTranslation("cities")(
-	({ t, value, regions, onChange = () => false, markers, country_code }) => {
-		return (
-			<select value={value} onChange={onChange}>
-				<option value="">{t("selectCity")}</option>
-				{(regions || [])
-					.map((r, ri) => {
-						r.inf = markers
-							.filter(
-								i =>
-									i.locale === country_code &&
-									"" + i.region === "" + r.region_code
-							)
-							.reduce((p, n) => (p += n.infections), 0);
-						return r;
-					})
-					.sort((a, b) => {
-						return b.inf - a.inf;
-					})
-					.map((r, ri) => {
-						return (
-							<option key={ri} value={r.region_code}>
-								{`${t(r.name)} (${r.inf})`}
-							</option>
-						);
-					})}
-			</select>
-		);
-	}
-);
-
-const News = memo(
-	({
-		t,
-		data: {
-			title,
-			guid,
-			create_date,
-			meta_data: { sc, image } = {},
-			content
-		} = {}
-	}) => {
-		const [sh, _sh] = useState(false);
-
-		return (
-			<div className={"author" + (sh ? " shown" : "")}>
-				<h3 className={"atitle clickable"}>
-					<a
-						href="#"
-						target="_blank"
-						onClick={e => {
-							e.preventDefault();
-							e.stopPropagation();
-							_sh(e => !e);
-						}}
-					>
-						{title}
-					</a>
-				</h3>
-
-				{sh && (
-					<div className={"desc" + (sh ? " act" : "")}>
-						{image && (
-							<div className="imgb">
-								<img src={image} alt="" />
-							</div>
-						)}
-
-						<div
-							className={"cont"}
-							dangerouslySetInnerHTML={{
-								__html: content
-							}}
-						></div>
-					</div>
-				)}
-
-				<span className={"showh"} onClick={() => _sh(e => !e)}>
-					{sh ? "-" : "+"}
-				</span>
-
-				{sc && (
-					<div className="resource">
-						{t("source")}: #{" "}
-						<a href={guid} target="_blank">
-							{sc}
-						</a>
-					</div>
-				)}
-
-				<time dateTime={create_date}>{create_date}</time>
-			</div>
-		);
-	},
-	() => true
-);
-
-const RenderSource = ({ title = "Source", s }) => {
+const RenderSource = memo(({ title = "Source", s }) => {
 	return (
 		<div className="src">
 			{title + ": "}
@@ -173,15 +45,7 @@ const RenderSource = ({ title = "Source", s }) => {
 			)}
 		</div>
 	);
-};
-
-const caseDef = {
-	infections: 0,
-	infected: 0,
-	cured: 0,
-	suspicion: 0,
-	mortal: 0
-};
+});
 
 const Activity = ({ t }) => {
 	const {
@@ -203,14 +67,74 @@ const Activity = ({ t }) => {
 	} = useContext(RootContext) || {};
 
 	const usersCc = geo ? geo.country_code : false;
-
+	const mType =
+		country_code && region_code
+			? "local"
+			: country_code
+			? "regional"
+			: false;
+	const rkey = region_code || "other";
+	const markerKey = mType === "regional" ? mType : `${country_code}_${rkey}`;
 	const [nav, _nav] = useState("acts");
 	const [ch, _ch] = useState(false);
 	const [fetchingNews, _fetchingNews] = useState(false);
 	const [fetchingMarkers, _fetchingMarkers] = useState(false);
-	const rkey = region_code || "other";
-	const markerKey = `${country_code}_${rkey}`;
 	const { regions = false } = cpos || {};
+
+	const newsData = useMemo(
+		() => (country_code && news[country_code] ? news[country_code] : []),
+		[country_code, fetchingNews]
+	);
+
+	const newsLimited = useMemo(
+		() =>
+			country_code && newsLimit[country_code]
+				? newsLimit[country_code]
+				: false,
+		[country_code, fetchingNews]
+	);
+
+	const activityLimited = useMemo(
+		() =>
+			country_code && activityLimit[markerKey]
+				? activityLimit[markerKey]
+				: false,
+		[country_code, rkey, fetchingMarkers]
+	);
+
+	const infections = useMemo(
+		() =>
+			country_code && activity[markerKey] ? activity[markerKey] : false,
+		[country_code, rkey, fetchingMarkers]
+	);
+
+	const builtRegions = useMemo(
+		() =>
+			regions &&
+			Object.keys(regions).map(n => ({
+				region_code: n,
+				...regions[n]
+			})),
+		[regions]
+	);
+
+	useEffect(() => {
+		if (region_code || mType === "regional") {
+			fetchMarkers();
+		}
+	}, [region_code, mType]);
+
+	useEffect(() => {
+		if (country_code) {
+			fetchNews();
+		}
+	}, [country_code]);
+
+	useEffect(() => {
+		if (index >= 0) {
+			navigation("local");
+		}
+	}, [index]);
 
 	const GetInfo = useCallback(() => {
 		const index =
@@ -271,57 +195,25 @@ const Activity = ({ t }) => {
 		);
 	}, [mapMarkers, country_code, region_code]);
 
-	const newsData = useMemo(
-		() => (country_code && news[country_code] ? news[country_code] : []),
-		[country_code, fetchingNews]
-	);
+	const navigation = useCallback(key => {
+		_nav(key);
+	}, []);
 
-	const newsLimited = useMemo(
-		() =>
-			country_code && newsLimit[country_code]
-				? newsLimit[country_code]
-				: false,
-		[country_code, fetchingNews]
-	);
+	const setCountry = useCallback(({ target: { value } }) => {
+		setStore({
+			country_code: value,
+			region_code: ""
+		});
+	}, []);
 
-	const activityLimited = useMemo(
-		() =>
-			country_code && activityLimit[markerKey]
-				? activityLimit[markerKey]
-				: false,
-		[country_code, rkey, fetchingMarkers]
-	);
-
-	const infections = useMemo(
-		() =>
-			country_code && activity[markerKey] ? activity[markerKey] : false,
-		[country_code, rkey, fetchingMarkers]
-	);
-
-	const builtRegions = useMemo(
-		() =>
-			regions &&
-			Object.keys(regions).map(n => ({
-				region_code: n,
-				...regions[n]
-			})),
-		[regions]
-	);
-
-	useEffect(() => {
-		if (country_code) {
-			fetchNews();
-		}
-	}, [country_code]);
-
-	useEffect(() => {
-		if (region_code) {
-			fetchMarkers();
-		}
-	}, [region_code]);
+	const setCity = useCallback(({ target: { value } }) => {
+		setStore({
+			region_code: value
+		});
+	}, []);
 
 	const fetchMarkers = () => {
-		if (region_code && country_code && fetchingMarkers === false) {
+		if (country_code && fetchingMarkers === false) {
 			_fetchingMarkers(true);
 
 			const offset =
@@ -334,7 +226,7 @@ const Activity = ({ t }) => {
 					reduce: "SET_ACTIVITY",
 					method: "GET",
 					action: "activity",
-					params: `country=${country_code}&city=${region_code}&limit=10&offset=${offset}`
+					params: `type=${mType}&country=${country_code}&city=${region_code}&limit=10&offset=${offset}`
 				}).then(() => {
 					_fetchingMarkers(false);
 				});
@@ -365,17 +257,7 @@ const Activity = ({ t }) => {
 		}
 	};
 
-	const navigation = useCallback(key => {
-		_nav(key);
-	}, []);
-
-	useEffect(() => {
-		if (index >= 0) {
-			navigation("local");
-		}
-	}, [index]);
-
-	const SingleItem = useCallback(
+	const MarkerItem = useCallback(
 		({ a: { ID, condition: cond, type, number, details, date } = {} }) => {
 			const [cont, _cont] = useState(false);
 
@@ -435,8 +317,7 @@ const Activity = ({ t }) => {
 					)}
 
 					<div className={"atitle " + type}>
-						<img src={`/${type}.png`} alt="" />
-						{`${t(sources[type])} #${ID}`}
+						{`#${t(sources[type])}`}
 					</div>
 
 					<div className="resource">
@@ -461,19 +342,6 @@ const Activity = ({ t }) => {
 		},
 		[]
 	);
-
-	const setCountry = useCallback(({ target: { value } }) => {
-		setStore({
-			country_code: value,
-			region_code: ""
-		});
-	}, []);
-
-	const setCity = useCallback(({ target: { value } }) => {
-		setStore({
-			region_code: value
-		});
-	}, []);
 
 	return (
 		<div id="activityArea" className={"block activityArea " + nav}>
@@ -567,7 +435,7 @@ const Activity = ({ t }) => {
 							{infections && infections.length
 								? infections.map((a, ax) => {
 										return (
-											<SingleItem
+											<MarkerItem
 												nav={nav}
 												key={ax}
 												a={a}
@@ -589,7 +457,13 @@ const Activity = ({ t }) => {
 							scrollableTarget="sc-news"
 						>
 							{newsData.map((a, ax) => (
-								<News key={ax} data={a} ax={ax} t={t} />
+								<News
+									key={ax}
+									data={a}
+									ax={ax}
+									t={t}
+									language={language}
+								/>
 							))}
 						</InfiniteScroll>
 					</div>

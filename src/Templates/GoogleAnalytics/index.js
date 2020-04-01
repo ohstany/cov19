@@ -19,12 +19,16 @@ export const trackEvent = (category, action, label = "") => {
 	if (typeof window === "undefined") return;
 
 	if (!window.GA_INITIALIZED && category && action) {
-		// console.log("VIEW", category, action);
-		ReactGA.event({
-			category,
-			action,
-			label
-		});
+		try {
+			ReactGA.event({
+				category,
+				action,
+				label
+			});
+			console.log("EVENT:", category, action, label);
+		} catch (error) {
+			console.log("EVENT ERROR:", error);
+		}
 	}
 };
 

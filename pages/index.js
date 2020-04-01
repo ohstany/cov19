@@ -3,6 +3,7 @@ import GoogleMaps from "Templates/GoogleMaps";
 import ActivityArea from "Templates/ActivityArea";
 import Socials from "Templates/Socials";
 import Subscribe from "Templates/Subscribe";
+import ContactUs from "Templates/ContactUs";
 import NavMenu from "Templates/NavMenu";
 import GoogleAnalytics from "Templates/GoogleAnalytics";
 import { MainBlock } from "Layouts";
@@ -40,6 +41,7 @@ const Home = memo(
 						</main>
 						<NavMenu />
 						<Subscribe />
+						<ContactUs />
 					</div>
 				</GoogleAnalytics>
 			</>

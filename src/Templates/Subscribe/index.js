@@ -9,7 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/fontawesome-free-solid";
 import RootContext from "Context";
 import Popup from "Templates/Popup";
-import { withTranslation } from "i18n";
+import { notification, validateNumber, validateEmail } from "Library";
+import { withTranslation, Link, Router } from "i18n";
 
 import phone from "./phone.png";
 import email from "./email.png";
@@ -27,11 +28,15 @@ export default memo(
 		const { api, store: { geo, subscribe } = {}, setStore } = useContext(
 			RootContext
 		);
+
+		const [notShow, _notShow] = useState(false);
+
 		const [state, _state] = useState({
 			via: "phone",
 			num: phones[0].dial_code,
 			phone: "",
-			email: ""
+			email: "",
+			checked: false
 		});
 
 		useEffect(() => {
@@ -53,6 +58,17 @@ export default memo(
 
 		const submitForm = () => {
 			if (state.phone || state.email) {
+				if (state.phone && !validateNumber(state.phone)) {
+					notification(t("wrongInputFormat"));
+					return false;
+				} else if (state.email && !validateEmail(state.email)) {
+					notification(t("wrongInputFormat"));
+					return false;
+				} else if (!state.checked) {
+					notification(t("mustAgree"));
+					return false;
+				}
+
 				api({
 					method: "POST",
 					action: "subscribe",
@@ -71,11 +87,11 @@ export default memo(
 						);
 						_done(res);
 					} else {
-						alert(t("wrongInputFormat"));
+						notification(t("wrongInputFormat"));
 					}
 				});
 			} else {
-				alert(t("reuiredInputFormat"));
+				notification(t("reuiredInputFormat"));
 			}
 		};
 
@@ -84,6 +100,10 @@ export default memo(
 				target: { value }
 			} = e;
 			const name = e.target.getAttribute("name");
+
+			if (name === "phone" && !/^[0-9]+$/.test(value) && value !== "") {
+				return false;
+			}
 
 			_state(e => {
 				return {
@@ -103,6 +123,7 @@ export default memo(
 		);
 
 		// useEffect(() => {
+		// 	_notShow(true);
 		// 	setTimeout(() => {
 		// 		if (!localStorage.getItem("notshowsub")) {
 		// 			togglePopup();
@@ -153,8 +174,10 @@ export default memo(
 															key={px}
 															value={p.dial_code}
 														>
-															{p.dial_code} (
-															{p.name})
+															{p.dial_code}{" "}
+															{state.num !==
+																p.dial_code &&
+																`(${p.name})`}
 														</option>
 													))}
 												</select>
@@ -186,21 +209,49 @@ export default memo(
 							</div>
 
 							{done === "0" && (
-								<button onClick={submitForm}>
-									<FontAwesomeIcon icon={faCheck} />
-									{t("subscribe")}
-								</button>
+								<>
+									<div className="agree">
+										<label>
+											<input
+												type="checkbox"
+												checked={state.checked}
+												onChange={({
+													target: { checked }
+												}) => {
+													_state(p => ({
+														...p,
+														checked
+													}));
+												}}
+											/>
+											{t("privacyAgree") + " "}
+											<a href="/privacy" target="_blank">
+												{t("privacyPolicy")}
+											</a>
+										</label>
+									</div>
+
+									<button onClick={submitForm}>
+										<FontAwesomeIcon icon={faCheck} />
+										{t("subscribe")}
+									</button>
+								</>
 							)}
 
-							<label
-								className="notshow"
-								onClick={() => {
-									localStorage.setItem("notshowsub", true);
-									togglePopup();
-								}}
-							>
-								{t("donotshow")}
-							</label>
+							{notShow && (
+								<label
+									className="notshow"
+									onClick={() => {
+										localStorage.setItem(
+											"notshowsub",
+											true
+										);
+										togglePopup();
+									}}
+								>
+									{t("donotshow")}
+								</label>
+							)}
 						</div>
 					</div>
 				</div>

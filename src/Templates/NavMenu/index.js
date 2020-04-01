@@ -91,10 +91,17 @@ export default memo(
 						<Svg />
 					</div>
 
-					<div className="submb">
+					<div className="submb subscribe">
 						<img
 							src="/bell.png"
 							onClick={() => setStore({ subscribe: true })}
+						/>
+					</div>
+
+					<div className="submb contus-i">
+						<img
+							src="/email.png"
+							onClick={() => setStore({ contactUs: true })}
 						/>
 					</div>
 

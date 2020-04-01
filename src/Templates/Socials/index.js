@@ -72,7 +72,7 @@ export default memo(
 					id: "twitter",
 					className: "tw",
 					allow: "",
-					exclude: "UA",
+					exclude: "",
 					icon: faTwitter,
 					main: true
 				},
@@ -135,7 +135,7 @@ export default memo(
 					id: "skype",
 					className: "skype",
 					allow: "",
-					exclude: "",
+					exclude: "UA",
 					icon: faSkype,
 					main: true
 				},
@@ -198,6 +198,7 @@ export default memo(
 					>
 						<FontAwesomeIcon icon={faEnvelope} />
 					</a>
+
 					<a
 						className="custom copyurl"
 						onClick={e => copy(e, url, t("copy"))}

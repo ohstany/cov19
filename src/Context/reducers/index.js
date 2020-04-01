@@ -228,11 +228,14 @@ export const root_store_reducer = (s, a, params = false) => {
 		case "SET_ACTIVITY": {
 			const { activity, activityLimit } = s;
 
-			const { limit, country, city } = getUrlParams("?" + params.params);
+			const { type, limit, country, city } = getUrlParams(
+				"?" + params.params
+			);
 
 			if (!country) return {};
 
-			const rkey = `${country}_${city || "other"}`;
+			const rkey =
+				type === "regional" ? type : `${country}_${city || "other"}`;
 
 			if (!activity[rkey]) {
 				activity[rkey] = [];
@@ -241,8 +244,24 @@ export const root_store_reducer = (s, a, params = false) => {
 
 			if (data) {
 				activity[rkey] = [...activity[rkey], ...data];
+
 				if (limit && data.length < limit) {
 					activityLimit[rkey] = true;
+				}
+
+				if (type === "regional") {
+					data.map(i => {
+						const rk = `${i.locale}_${i.region || "other"}`;
+
+						if (!activity[rk]) {
+							activity[rk] = [];
+							activityLimit[rk] = false;
+						}
+
+						activity[rk].push(i);
+
+						return false;
+					});
 				}
 			} else {
 				activityLimit[rkey] = true;
@@ -415,7 +434,8 @@ export const root_store_initial_state = {
 	language: "en",
 	country_code: undefined,
 	region_code: undefined,
-	index: undefined,
+   index: undefined,
+   contactUs: false,
 	subscribe: false,
 	fetched: false,
 	cpos: false,
@@ -429,7 +449,7 @@ export const root_store_initial_state = {
 	options: {},
 	settings: {},
 	activityLimit: {},
-	activity: {},
+	activity: { regional: [] },
 	newsLimit: {},
 	news: {},
 	mk: [],

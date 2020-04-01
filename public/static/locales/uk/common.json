@@ -74,10 +74,10 @@
 	"privacyAgree": "Я даю свою згоду на обробку персональних даних і приймаю умови",
 	"privacyPolicy": "політики конфіденційності",
 	"mustAgree": "Потрібно узгодити політику конфіденційності веб-сайту",
-	"contactUsTitle": "If you have any question or suggestion, feel free to reach us.",
-	"leaveMessage": "Write your message",
-	"contactThank": "Thank you for contacting us. We'll reply very soon.",
+	"contactUsTitle": "Пишіть нам з усіх питань та пропозицій",
+	"leaveMessage": "Напишіть ваше повідомлення",
+	"contactThank": "Ми відповідаємо вам в найближчому часі",
 	"send": "Send",
-	"wrongEmailFormat": "Please check your email format.",
-	"contentRequired": "Must write a message."
+	"wrongEmailFormat": "Перевірте формат електронної пошти",
+	"contentRequired": "Напишіть ваше повідомлення."
 }

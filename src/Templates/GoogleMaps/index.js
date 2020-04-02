@@ -258,7 +258,9 @@ const MapCover = withTranslation("common")(
 																			]
 																		)}
 																</span>
-																{value[k]}
+																{numComma(
+																	value[k]
+																)}
 															</li>
 														) : (
 															""

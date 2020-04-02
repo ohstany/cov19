@@ -80,8 +80,8 @@
 	"send": "Надіслати",
 	"wrongEmailFormat": "Перевірте формат електронної пошти",
 	"contentRequired": "Напишіть ваше повідомлення.",
-	"Hide": "Hide",
-	"Read More": "Read More",
-	"countryUpdate": "Latest updates in the country",
-	"regionUpdate": "Latest updates in the region"
+	"Hide": "Згорнути",
+	"Read More": "Читати статтю",
+	"countryUpdate": "Останні оновлення в країні",
+	"regionUpdate": "Останні оновлення в регіоні"
 }

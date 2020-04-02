@@ -79,5 +79,9 @@
 	"contactThank": "Thank you for contacting us. We'll reply very soon.",
 	"send": "Send",
 	"wrongEmailFormat": "Please check your email format.",
-	"contentRequired": "Must write a message."
+	"contentRequired": "Must write a message.",
+	"Hide": "Hide",
+	"Read More": "Read More",
+	"countryUpdate": "Latest updates in the country",
+	"regionUpdate": "Latest updates in the region"
 }

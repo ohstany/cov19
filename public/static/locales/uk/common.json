@@ -79,5 +79,9 @@
 	"contactThank": "Ми відповідаємо вам в найближчому часі",
 	"send": "Надіслати",
 	"wrongEmailFormat": "Перевірте формат електронної пошти",
-	"contentRequired": "Напишіть ваше повідомлення."
+	"contentRequired": "Напишіть ваше повідомлення.",
+	"Hide": "Hide",
+	"Read More": "Read More",
+	"countryUpdate": "Latest updates in the country",
+	"regionUpdate": "Latest updates in the region"
 }

@@ -427,8 +427,6 @@ const Activity = ({ t }) => {
 							endMessage={<NoContent text={t("nodata")} />}
 							scrollableTarget="sc-markers"
 						>
-							<GetInfo />
-
 							{country_code && region_code ? (
 								<h4>{t("regionUpdate")}</h4>
 							) : country_code ? (
@@ -436,6 +434,8 @@ const Activity = ({ t }) => {
 							) : (
 								""
 							)}
+
+							<GetInfo />
 
 							{infections && infections.length
 								? infections.map((a, ax) => {
@@ -454,6 +454,7 @@ const Activity = ({ t }) => {
 
 					<div id="sc-news" className="bb b2">
 						<h4>{t("Latest news, update every 1 hour")}</h4>
+
 						<InfiniteScroll
 							dataLength={newsData.length}
 							next={fetchNews}

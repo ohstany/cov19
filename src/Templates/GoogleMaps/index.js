@@ -105,9 +105,11 @@ const MapCover = withTranslation("common")(
 							  }
 					);
 
+					_zoom(p => p - 1);
+
 					setTimeout(() => {
 						_zoom((rc && rc.zoom) || 9);
-					}, 200);
+					}, 100);
 				}
 			}, [region_code, cpos]);
 
@@ -127,8 +129,6 @@ const MapCover = withTranslation("common")(
 
 			const onMarkerClick = useCallback(
 				(pp, country_code, region_code) => {
-					_zoom(p => p + 1);
-					_zoom(12);
 					setStore({ country_code, region_code });
 					_mks(markerSizes(refs.map.getZoom()));
 				},

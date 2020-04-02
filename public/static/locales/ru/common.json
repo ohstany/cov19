@@ -80,8 +80,8 @@
 	"send": "Отправить",
 	"wrongEmailFormat": "Пожалуйста, проверьте формат вашей электронной почты",
 	"contentRequired": "Напишите ваше сообщение",
-	"Hide": "Hide",
-	"Read More": "Read More",
-	"countryUpdate": "Latest updates in the country",
-	"regionUpdate": "Latest updates in the region"
+	"Hide": "Свернуть",
+	"Read More": "Читать статью",
+	"countryUpdate": "Последние обновления в стране",
+	"regionUpdate": "Последние обновления в регионе"
 }

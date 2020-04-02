@@ -74,10 +74,10 @@
 	"privacyAgree": "Я даю свое согласие на обработку персональных данных и принимаю условия",
 	"privacyPolicy": "пользовательского соглашения",
 	"mustAgree": "Необходимо принять условия пользовательского соглашения",
-	"contactUsTitle": "If you have any question or suggestion, feel free to reach us.",
-	"leaveMessage": "Write your message",
-	"contactThank": "Thank you for contacting us. We'll reply very soon.",
-	"send": "Send",
-	"wrongEmailFormat": "Please check your email format.",
-	"contentRequired": "Must write a message."
+	"contactUsTitle": "Пишите нам по всем вопросам и предложениям",
+	"leaveMessage": "Напишите ваше сообщение",
+	"contactThank": "Мы ответим вам в ближайшее время",
+	"send": "Отправить",
+	"wrongEmailFormat": "Пожалуйста, проверьте формат вашей электронной почты",
+	"contentRequired": "Напишите ваше сообщение"
 }

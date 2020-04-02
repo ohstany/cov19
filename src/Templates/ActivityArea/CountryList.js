@@ -1,4 +1,5 @@
 import { withTranslation } from "i18n";
+import { numComma } from "Library";
 import countries from "Library/countries-object.json";
 
 export const CountryList = withTranslation("countries")(
@@ -32,7 +33,9 @@ export const CountryList = withTranslation("countries")(
 				{f.map((c, ci) => {
 					return (
 						<option key={ci} value={c.locale}>
-							{`${t(countries[c.locale].name)} (${c.infections})`}
+							{`${t(countries[c.locale].name)} (${numComma(
+								c.infections
+							)})`}
 						</option>
 					);
 				})}
@@ -63,7 +66,7 @@ export const CityList = withTranslation("cities")(
 					.map((r, ri) => {
 						return (
 							<option key={ri} value={r.region_code}>
-								{`${t(r.name)} (${r.inf})`}
+								{`${t(r.name)} (${numComma(r.inf)})`}
 							</option>
 						);
 					})}

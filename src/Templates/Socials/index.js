@@ -3,11 +3,7 @@ import RootContext from "Context";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import {
-	faPaperPlane,
-	faEnvelope,
-	faCopy
-} from "@fortawesome/fontawesome-free-solid";
+import { faPaperPlane, faCopy } from "@fortawesome/fontawesome-free-solid";
 
 import {
 	faFacebook,

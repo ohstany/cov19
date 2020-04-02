@@ -1,5 +1,7 @@
 import { useState, memo } from "react";
 import moment from "moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/fontawesome-free-solid";
 
 export default memo(
 	({
@@ -13,8 +15,8 @@ export default memo(
 			content
 		} = {}
 	}) => {
-      const [sh, _sh] = useState(false);
-      
+		const [sh, _sh] = useState(false);
+
 		return (
 			<div className={"author" + (sh ? " shown" : "")}>
 				<h3 className={"atitle clickable"}>
@@ -48,8 +50,14 @@ export default memo(
 					</div>
 				)}
 
-				<span className={"showh"} onClick={() => _sh(e => !e)}>
-					{sh ? "-" : "+"}
+				<span className="showh" onClick={() => _sh(e => !e)}>
+					{sh ? (
+						t("Hide")
+					) : (
+						<>
+							<FontAwesomeIcon icon={faEye} /> {t("Read More")}
+						</>
+					)}
 				</span>
 
 				{sc && (

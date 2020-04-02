@@ -138,6 +138,9 @@ const MapCover = withTranslation("common")(
 			useEffect(() => {
 				if (refs.map) {
 					setTimeout(() => {
+						if (!refs.map) {
+							return;
+						}
 						const s = refs.map.getZoom();
 						_mks(markerSizes(s));
 					}, 500);
@@ -155,6 +158,9 @@ const MapCover = withTranslation("common")(
 						// console.log("locl", latitude, longtitude, e);
 					}}
 					onZoomChanged={() => {
+						if (!refs.map) {
+							return;
+						}
 						const s = refs.map.getZoom();
 						const z = markerSizes(s);
 						if (s <= 5) {

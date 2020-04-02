@@ -10,15 +10,14 @@ import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
 import NoContent from "Templates/NoContent";
 import RootContext from "Context";
-import { sources } from "Library/statuses.js";
-import { condition } from "Library/statuses";
-import { numComma } from "Library";
-import Chat from "./Chat";
-import News from "./News";
+import { condition, sources } from "Library/statuses";
 import { CountryList, CityList } from "./CountryList";
+import { numComma } from "Library";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
 import moment from "moment";
+import Chat from "./Chat";
+import News from "./News";
 
 const caseDef = {
 	infections: 0,
@@ -269,16 +268,11 @@ const Activity = ({ t }) => {
 			return ID ? (
 				<div className={"author " + type}>
 					<div className="infc">
-						{number >= 1 && (
-							<span className="cases">
-								<b className="b">{numComma(number)}</b>{" "}
-								{number > 1 ? t("cases") : t("case")}
-							</span>
-						)}
-
 						{cond !== "none" && (
-							<span className={"cond " + cond}>
-								<b className={"b circ " + cond} />
+							<span className={"cases cond " + cond}>
+								<b className={"b " + cond}>
+									{numComma(number)}
+								</b>{" "}
 								{t(condition[cond])}
 							</span>
 						)}
@@ -435,6 +429,14 @@ const Activity = ({ t }) => {
 						>
 							<GetInfo />
 
+							{country_code && region_code ? (
+								<h4>{t("regionUpdate")}</h4>
+							) : country_code ? (
+								<h4>{t("countryUpdate")}</h4>
+							) : (
+								""
+							)}
+
 							{infections && infections.length
 								? infections.map((a, ax) => {
 										return (
@@ -451,6 +453,7 @@ const Activity = ({ t }) => {
 					</div>
 
 					<div id="sc-news" className="bb b2">
+						<h4>{t("Latest news, update every 1 hour")}</h4>
 						<InfiniteScroll
 							dataLength={newsData.length}
 							next={fetchNews}

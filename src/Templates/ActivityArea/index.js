@@ -314,7 +314,7 @@ const Activity = ({ t }) => {
 					)}
 
 					<div className={"atitle " + type}>
-						{`#${t(sources[type])}`}
+						{`${t(sources[type])}`}
 					</div>
 
 					<div className="resource">

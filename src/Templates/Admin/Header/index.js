@@ -15,7 +15,9 @@ export default ({ logout }) => {
 				{[
 					{ url: `/${url}`, text: "Markers" },
 					{ url: `/${url}/subscriptions`, text: "Subscriptions" },
-					{ url: `/${url}/settings`, text: "Settings" }
+					{ url: `/${url}/settings`, text: "Settings" },
+					{ url: `/${url}/members`, text: "Members" },
+					{ url: `/${url}/chat`, text: "Chat" }
 				].map((n, nx) => {
 					return (
 						<Link key={nx} href={n.url}>
@@ -25,7 +27,8 @@ export default ({ logout }) => {
 									window.location.pathname === n.url
 										? "current"
 										: ""
-								}>
+								}
+							>
 								{n.text}
 							</li>
 						</Link>

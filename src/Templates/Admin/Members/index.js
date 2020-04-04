@@ -32,6 +32,8 @@ const defV = {
 	d: false,
 };
 
+const show = 20;
+
 const CountrySelect = ({ id, onBlur, controlled = true, value, onUpdate }) => {
 	return (
 		<select
@@ -91,6 +93,7 @@ const RegionSelect = ({ locale, value, onUpdate }) => {
 
 export default () => {
 	const {
+		setStore,
 		actioner,
 		store: { geo, markers },
 	} = useContext(RootContext);
@@ -100,14 +103,16 @@ export default () => {
 	const [popup, _popup] = useState(false);
 	const [uploaded, _uploaded] = useState(false);
 	const [state, _state] = useState(initialState);
-	console.log("markers", markers);
 
-	const marks =
-		markers && markers[byc]
-			? markers[byc]
-			: byc === "all"
-			? Object.keys(markers).reduce((p, n) => [...p, ...markers[n]], [])
-			: [];
+	const { a, paging = 0, page = 1 } = markers[byc];
+
+	useEffect(() => {
+		getPaging();
+	}, []);
+
+	useEffect(() => {
+		refreshs();
+	}, [page]);
 
 	const updateState = useCallback((e) => {
 		const {
@@ -124,20 +129,42 @@ export default () => {
 	}, []);
 
 	const refreshs = () => {
+		if (a[page]) {
+			return false;
+		}
+
 		_refr(true);
+
 		actioner({
 			reduce: "SET_MARKERS_ADMIN",
 			action: "markers",
 			method: "POST",
-			params: "locale=" + byc,
+			params: `locale=${byc}&page=${page}&limit=${show}`,
+		}).then(() => {
+			setTimeout(() => {
+				_refr(false);
+			}, 500);
+		});
+	};
+
+	const getPaging = () => {
+		_refr(true);
+		actioner({
+			reduce: "SET_MARKERS_PAGING",
+			action: "markers",
+			method: "OPTIONS",
+			params: "type=paging&locale=" + byc,
 		}).then(() => {
 			_refr(false);
 		});
 	};
 
-	useEffect(() => {
-		refreshs();
-	}, []);
+	const pageChange = (page) => {
+		markers[byc].page = page;
+		setStore({
+			markers,
+		});
+	};
 
 	const modifyMarker = useCallback(
 		(ID, modify) => {
@@ -146,6 +173,7 @@ export default () => {
 				method: "UPDATE",
 				action: "markers",
 				data: {
+					page,
 					action: "modify",
 					locale: byc,
 					modify,
@@ -163,6 +191,7 @@ export default () => {
 				method: "DELETE",
 				action: "markers",
 				data: {
+					page,
 					locale: byc,
 					ID,
 				},
@@ -260,17 +289,12 @@ export default () => {
 							},
 						};
 
-						console.log("aadad", {
-							action,
-							address,
-							ID,
-						});
-
 						return actioner({
 							reduce: "UPDATE_LOCATION",
 							method: "UPDATE",
 							action: "markers",
 							data: {
+								page,
 								locale: byc,
 								action,
 								address,
@@ -500,7 +524,6 @@ export default () => {
 							_block(true);
 							if (block === false) {
 								ffg(address, ID, "location").then((rr) => {
-									console.log("SS", address, rr);
 									_block(false);
 									notification("Address Fetched");
 								});
@@ -655,8 +678,15 @@ export default () => {
 			<div className="content">
 				<Table
 					className="amarkers"
-					data={marks}
+					data={a}
 					fields={fields}
+					pagination={{
+						show,
+						paging,
+						page,
+					}}
+					loading={refr}
+					onPage={pageChange}
 					methods={{
 						modifyMarker,
 						deleteMarker,

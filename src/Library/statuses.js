@@ -16,3 +16,9 @@ export const via = {
 	admin: "Admin",
 	anonim: "Anonimous"
 };
+
+export const status = {
+	review: "Review",
+	hidden: "Hidden",
+	published: "Published"
+};

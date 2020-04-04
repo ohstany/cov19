@@ -1361,9 +1361,6 @@ body.subsc {
 			color: white;
 			padding: 4px 0;
 			font-weight: 200;
-			@include md {
-				display: none;
-			}
 		}
 		.share-links {
 			display: table;

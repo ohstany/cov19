@@ -21,6 +21,8 @@ export default memo(
 			? moment(create_date).tz(continent_code)
 			: moment(create_date);
 
+		console.log("date", create_date);
+
 		return (
 			<div className={"author" + (sh ? " shown" : "")}>
 				<h3 className={"atitle clickable"}>

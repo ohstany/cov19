@@ -4,7 +4,7 @@ import {
 	useCallback,
 	useEffect,
 	useState,
-	useContext
+	useContext,
 } from "react";
 import RootContext from "Context";
 import { Skeleton1 } from "Templates/Skeleton";
@@ -14,14 +14,14 @@ import Access from "Templates/Login/LoginForm";
 import { numComma } from "Library";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
-import moment from "moment";
+import moment from "moment-timezone";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
 	faThumbsUp,
 	faThumbsDown,
-	faChevronLeft
+	faChevronLeft,
 } from "@fortawesome/fontawesome-free-solid";
 
 const UserName = ({ prefix = "User", value }) =>
@@ -56,16 +56,17 @@ export default memo(
 				loginStatus,
 				userdata: {
 					avatar: mya,
-					geo,
-					user_roles: [role = "none"] = []
+					user_roles: [role = "none"] = [],
 				} = {},
+				geo,
 				country_code,
 				chats,
 				chatReplies,
-				chatLimit
-			}
+				chatLimit,
+			},
 		} = useContext(RootContext);
 
+		const { continent_code = false } = geo || {};
 		const [comment, _comment] = useState("");
 		const [showReply, _showReply] = useState({ show: false, over: false });
 		const [fetchingMessages, _fetchingMessages] = useState(false);
@@ -79,13 +80,13 @@ export default memo(
 		useEffect(() => {
 			if (showReply.ID) {
 				const index = chats[country_code].data.findIndex(
-					i => i.ID === showReply.ID
+					(i) => i.ID === showReply.ID
 				);
 
 				if (index >= 0) {
-					_showReply(p => ({
+					_showReply((p) => ({
 						...p,
-						...chats[country_code].data[index]
+						...chats[country_code].data[index],
 					}));
 				}
 			}
@@ -131,9 +132,9 @@ export default memo(
 				reduce: "SET_LIKE",
 				action: "likes",
 				method: "POST",
-				params: `item=${ID}&status=${status}&c=${country_code}&type=${type}`
+				params: `item=${ID}&status=${status}&c=${country_code}&type=${type}`,
 			}).then(() => {
-				_updater(p => p + 1);
+				_updater((p) => p + 1);
 			});
 		};
 
@@ -158,7 +159,7 @@ export default memo(
 					timer2 = setInterval(() => {
 						count2 = count2 + 1;
 						if (count2 === checkAfter) {
-							_autoFetchReplies(p => {
+							_autoFetchReplies((p) => {
 								return p === true ? false : true;
 							});
 							count2 = 0;
@@ -180,7 +181,7 @@ export default memo(
 							reduce: "SET_CHAT_COUNT",
 							action: "comments",
 							method: "GET",
-							params: `country=${country_code}&type=count`
+							params: `country=${country_code}&type=count`,
 						});
 					}, 200);
 				}
@@ -202,7 +203,7 @@ export default memo(
 				timer = setInterval(() => {
 					count = count + 1;
 					if (count === checkAfter) {
-						_autoFetchAuthors(p => {
+						_autoFetchAuthors((p) => {
 							return p === true ? false : true;
 						});
 						count = 0;
@@ -236,7 +237,7 @@ export default memo(
 						reduce: "FETCH_CHAT",
 						action: "comments",
 						method: "GET",
-						params: `country=${country_code}&type=author&offset=${offset}&limit=${limit}&get=${g}`
+						params: `country=${country_code}&type=author&offset=${offset}&limit=${limit}&get=${g}`,
 					}).then(() => {
 						_fetchingMessages(false);
 						_autoFetchAuthors(false);
@@ -248,7 +249,7 @@ export default memo(
 		const fetchReplies = (g = "new", c) => {
 			if (country_code && fetchingReplies === false) {
 				c &&
-					_showReply(p => {
+					_showReply((p) => {
 						if (p.show === false) {
 							document
 								.getElementById("cm-replies")
@@ -259,7 +260,7 @@ export default memo(
 							...c,
 							replyTo: c.ID,
 							replyName: c.name,
-							show: true
+							show: true,
 						};
 					});
 
@@ -279,7 +280,7 @@ export default memo(
 						reduce: "FETCH_REPLY",
 						action: "comments",
 						method: "GET",
-						params: `country=${country_code}&parent=${ID}&type=replier&offset=${offset}&limit=10&get=${g}`
+						params: `country=${country_code}&parent=${ID}&type=replier&offset=${offset}&limit=10&get=${g}`,
 					}).then(() => {
 						_fetchingReplies(false);
 						_autoFetchReplies(false);
@@ -301,12 +302,12 @@ export default memo(
 							parent,
 							replyto,
 							content,
-							country: country_code
-						}
+							country: country_code,
+						},
 					}).then(() => {
 						_comment("");
 						_pushingComment(false);
-						parent && _updater(p => p + 1);
+						parent && _updater((p) => p + 1);
 					});
 				}
 			},
@@ -315,10 +316,10 @@ export default memo(
 
 		const repliesWindow = useCallback(
 			(replyTo = false, replyName = false, focus = false, timer = 0) => {
-				_showReply(p => ({
+				_showReply((p) => ({
 					...p,
 					replyTo: replyTo !== false ? replyTo : p.ID,
-					replyName: replyName !== false ? replyName : p.name
+					replyName: replyName !== false ? replyName : p.name,
 				}));
 
 				if (focus) {
@@ -338,7 +339,7 @@ export default memo(
 		const DoLogin = useCallback(() => {
 			return (
 				<div className="c-login">
-					<span className="do" onClick={() => _popup(p => !p)}>
+					<span className="do" onClick={() => _popup((p) => !p)}>
 						{t("Login")}
 					</span>{" "}
 					{t("toLeaveComment")}
@@ -347,7 +348,7 @@ export default memo(
 		}, []);
 
 		const closePopup = useCallback(() => {
-			_popup(p => false);
+			_popup((p) => false);
 		}, []);
 
 		const Actions = useCallback(
@@ -395,6 +396,11 @@ export default memo(
 				const [cont, _cont] = useState(false);
 
 				const len = c.content.length;
+				const tm = c.date
+					? continent_code
+						? moment(c.date).tz(continent_code)
+						: moment(c.date)
+					: "";
 
 				return (
 					<div className="comment">
@@ -407,10 +413,8 @@ export default memo(
 									<UserName value={c.name} />
 								</span>
 								<span className="c-when">
-									{c.date
-										? moment(c.date)
-												.lang(language || "en")
-												.fromNow()
+									{tm
+										? tm.lang(language || "en").fromNow()
 										: ""}
 								</span>
 							</div>
@@ -434,7 +438,7 @@ export default memo(
 							{len && len > 100 ? (
 								<div
 									className="moreLess"
-									onClick={() => _cont(p => !p)}
+									onClick={() => _cont((p) => !p)}
 								>
 									{t(cont ? "showLess" : "showMore")}
 								</div>
@@ -495,7 +499,7 @@ export default memo(
 							{len && len > 100 ? (
 								<div
 									className="moreLess"
-									onClick={() => _cont(p => !p)}
+									onClick={() => _cont((p) => !p)}
 								>
 									{t(cont ? "showLess" : "showMore")}
 								</div>
@@ -514,7 +518,7 @@ export default memo(
 				className={[
 					"chatArea",
 					loginStatus ? "online" : "offline",
-					visible ? "visible" : "hidden"
+					visible ? "visible" : "hidden",
 				].join(" ")}
 			>
 				<Popup visible={popup} onClose={closePopup}>
@@ -568,7 +572,7 @@ export default memo(
 													)}
 													value={comment}
 													onChange={({
-														target: value
+														target: value,
 													}) => {
 														if (
 															value.value.length <
@@ -579,7 +583,7 @@ export default memo(
 															);
 														}
 													}}
-													onKeyDown={e => {
+													onKeyDown={(e) => {
 														if (e.key === "Enter") {
 															if (
 																!pushingComment
@@ -639,9 +643,9 @@ export default memo(
 							<div
 								className="goback"
 								onClick={() => {
-									_showReply(p => ({
+									_showReply((p) => ({
 										...p,
-										show: false
+										show: false,
 									}));
 								}}
 							>
@@ -686,19 +690,19 @@ export default memo(
 													)}
 													value={comment}
 													onFocus={() =>
-														_showReply(p => ({
+														_showReply((p) => ({
 															...p,
-															over: true
+															over: true,
 														}))
 													}
 													onBlur={() =>
-														_showReply(p => ({
+														_showReply((p) => ({
 															...p,
-															over: false
+															over: false,
 														}))
 													}
 													onChange={({
-														target: value
+														target: value,
 													}) => {
 														if (
 															value.value.length <
@@ -709,7 +713,7 @@ export default memo(
 															);
 														}
 													}}
-													onKeyDown={e => {
+													onKeyDown={(e) => {
 														if (e.key === "Enter") {
 															if (
 																!pushingComment

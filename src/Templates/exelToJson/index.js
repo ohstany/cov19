@@ -3,7 +3,7 @@ import React, {
 	memo,
 	useEffect,
 	useContext,
-	useCallback
+	useCallback,
 } from "react";
 import XLSX from "xlsx";
 import templates from "./template";
@@ -18,11 +18,11 @@ import "./style.scss";
 const joinedString = {
 	...condition,
 	...sources,
-	...via
+	...via,
 };
 
 export const AllowedUpload = ["xlsx", "xlsb", "xlsm", "xls"]
-	.map(function(x) {
+	.map(function (x) {
 		return "." + x;
 	})
 	.join(",");
@@ -37,12 +37,12 @@ export default memo(
 		buttonText = "EXEL",
 		cname,
 		uploaded = false,
-		country_code
+		country_code,
 	}) => {
 		const { api } = useContext(RootContext);
 		const [state, setState] = useState({
 			data: [],
-			converted: undefined
+			converted: undefined,
 		});
 
 		const [loading, _loading] = useState(false);
@@ -58,8 +58,8 @@ export default memo(
 				api({
 					method: "GET",
 					action: "exel",
-					params: "type=" + type
-				}).then(res => {
+					params: "type=" + type,
+				}).then((res) => {
 					_exels(res);
 				});
 
@@ -86,14 +86,14 @@ export default memo(
 							"&filename=" +
 							state.converted.name,
 						data: {
-							import: state.converted.templated
-						}
-					}).then(ret => {
+							import: state.converted.templated,
+						},
+					}).then((ret) => {
 						const {
 							imported = false,
 							action,
 							exel_inserted,
-							custom_message = ""
+							custom_message = "",
 						} = ret || {};
 
 						if (imported) {
@@ -107,7 +107,7 @@ export default memo(
 									...state,
 									file: undefined,
 									data: [],
-									converted: undefined
+									converted: undefined,
 								});
 							}
 
@@ -135,7 +135,7 @@ export default memo(
 			}
 		}, [state.converted]);
 
-		const beforeUpload = useCallback(file => {
+		const beforeUpload = useCallback((file) => {
 			var ext = /^.+\.([^.]+)$/.exec(file.name);
 			ext = ext == null ? "" : ext[1];
 			if (AllowedUpload.indexOf(ext) < 0) {
@@ -148,11 +148,11 @@ export default memo(
 				const reader = new FileReader();
 				const rABS = !!reader.readAsBinaryString;
 
-				reader.onload = e => {
+				reader.onload = (e) => {
 					const bstr = e.target.result;
 					const wb = XLSX.read(bstr, {
 						type: rABS ? "binary" : "array",
-						bookVBA: true
+						bookVBA: true,
 					});
 					const wsname = wb.SheetNames[0];
 					const ws = wb.Sheets[wsname];
@@ -165,7 +165,7 @@ export default memo(
 					data.map((exl_data, dx) => {
 						if (!templated[dx]) templated[dx] = {};
 
-						Object.keys(exl_data).map(exl_colname => {
+						Object.keys(exl_data).map((exl_colname) => {
 							if (
 								Object.keys(template).includes(exl_colname) &&
 								exl_colname !== "№"
@@ -211,7 +211,7 @@ export default memo(
 									templated[dx][path] = pr
 										? pr
 												.split(",")
-												.map(tg => parseFloat(tg))
+												.map((tg) => parseFloat(tg))
 										: "";
 								}
 							}
@@ -224,9 +224,9 @@ export default memo(
 								templated,
 								data,
 								name: file.name,
-								size: file.size
+								size: file.size,
 							},
-							keys
+							keys,
 						});
 
 					templated.length <= 0 &&
@@ -294,16 +294,18 @@ export default memo(
 															style={{
 																width: "100%",
 																margin: 0,
-																marginTop: 4
+																marginTop: 4,
+																background:
+																	"#ff700a",
 															}}
 															type="primary"
 															disabled={loading}
-															onClick={e => {
+															onClick={(e) => {
 																e.stopPropagation();
 																doUpload();
 															}}
 														>
-															Register
+															Upload
 														</button>
 													</div>
 												</>
@@ -315,7 +317,7 @@ export default memo(
 									<h2
 										style={{
 											fontSize: 20,
-											paddingBottom: 10
+											paddingBottom: 10,
 										}}
 									>
 										Exel File Upload
@@ -332,28 +334,31 @@ export default memo(
 										<li
 											style={{
 												fontWeight: "bold",
-												color: "#e64234"
+												color: "#e64234",
 											}}
 										>
 											TEMPLATE:{" "}
 											<b>
 												<button
+													style={{
+														background: "#505050",
+													}}
 													onClick={() => {
 														const json = [
 															build_Cmodules(
 																{
-																	"№": 1
+																	"№": 1,
 																},
 																templates[type],
 																true
-															)
+															),
 														];
 
 														exportAsExcelFile({
 															json,
 															filename:
 																"template.xlsx",
-															db: templates[type]
+															db: templates[type],
 														});
 													}}
 												>
@@ -364,7 +369,7 @@ export default memo(
 										<li
 											style={{
 												fontWeight: "bold",
-												color: "#e64234"
+												color: "#e64234",
 											}}
 										>
 											EXPORT ({cname ? cname : "ALL"})
@@ -395,7 +400,7 @@ export default memo(
 												<span
 													style={{
 														fontSize: 11,
-														color: "#acacac"
+														color: "#acacac",
 													}}
 												>
 													{f.create_date}
@@ -410,7 +415,7 @@ export default memo(
 																"#50a563",
 															marginRight: 5,
 															borderColor:
-																"#348f49"
+																"#348f49",
 														}}
 														onClick={() =>
 															exportItemsToExel(
@@ -446,9 +451,9 @@ const exportItemsToExel = (api, type, ids, filename, country_code) => {
 		data: {
 			ids: typeof ids === "object" ? ids.join(",") : ids,
 			type,
-			country_code
-		}
-	}).then(res => {
+			country_code,
+		},
+	}).then((res) => {
 		if (res) {
 			const json = res.map((d, o) => {
 				const cdata = d.metadata
@@ -464,7 +469,7 @@ const exportItemsToExel = (api, type, ids, filename, country_code) => {
 					{
 						"№": o + 1,
 						...d,
-						...(cdata || {})
+						...(cdata || {}),
 					},
 					templates[type]
 				);
@@ -473,7 +478,7 @@ const exportItemsToExel = (api, type, ids, filename, country_code) => {
 			exportAsExcelFile({
 				json,
 				filename,
-				db: templates[type]
+				db: templates[type],
 			});
 		} else {
 			notification(
@@ -496,14 +501,14 @@ const booleanChoicesToExel = {
 		TRUE: "Y",
 		true: "Y",
 		FALSE: "N",
-		false: "N"
+		false: "N",
 	},
 	booleanNumber: {
 		"1": "Y",
 		Y: "Y",
 		"0": "N",
-		N: "N"
-	}
+		N: "N",
+	},
 };
 
 const booleanChoicesToJson = (type, value) => {
@@ -533,7 +538,7 @@ const build_Cmodules = (db, ttype, sample = false) => {
 			value = {
 				[next]: sample
 					? ttype[next].sample
-					: joinedString[obj_g] || obj_g || ""
+					: joinedString[obj_g] || obj_g || "",
 			};
 		} else if (ttype[next].path === "latlng") {
 			value = {
@@ -543,19 +548,19 @@ const build_Cmodules = (db, ttype, sample = false) => {
 						: db[ttype[next].path]
 						? db[ttype[next].path]
 						: []
-				).join(",")
+				).join(","),
 			};
 		} else if (ttype[next].skip) {
 			value = {};
 		} else if (next === "№") {
 			value = {
-				[next]: db[next]
+				[next]: db[next],
 			};
 		} else if (["region", "number"].includes(ttype[next].path)) {
 			value = {
 				[next]: sample
 					? ttype[next].sample + ""
-					: db[ttype[next].path] + ""
+					: db[ttype[next].path] + "",
 			};
 		} else {
 			if (sample) {
@@ -563,7 +568,7 @@ const build_Cmodules = (db, ttype, sample = false) => {
 					ttype[next].sample === undefined
 						? {}
 						: {
-								[next]: ttype[next].sample
+								[next]: ttype[next].sample,
 						  };
 			} else {
 				const columnType = ttype[next].type || "default";
@@ -573,17 +578,17 @@ const build_Cmodules = (db, ttype, sample = false) => {
 						? {
 								[next]: ttype[next].select
 									? swapKeyValue(ttype[next].select)[obj_g]
-									: obj_g
+									: obj_g,
 						  }
 						: columnType === "array"
 						? {
-								[next]: (obj_g || []).join(",")
+								[next]: (obj_g || []).join(","),
 						  }
 						: ["boolean", "booleanNumber"].indexOf(columnType) >= 0
 						? {
 								[next]:
 									booleanChoicesToExel[columnType][obj_g] ||
-									"N"
+									"N",
 						  }
 						: {};
 			}
@@ -628,10 +633,10 @@ const exportAsExcelFile = ({ json, filename, db = false }) => {
 									[next]:
 										booleanChoicesToExel[
 											db[workbook.Sheets.sheet[k].v].type
-										] || "N"
+										] || "N",
 							  }
 							: db[workbook.Sheets.sheet[k].v].select
-					).join(", ")
+					).join(", "),
 				});
 			}
 		}

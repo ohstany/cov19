@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import moment from "moment";
+import moment from "moment-timezone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/fontawesome-free-solid";
 
@@ -7,15 +7,19 @@ export default memo(
 	({
 		t,
 		language,
+		continent_code,
 		data: {
 			title,
 			guid,
 			create_date,
 			meta_data: { sc, image } = {},
-			content
-		} = {}
+			content,
+		} = {},
 	}) => {
 		const [sh, _sh] = useState(false);
+		const tm = continent_code
+			? moment(create_date).tz(continent_code)
+			: moment(create_date);
 
 		return (
 			<div className={"author" + (sh ? " shown" : "")}>
@@ -23,10 +27,10 @@ export default memo(
 					<a
 						href="#"
 						target="_blank"
-						onClick={e => {
+						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							_sh(e => !e);
+							_sh((e) => !e);
 						}}
 					>
 						{title}
@@ -44,13 +48,13 @@ export default memo(
 						<div
 							className={"cont"}
 							dangerouslySetInnerHTML={{
-								__html: content
+								__html: content,
 							}}
 						></div>
 					</div>
 				)}
 
-				<span className="showh" onClick={() => _sh(e => !e)}>
+				<span className="showh" onClick={() => _sh((e) => !e)}>
 					{sh ? (
 						t("Hide")
 					) : (
@@ -62,7 +66,7 @@ export default memo(
 
 				{sc && (
 					<div className="resource">
-						{t("source")}: #{" "}
+						{t("source")}: {" "}
 						<a href={guid} target="_blank">
 							{sc}
 						</a>
@@ -70,11 +74,7 @@ export default memo(
 				)}
 
 				<time dateTime={create_date}>
-					{create_date
-						? moment(create_date)
-								.lang(language || "en")
-								.fromNow()
-						: ""}
+					{tm.lang(language || "en").fromNow()}
 				</time>
 			</div>
 		);

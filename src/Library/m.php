@@ -11,7 +11,8 @@ function originToArray()
          'country_code' => $value->country_code,
          'lat' => $value->latlng[0],
          'lng' => $value->latlng[1],
-         'name' => $value->name
+         'name' => $value->name,
+         'tz' => $value->timezones ? $value->timezones[0] : false
       ];
       $n[] = $temp;
    }
@@ -36,7 +37,8 @@ function originToObject()
          'lat' => $value->latlng[0],
          'lng' => $value->latlng[1],
          'name' => $value->name,
-         'capital' => $value->capital
+         'capital' => $value->capital,
+         'tz' => $value->timezones ? $value->timezones[0] : false
       ];
    }
 
@@ -342,10 +344,13 @@ function iso3166_2_finalize()
 function iso3166_2_minify()
 {
    $js = json_decode(file_get_contents("./iso-3166-2-object.json"));
+   $co = (array) json_decode(file_get_contents("./countries-object.json"));
    $copy = $js;
 
    foreach ($js as $c => $cv) {
       if ($cv->regions) {
+         // add timezone
+         $cv->tz = $co[$cv->code]->tz;
          unset($cv->parent);
          // unset($cv->code);
          unset($cv->division);
@@ -368,6 +373,7 @@ function iso3166_2_minify()
 function iso3166_2_minify_to_js()
 {
    $js = json_decode(file_get_contents("./iso-3166-2-object.json"));
+   $co = (array) json_decode(file_get_contents("./countries-object.json"));
    $copy = $js;
 
    $str = "";
@@ -375,6 +381,8 @@ function iso3166_2_minify_to_js()
    foreach ($js as $c => $cv) {
       if (!in_array($cv->name, ["Earth", "Asia", "Africa", "Antarctica", "Australia", "Europe", "North America", "South America"])) {
          if ($cv->regions) {
+            // add timezone
+            $cv->tz = $co[$cv->code]->tz;
             unset($cv->parent);
             // unset($cv->code);
             unset($cv->division);
@@ -514,7 +522,7 @@ function replaceTranslation()
 // iso3166_2_minify();
 // build_phones();
 // buildNewCountries();
-// iso3166_2_minify_to_js();
+iso3166_2_minify_to_js();
 // buildCountries();
 // buildCities();
 // replaceTranslation();

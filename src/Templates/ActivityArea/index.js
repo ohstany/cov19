@@ -4,7 +4,7 @@ import {
 	useCallback,
 	useContext,
 	memo,
-	useMemo
+	useMemo,
 } from "react";
 import MakeMark from "Templates/MakeMark";
 import { Skeleton1 } from "Templates/Skeleton";
@@ -15,7 +15,7 @@ import { CountryList, CityList } from "./CountryList";
 import { numComma } from "Library";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
-import moment from "moment";
+import moment from "moment-timezone";
 import Chat from "./Chat";
 import News from "./News";
 
@@ -24,7 +24,7 @@ const caseDef = {
 	infected: 0,
 	cured: 0,
 	suspicion: 0,
-	mortal: 0
+	mortal: 0,
 };
 
 const RenderSource = memo(({ title = "Source", s }) => {
@@ -34,7 +34,7 @@ const RenderSource = memo(({ title = "Source", s }) => {
 			{s.indexOf("youtube") >= 0 && s.indexOf("iframe") >= 0 ? (
 				<div
 					dangerouslySetInnerHTML={{
-						__html: s
+						__html: s,
 					}}
 				/>
 			) : (
@@ -60,11 +60,12 @@ const Activity = ({ t }) => {
 			newsLimit,
 			activity,
 			activityLimit,
-			mapMarkers
+			mapMarkers,
 		},
-		setStore
+		setStore,
 	} = useContext(RootContext) || {};
 
+	const { continent_code = false } = geo || {};
 	const usersCc = geo ? geo.country_code : false;
 	const mType =
 		country_code && region_code
@@ -113,9 +114,9 @@ const Activity = ({ t }) => {
 	const builtRegions = useMemo(
 		() =>
 			regions &&
-			Object.keys(regions).map(n => ({
+			Object.keys(regions).map((n) => ({
 				region_code: n,
-				...regions[n]
+				...regions[n],
 			})),
 		[regions]
 	);
@@ -142,7 +143,7 @@ const Activity = ({ t }) => {
 		const index =
 			country_code && region_code
 				? mapMarkers.findIndex(
-						i =>
+						(i) =>
 							"" + i.region === "" + region_code &&
 							"" + i.locale === "" + country_code
 				  )
@@ -151,7 +152,7 @@ const Activity = ({ t }) => {
 		const cases =
 			country_code && !region_code
 				? mapMarkers
-						.filter(i => i.locale === country_code)
+						.filter((i) => i.locale === country_code)
 						.reduce(
 							(ac, { infected, cured, mortal }) => {
 								ac.infections += infected + cured + mortal;
@@ -197,20 +198,20 @@ const Activity = ({ t }) => {
 		);
 	}, [mapMarkers, country_code, region_code]);
 
-	const navigation = useCallback(key => {
+	const navigation = useCallback((key) => {
 		_nav(key);
 	}, []);
 
 	const setCountry = useCallback(({ target: { value } }) => {
 		setStore({
 			country_code: value,
-			region_code: ""
+			region_code: "",
 		});
 	}, []);
 
 	const setCity = useCallback(({ target: { value } }) => {
 		setStore({
-			region_code: value
+			region_code: value,
 		});
 	}, []);
 
@@ -228,7 +229,7 @@ const Activity = ({ t }) => {
 					reduce: "SET_ACTIVITY",
 					method: "GET",
 					action: "activity",
-					params: `type=${mType}&country=${country_code}&city=${region_code}&limit=10&offset=${offset}`
+					params: `type=${mType}&country=${country_code}&city=${region_code}&limit=10&offset=${offset}`,
 				}).then(() => {
 					_fetchingMarkers(false);
 				});
@@ -251,7 +252,7 @@ const Activity = ({ t }) => {
 					method: "GET",
 					action: "news",
 					params: `locale=${country_code}&limit=10&offset=${offset}`,
-					reduce: "SET_NEWS"
+					reduce: "SET_NEWS",
 				}).then(() => {
 					_fetchingNews(false);
 				});
@@ -264,6 +265,12 @@ const Activity = ({ t }) => {
 			const [cont, _cont] = useState(false);
 
 			const len = details.content ? details.content.length : 0;
+
+			const tm = date
+				? continent_code
+					? moment(date).tz(continent_code)
+					: moment(date)
+				: "";
 
 			return ID ? (
 				<div className={"author " + type}>
@@ -278,11 +285,7 @@ const Activity = ({ t }) => {
 						)}
 
 						<time dateTime={date}>
-							{date
-								? moment(date)
-										.lang(language || "en")
-										.fromNow()
-								: ""}
+							{tm ? tm.lang(language || "en").fromNow() : ""}
 						</time>
 					</div>
 
@@ -301,7 +304,7 @@ const Activity = ({ t }) => {
 							{len > 100 ? (
 								<div
 									className="moreLess"
-									onClick={() => _cont(p => !p)}
+									onClick={() => _cont((p) => !p)}
 								>
 									{t(cont ? "showLess" : "showMore")}
 								</div>
@@ -314,7 +317,7 @@ const Activity = ({ t }) => {
 					)}
 
 					<div className={"atitle " + type}>
-						{`${t(sources[type])}`}
+						{`#${t(sources[type])}`}
 					</div>
 
 					<div className="resource">
@@ -342,7 +345,7 @@ const Activity = ({ t }) => {
 
 	return (
 		<div id="activityArea" className={"block activityArea " + nav}>
-			<Chat visible={ch} toggle={() => _ch(p => !p)} />
+			<Chat visible={ch} toggle={() => _ch((p) => !p)} />
 
 			<div className="hidden">
 				<nav>
@@ -356,10 +359,10 @@ const Activity = ({ t }) => {
 										<span className="chatlive" />
 										{t("chat")}
 									</>
-								)
+								),
 							},
 							{ id: "acts", title: t("infections") },
-							{ id: "news", title: t("news") }
+							{ id: "news", title: t("news") },
 						].map((m, mx) => {
 							return (
 								<li
@@ -373,7 +376,7 @@ const Activity = ({ t }) => {
 									}
 									onClick={() => {
 										if (m.id === "chat") {
-											_ch(p => !p);
+											_ch((p) => !p);
 										} else {
 											navigation(m.id);
 										}
@@ -469,6 +472,7 @@ const Activity = ({ t }) => {
 									data={a}
 									ax={ax}
 									t={t}
+									continent_code={continent_code}
 									language={language}
 								/>
 							))}
@@ -481,7 +485,7 @@ const Activity = ({ t }) => {
 };
 
 Activity.getInitialProps = async () => ({
-	namespacesRequired: ["common", "countries", "cities"]
+	namespacesRequired: ["common", "countries", "cities"],
 });
 
 export default memo(withTranslation("common")(Activity), () => true);

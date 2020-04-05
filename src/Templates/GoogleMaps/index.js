@@ -4,7 +4,7 @@ import React, {
 	useEffect,
 	useReducer,
 	memo,
-	useState
+	useState,
 } from "react";
 // import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import markerImg from "./m2.png";
@@ -17,7 +17,7 @@ import {
 	withGoogleMap,
 	InfoWindow,
 	GoogleMap,
-	Marker
+	Marker,
 } from "react-google-maps";
 import { condition } from "Library/statuses.js";
 import { withTranslation } from "i18n";
@@ -34,7 +34,7 @@ const setRefs = (r, k) => {
 	refs[k] = r;
 };
 
-const markerSizes = size => {
+const markerSizes = (size) => {
 	const s = size * 10;
 	return s - (size >= 3 ? 20 : 0);
 };
@@ -45,14 +45,14 @@ const MapCover = withTranslation("common")(
 			const {
 				actioner,
 				store: { cpos, country_code, region_code, mapMarkers, index },
-				setStore
+				setStore,
 			} = useContext(RootContext) || {};
 
 			const [state, _state] = useReducer(reducer, {
 				lat: 50.167003,
 				lng: 31.072426,
 				zoom: 4,
-				activeMarker: null
+				activeMarker: null,
 			});
 
 			const [zoom, _zoom] = useState(4);
@@ -66,8 +66,8 @@ const MapCover = withTranslation("common")(
 			const markerSets = {
 				icon: {
 					url: markerImg,
-					scaledSize: new google.maps.Size(mks, mks)
-				}
+					scaledSize: new google.maps.Size(mks, mks),
+				},
 			};
 
 			useEffect(() => {
@@ -81,7 +81,7 @@ const MapCover = withTranslation("common")(
 						setStore({ cpos });
 
 						_state({
-							...lngs
+							...lngs,
 						});
 
 						_zoom(zoom);
@@ -97,15 +97,15 @@ const MapCover = withTranslation("common")(
 						rc
 							? {
 									lat: cpos.regions[region_code].lat,
-									lng: cpos.regions[region_code].lng
+									lng: cpos.regions[region_code].lng,
 							  }
 							: {
 									lat: cpos.lat,
-									lng: cpos.lng
+									lng: cpos.lng,
 							  }
 					);
 
-					_zoom(p => p - 1);
+					_zoom((p) => p - 1);
 
 					setTimeout(() => {
 						_zoom((rc && rc.zoom) || 9);
@@ -117,7 +117,7 @@ const MapCover = withTranslation("common")(
 				actioner({
 					reduce: "SET_MAP_MARKERS",
 					method: "GET",
-					action: "markers"
+					action: "markers",
 				});
 			}, []);
 
@@ -149,10 +149,10 @@ const MapCover = withTranslation("common")(
 
 			return (
 				<GoogleMap
-					ref={r => setRefs(r, "map")}
+					ref={(r) => setRefs(r, "map")}
 					defaultOptions={styles}
 					zoom={zoom}
-					onClick={e => {
+					onClick={(e) => {
 						// let latitude = e.latLng.lat();
 						// let longtitude = e.latLng.lng();
 						// console.log("locl", latitude, longtitude, e);
@@ -178,19 +178,19 @@ const MapCover = withTranslation("common")(
 							region && cpos.regions[region]
 								? {
 										lat: cpos.regions[region].lat,
-										lng: cpos.regions[region].lng
+										lng: cpos.regions[region].lng,
 								  }
 								: {
 										lat: cpos.lat,
-										lng: cpos.lng
+										lng: cpos.lng,
 								  };
 
 						return (
 							<Marker
-								ref={r => setRefs(r, mx)}
+								ref={(r) => setRefs(r, mx)}
 								labelClass="labelc"
-								onClick={pp => {
-									_open(p => {
+								onClick={(pp) => {
+									_open((p) => {
 										p[mx] = true;
 										return p;
 									});
@@ -207,7 +207,7 @@ const MapCover = withTranslation("common")(
 											<span
 												className="close"
 												onClick={() => {
-													_open(p => {
+													_open((p) => {
 														p[mx] = !p[mx];
 														return { ...p };
 													});
@@ -241,7 +241,7 @@ const MapCover = withTranslation("common")(
 													{[
 														"infected",
 														"cured",
-														"mortal"
+														"mortal",
 													].map((k, ki) => {
 														return k !== "none" ? (
 															<li key={ki}>
@@ -280,13 +280,16 @@ const MapCover = withTranslation("common")(
 	)
 );
 
-export default memo(props => {
+export default memo((props) => {
 	return (
 		<MapCover
 			googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places&language=${props.language}`}
 			loadingElement={<div style={{ height: `100%` }} />}
 			containerElement={
-				<section ref={r => setRefs(r, "mapArea")} className="mapArea" />
+				<section
+					ref={(r) => setRefs(r, "mapArea")}
+					className="mapArea"
+				/>
 			}
 			mapElement={<div style={{ height: `100%` }} />}
 		/>

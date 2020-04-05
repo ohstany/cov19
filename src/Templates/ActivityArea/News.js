@@ -17,11 +17,14 @@ export default memo(
 		} = {},
 	}) => {
 		const [sh, _sh] = useState(false);
-		const tm = continent_code
-			? moment(create_date).tz(continent_code)
-			: moment(create_date);
-
-		console.log("date", create_date);
+		const tm =
+			continent_code && continent_code.indexOf("Seoul") === -1
+				? moment(
+						moment(create_date)
+							.tz(continent_code)
+							.format("YYYY-MM-DD HH:mm:ss")
+				  )
+				: moment(create_date);
 
 		return (
 			<div className={"author" + (sh ? " shown" : "")}>

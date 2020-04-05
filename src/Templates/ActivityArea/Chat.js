@@ -52,7 +52,7 @@ export default memo(
 		const {
 			actioner,
 			store: {
-            continent_code,
+				continent_code,
 				language,
 				loginStatus,
 				userdata: {
@@ -65,8 +65,8 @@ export default memo(
 				chatReplies,
 				chatLimit,
 			},
-      } = useContext(RootContext);
-      
+		} = useContext(RootContext);
+
 		const [comment, _comment] = useState("");
 		const [showReply, _showReply] = useState({ show: false, over: false });
 		const [fetchingMessages, _fetchingMessages] = useState(false);
@@ -77,12 +77,6 @@ export default memo(
 		const [popup, _popup] = useState(false);
 		const [updater, _updater] = useState(false);
 
-      useEffect(() => {
-         if (continent_code) {
-            moment.tz.setDefault(continent_code);
-         }
-      }, [continent_code]);
-      
 		useEffect(() => {
 			if (showReply.ID) {
 				const index = chats[country_code].data.findIndex(
@@ -403,8 +397,12 @@ export default memo(
 
 				const len = c.content.length;
 				const tm = c.date
-					? continent_code
-						? moment(c.date).tz(continent_code)
+					? continent_code && continent_code.indexOf("Seoul") === -1
+						? moment(
+								moment(c.date)
+									.tz(continent_code)
+									.format("YYYY-MM-DD HH:mm:ss")
+						  )
 						: moment(c.date)
 					: "";
 

@@ -151,12 +151,6 @@ const Activity = ({ t }) => {
 	}, [country_code, region_code, mapMarkers]);
 
 	useEffect(() => {
-		if (continent_code) {
-			moment.tz.setDefault(continent_code);
-		}
-	}, [continent_code]);
-
-	useEffect(() => {
 		if (region_code || mType === "regional") {
 			fetchMarkers();
 		}
@@ -282,8 +276,12 @@ const Activity = ({ t }) => {
 			const len = details.content ? details.content.length : 0;
 
 			const tm = date
-				? continent_code
-					? moment(date).tz(continent_code)
+				? continent_code && continent_code.indexOf("Seoul") === -1
+					? moment(
+							moment(date)
+								.tz(continent_code)
+								.format("YYYY-MM-DD HH:mm:ss")
+					  )
 					: moment(date)
 				: "";
 

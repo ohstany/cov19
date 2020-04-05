@@ -52,6 +52,7 @@ export default memo(
 		const {
 			actioner,
 			store: {
+            continent_code,
 				language,
 				loginStatus,
 				userdata: {
@@ -64,9 +65,8 @@ export default memo(
 				chatReplies,
 				chatLimit,
 			},
-		} = useContext(RootContext);
-
-		const { continent_code = false } = geo || {};
+      } = useContext(RootContext);
+      
 		const [comment, _comment] = useState("");
 		const [showReply, _showReply] = useState({ show: false, over: false });
 		const [fetchingMessages, _fetchingMessages] = useState(false);

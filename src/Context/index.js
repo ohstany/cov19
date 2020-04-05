@@ -96,6 +96,7 @@ const formating = (key) => {
 			return "country_name";
 
 		case "geoplugin_timezone":
+		case "timezone":
 		case "time_zone":
 			return "continent_code";
 
@@ -230,12 +231,14 @@ export const RootProvider = withRouter((props) => {
 
 			if (geo) {
 				// console.log("INTERNAL", geo);
-				const { region_code, country_code } = geo || {};
+				const { region_code, country_code, continent_code, time_zone } =
+					geo || {};
 
 				setStore({
 					region_code,
 					country_code,
 					geo,
+					continent_code: continent_code || time_zone || false,
 				});
 			} else {
 				// console.log("EXTERNAL", PROTOCOL);
@@ -260,7 +263,12 @@ export const RootProvider = withRouter((props) => {
 							);
 						}, {});
 
-						const { region_code, country_code } = geo || {};
+						const {
+							region_code,
+							country_code,
+							continent_code,
+							time_zone,
+						} = geo || {};
 
 						geo.lat = parseFloat(geo.lat);
 						geo.lng = parseFloat(geo.lng);
@@ -271,6 +279,8 @@ export const RootProvider = withRouter((props) => {
 							region_code,
 							country_code,
 							geo,
+							continent_code:
+								continent_code || time_zone || false,
 						});
 					});
 			}

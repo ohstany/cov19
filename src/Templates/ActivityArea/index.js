@@ -51,6 +51,7 @@ const Activity = ({ t }) => {
 		actioner,
 		store: {
 			geo,
+			continent_code,
 			language,
 			country_code,
 			region_code,
@@ -65,13 +66,11 @@ const Activity = ({ t }) => {
 		setStore,
 	} = useContext(RootContext) || {};
 
-	const { continent_code = false } = geo || {};
-
-	console.log("TIMEZONE", geo);
-
 	// moment.tz.setDefault("America/New_York");
 	// const create_date = "2020-04-05 21:40:10";
 	// const dd = moment(create_date);
+
+	console.log("TIMEZONE", continent_code);
 
 	// console.log(
 	// 	"Continent:",

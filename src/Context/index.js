@@ -33,13 +33,13 @@ const finalizeStore = async (
 
 	const actionExist = {
 		...(actions[reduce] || {}),
-		...single
+		...single,
 	};
 
 	if (!actionExist.action || actionExist.api === false) {
 		return reducer(store, {
 			reduce,
-			data: actionExist.data || false
+			data: actionExist.data || false,
 		});
 	}
 
@@ -49,8 +49,8 @@ const finalizeStore = async (
 			reduce,
 			data: await bpis(actionExist, signal, {
 				logout,
-				loginStatus
-			})
+				loginStatus,
+			}),
 		},
 		actionExist
 	);
@@ -65,7 +65,7 @@ const proxy = PROTOCOL + "//cors-anywhere.herokuapp.com/";
 const origin =
 	(typeof window !== "undefined" && window.location.host) || "cov19.online";
 
-const formating = key => {
+const formating = (key) => {
 	switch (key) {
 		case "geoplugin_request":
 		case "ip":
@@ -95,9 +95,6 @@ const formating = key => {
 		case "country_name":
 			return "country_name";
 
-		case "geoplugin_continentCode":
-			return "continent_code";
-
 		case "geoplugin_timezone":
 		case "time_zone":
 			return "continent_code";
@@ -116,7 +113,7 @@ const formating = key => {
 };
 
 // Context as global app store
-export const RootProvider = withRouter(props => {
+export const RootProvider = withRouter((props) => {
 	const { presets, children, siteMeta, language } = props;
 
 	root_store_initial_state.settings = presets;
@@ -127,7 +124,7 @@ export const RootProvider = withRouter(props => {
 		root_store_initial_state
 	);
 
-	const actioner = async apiParams => {
+	const actioner = async (apiParams) => {
 		const updater = { api: apiParams, toState: {}, signals: [] };
 		/** ARRAY:   if type is array we are able to make several
 		 *           api request, reduce them, and then assign all data at once to the state
@@ -144,7 +141,7 @@ export const RootProvider = withRouter(props => {
 								{
 									store,
 									actions: rootActions,
-									reducer: root_store_reducer
+									reducer: root_store_reducer,
 								},
 								single,
 								{ loginStatus: store.loginStatus, logout },
@@ -174,7 +171,7 @@ export const RootProvider = withRouter(props => {
 		}
 
 		return function clean() {
-			updater.signals.map(s => {
+			updater.signals.map((s) => {
 				s.abort();
 			});
 		};
@@ -182,9 +179,9 @@ export const RootProvider = withRouter(props => {
 
 	const [device, _device] = useState("pc");
 
-	const getScreenState = e => {
+	const getScreenState = (e) => {
 		e.preventDefault();
-		_device(s => {
+		_device((s) => {
 			const canSet =
 				s === "mobile" && window.innerWidth > 768
 					? "pc"
@@ -207,7 +204,7 @@ export const RootProvider = withRouter(props => {
 			reduce: "LOGIN",
 			method: "POST",
 			action: "settings",
-			method: "GET"
+			method: "GET",
 		});
 
 		if (typeof window !== "undefined") {
@@ -238,7 +235,7 @@ export const RootProvider = withRouter(props => {
 				setStore({
 					region_code,
 					country_code,
-					geo
+					geo,
 				});
 			} else {
 				// console.log("EXTERNAL", PROTOCOL);
@@ -247,8 +244,8 @@ export const RootProvider = withRouter(props => {
 						? "https://freegeoip.app/json/"
 						: "http://www.geoplugin.net/json.gp"
 				)
-					.then(res => res.json())
-					.then(res => {
+					.then((res) => res.json())
+					.then((res) => {
 						const geo = Object.keys(res).reduce((p, n) => {
 							const key = formating(n);
 
@@ -257,7 +254,7 @@ export const RootProvider = withRouter(props => {
 								p,
 								key
 									? {
-											[key]: res[n]
+											[key]: res[n],
 									  }
 									: {}
 							);
@@ -273,27 +270,27 @@ export const RootProvider = withRouter(props => {
 						setStore({
 							region_code,
 							country_code,
-							geo
+							geo,
 						});
 					});
 			}
 		}
 	}, []);
 
-	const logout = serverStatus => {
+	const logout = (serverStatus) => {
 		if (store.loginStatus === true && serverStatus === false) {
 			api({ action: "apilogout" });
 		}
 
 		setStore({
-			loginStatus: false
+			loginStatus: false,
 		});
 	};
 
 	const api = (data, signal = false) => {
 		return bpis(data, signal, {
 			logout,
-			loginStatus: store.loginStatus
+			loginStatus: store.loginStatus,
 		});
 	};
 
@@ -309,8 +306,9 @@ export const RootProvider = withRouter(props => {
 				device,
 				setStore,
 				logout,
-				api
-			}}>
+				api,
+			}}
+		>
 			{children}
 		</RootContext.Provider>
 	);

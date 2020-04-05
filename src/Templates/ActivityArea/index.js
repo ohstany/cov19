@@ -67,6 +67,8 @@ const Activity = ({ t }) => {
 
 	const { continent_code = false } = geo || {};
 
+	console.log("TIMEZONE", geo);
+
 	// moment.tz.setDefault("America/New_York");
 	// const create_date = "2020-04-05 21:40:10";
 	// const dd = moment(create_date);

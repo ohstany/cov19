@@ -68,25 +68,25 @@ const Activity = ({ t }) => {
 	const { continent_code = false } = geo || {};
 
 	// moment.tz.setDefault("America/New_York");
-	const create_date = "2020-04-05 21:40:10";
-	const dd = moment(create_date);
+	// const create_date = "2020-04-05 21:40:10";
+	// const dd = moment(create_date);
 
-	console.log(
-		"Continent:",
-		continent_code,
-		", Date: ",
-		create_date,
-		", Kiev: ",
-		dd.tz("Europe/Kiev").format("YYYY-MM-DD HH:mm:ss"),
-		", Seoul: ",
-		dd.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss"),
-		", ",
-		`[${dd.tz("Europe/Kiev").fromNow()}, ${dd.tz("Asia/Seoul").fromNow()}]`,
-		", ",
-		`[${moment(
-			dd.tz("Europe/Kiev").format("YYYY-MM-DD HH:mm:ss")
-		).fromNow()}, ${dd.tz("Asia/Seoul").fromNow()}]`
-	);
+	// console.log(
+	// 	"Continent:",
+	// 	continent_code,
+	// 	", Date: ",
+	// 	create_date,
+	// 	", Kiev: ",
+	// 	dd.tz("Europe/Kiev").format("YYYY-MM-DD HH:mm:ss"),
+	// 	", Seoul: ",
+	// 	dd.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss"),
+	// 	", ",
+	// 	`[${dd.tz("Europe/Kiev").fromNow()}, ${dd.tz("Asia/Seoul").fromNow()}]`,
+	// 	", ",
+	// 	`[${moment(
+	// 		dd.tz("Europe/Kiev").format("YYYY-MM-DD HH:mm:ss")
+	// 	).fromNow()}, ${dd.tz("Asia/Seoul").fromNow()}]`
+	// );
 
 	const usersCc = geo ? geo.country_code : false;
 	const mType =
@@ -171,6 +171,12 @@ const Activity = ({ t }) => {
 			? mapMarkers[index] || { ...caseDef }
 			: { ...caseDef };
 	}, [country_code, region_code, mapMarkers]);
+
+	useEffect(() => {
+		if (continent_code) {
+			moment.tz.setDefault(continent_code);
+		}
+	}, [continent_code]);
 
 	useEffect(() => {
 		if (region_code || mType === "regional") {

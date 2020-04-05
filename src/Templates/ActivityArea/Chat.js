@@ -77,6 +77,12 @@ export default memo(
 		const [popup, _popup] = useState(false);
 		const [updater, _updater] = useState(false);
 
+      useEffect(() => {
+         if (continent_code) {
+            moment.tz.setDefault(continent_code);
+         }
+      }, [continent_code]);
+      
 		useEffect(() => {
 			if (showReply.ID) {
 				const index = chats[country_code].data.findIndex(

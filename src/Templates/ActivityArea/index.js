@@ -66,6 +66,28 @@ const Activity = ({ t }) => {
 	} = useContext(RootContext) || {};
 
 	const { continent_code = false } = geo || {};
+
+	// moment.tz.setDefault("America/New_York");
+	const create_date = "2020-04-05 21:40:10";
+	const dd = moment(create_date);
+
+	console.log(
+		"Continent:",
+		continent_code,
+		", Date: ",
+		create_date,
+		", Kiev: ",
+		dd.tz("Europe/Kiev").format("YYYY-MM-DD HH:mm:ss"),
+		", Seoul: ",
+		dd.tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss"),
+		", ",
+		`[${dd.tz("Europe/Kiev").fromNow()}, ${dd.tz("Asia/Seoul").fromNow()}]`,
+		", ",
+		`[${moment(
+			dd.tz("Europe/Kiev").format("YYYY-MM-DD HH:mm:ss")
+		).fromNow()}, ${dd.tz("Asia/Seoul").fromNow()}]`
+	);
+
 	const usersCc = geo ? geo.country_code : false;
 	const mType =
 		country_code && region_code
@@ -157,7 +179,7 @@ const Activity = ({ t }) => {
 	}, [country_code, region_code, mType]);
 
 	useEffect(() => {
-		if (f) {
+		if (f && cases && !cases.infected) {
 			setStore({ region_code: "" });
 		}
 	}, [f]);

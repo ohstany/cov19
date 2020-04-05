@@ -66,7 +66,7 @@ export default memo(
 
 				{sc && (
 					<div className="resource">
-						{t("source")}: {" "}
+						{t("source")}:{" "}
 						<a href={guid} target="_blank">
 							{sc}
 						</a>

@@ -80,6 +80,7 @@ const Activity = ({ t }) => {
 			: `${country_code}_${rkey}`;
 	const [nav, _nav] = useState("acts");
 	const [ch, _ch] = useState(false);
+	const [f, _f] = useState(false);
 	const [fetchingNews, _fetchingNews] = useState(false);
 	const [fetchingMarkers, _fetchingMarkers] = useState(false);
 	const { regions = false } = cpos || {};
@@ -121,11 +122,45 @@ const Activity = ({ t }) => {
 		[regions]
 	);
 
+	const cases = useMemo(() => {
+		const index =
+			country_code && region_code
+				? mapMarkers.findIndex(
+						(i) =>
+							"" + i.region === "" + region_code &&
+							"" + i.locale === "" + country_code
+				  )
+				: false;
+
+		return country_code && !region_code
+			? mapMarkers
+					.filter((i) => i.locale === country_code)
+					.reduce(
+						(ac, { infected, cured, mortal }) => {
+							ac.infections += infected + cured + mortal;
+							ac.infected += infected;
+							ac.cured += cured;
+							ac.mortal += mortal;
+							return ac;
+						},
+						{ ...caseDef }
+					)
+			: country_code && region_code
+			? mapMarkers[index] || { ...caseDef }
+			: { ...caseDef };
+	}, [country_code, region_code, mapMarkers]);
+
 	useEffect(() => {
 		if (region_code || mType === "regional") {
 			fetchMarkers();
 		}
-	}, [region_code, mType]);
+	}, [country_code, region_code, mType]);
+
+	useEffect(() => {
+		if (f) {
+			setStore({ region_code: "" });
+		}
+	}, [f]);
 
 	useEffect(() => {
 		if (country_code) {
@@ -140,33 +175,6 @@ const Activity = ({ t }) => {
 	}, [index]);
 
 	const GetInfo = useCallback(() => {
-		const index =
-			country_code && region_code
-				? mapMarkers.findIndex(
-						(i) =>
-							"" + i.region === "" + region_code &&
-							"" + i.locale === "" + country_code
-				  )
-				: false;
-
-		const cases =
-			country_code && !region_code
-				? mapMarkers
-						.filter((i) => i.locale === country_code)
-						.reduce(
-							(ac, { infected, cured, mortal }) => {
-								ac.infections += infected + cured + mortal;
-								ac.infected += infected;
-								ac.cured += cured;
-								ac.mortal += mortal;
-								return ac;
-							},
-							{ ...caseDef }
-						)
-				: country_code && region_code
-				? mapMarkers[index] || { ...caseDef }
-				: { ...caseDef };
-
 		return (
 			<div className="ininfo">
 				<li className="infobox">
@@ -230,8 +238,9 @@ const Activity = ({ t }) => {
 					method: "GET",
 					action: "activity",
 					params: `type=${mType}&country=${country_code}&city=${region_code}&limit=10&offset=${offset}`,
-				}).then(() => {
+				}).then((r) => {
 					_fetchingMarkers(false);
+					_f(true);
 				});
 			}, 200);
 		}
@@ -420,13 +429,7 @@ const Activity = ({ t }) => {
 							dataLength={infections ? infections.length : 0}
 							next={fetchMarkers}
 							hasMore={!activityLimited}
-							loader={
-								region_code ? (
-									<Skeleton1 row={5} />
-								) : (
-									<NoContent text={t("selectCity")} />
-								)
-							}
+							loader={<Skeleton1 row={5} />}
 							endMessage={<NoContent text={t("nodata")} />}
 							scrollableTarget="sc-markers"
 						>
@@ -456,7 +459,7 @@ const Activity = ({ t }) => {
 					</div>
 
 					<div id="sc-news" className="bb b2">
-						<h4>{t("Latest news, update every 1 hour")}</h4>
+						<h4>{t("newsUpdate")}</h4>
 
 						<InfiniteScroll
 							dataLength={newsData.length}

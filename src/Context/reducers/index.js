@@ -455,6 +455,38 @@ export const root_store_reducer = (s, a, params = false) => {
 			return { markers };
 		}
 
+		case "RESET_MARKERS_ADMIN": {
+			const { markers } = s;
+			const { locale } = getUrlParams("?" + params.params);
+
+			if (data && data instanceof Array) {
+				markers[locale].a = [];
+				markers[locale].page = 1;
+
+				markers[locale].a[1] = data;
+
+				if (locale === "all") {
+					data.map((n) => {
+						if (!markers[n.locale])
+							markers[n.locale] = {
+								a: {
+									1: [],
+								},
+								paging: 0,
+								page: 1,
+							};
+
+						markers[n.locale].a[1].push(n);
+						return false;
+					});
+				}
+			} else {
+				return {};
+			}
+
+			return { markers };
+		}
+
 		case "UPDATE_OPTION": {
 			const { options } = s;
 			const { key, value } = params.data;

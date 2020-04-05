@@ -128,6 +128,24 @@ export default () => {
 		});
 	}, []);
 
+	const resetPages = () => {
+		if (a[1] && a[1][0]) {
+			_refr(true);
+			actioner({
+				reduce: "RESET_MARKERS_ADMIN",
+				action: "markers",
+				method: "OPTIONS",
+				params: `type=reset&locale=${byc}&offset=${a[1][0].ID}&limit=${show}`,
+			}).then(() => {
+				setTimeout(() => {
+					_refr(false);
+				}, 500);
+			});
+		} else {
+			return false;
+		}
+	};
+
 	const refreshs = () => {
 		if (a[page]) {
 			return false;
@@ -652,7 +670,7 @@ export default () => {
 					disabled={refr}
 					onClick={() => {
 						if (!refr) {
-							refreshs();
+							resetPages();
 						}
 					}}
 				>

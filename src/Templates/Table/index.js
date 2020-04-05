@@ -47,7 +47,7 @@ const Svg = () => (
 );
 
 export default ({ data, fields, showRow, pagination, onPage, loading }) => {
-	const [p, _p] = useState(1);
+   const [p, _p] = useState(1);
 
 	const paging = pagination.paging
 		? Math.ceil(pagination.paging / pagination.show)

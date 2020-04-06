@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useContext } from "react";
 import RootContext from "Context";
+import { notification } from "Library";
 import { withTranslation } from "i18n";
 import FacebookLogin from "react-facebook-login";
 import GoogleLogin from "react-google-login";
@@ -7,36 +8,36 @@ import GoogleLogin from "react-google-login";
 export default withTranslation("common")(({ t, onAuth = false }) => {
 	const {
 		actioner,
-		store: { loginStatus, geo }
+		store: { loginStatus, geo },
 	} = useContext(RootContext);
 
 	const [params, _params] = useState({
 		username: "",
-		password: ""
+		password: "",
 	});
 	const [error, _error] = useState("");
 	const [logged, _logged] = useState(false);
 	const [loading, _loading] = useState(false);
 
-	const updateState = useCallback(e => {
+	const updateState = useCallback((e) => {
 		const {
-			target: { value }
+			target: { value },
 		} = e;
 		const name = e.target.getAttribute("name");
 
-		_params(e => {
+		_params((e) => {
 			return {
 				...e,
-				[name]: value
+				[name]: value,
 			};
 		});
 	}, []);
 
-	const submitForm = e => {
+	const submitForm = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (["username", "password"].some(i => !params[i])) {
+		if (["username", "password"].some((i) => !params[i])) {
 			_error(t("idnandpassword"));
 		} else {
 			actioner({
@@ -45,9 +46,15 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 				action: "apilogin",
 				data: {
 					geo,
-					...params
+					...params,
+				},
+			}).then((lg) => {
+				if (lg.closed) {
+					notification(
+						t("accBlocked"),
+						5000
+					);
 				}
-			}).then(() => {
 				_logged(true);
 			});
 		}
@@ -61,7 +68,7 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 		}
 	}, [error]);
 
-	const responseFacebook = callback => {
+	const responseFacebook = (callback) => {
 		_loading(true);
 		// console.log(callback);
 		actioner({
@@ -71,15 +78,22 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 			data: {
 				geo,
 				provider: "facebook",
-				callback
+				callback,
+			},
+		}).then((lg) => {
+			if (lg.closed) {
+				notification(
+					t("accBlocked"),
+					5000
+				);
+			} else {
+				_logged(true);
 			}
-		}).then(() => {
 			_loading(false);
-			_logged(true);
 		});
 	};
 
-	const responseGoogle = callback => {
+	const responseGoogle = (callback) => {
 		_loading(true);
 		console.log(callback);
 		actioner({
@@ -89,11 +103,18 @@ export default withTranslation("common")(({ t, onAuth = false }) => {
 			data: {
 				geo,
 				provider: "google",
-				callback
+				callback,
+			},
+		}).then((lg) => {
+			if (lg.closed) {
+				notification(
+					t("accBlocked"),
+					5000
+				);
+			} else {
+				_logged(true);
 			}
-		}).then(() => {
 			_loading(false);
-			_logged(true);
 		});
 	};
 

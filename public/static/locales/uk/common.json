@@ -85,5 +85,6 @@
 	"countryUpdate": "Останні оновлення в країні",
    "regionUpdate": "Останні оновлення в регіоні",
    "newsUpdate": "Останні новини, оновлення кожну 1 годину",
-	"chat": "Чат"
+	"chat": "Чат",
+	"accBlocked": "Account blocked, please contact administrator."
 }

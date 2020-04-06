@@ -1,4 +1,5 @@
 import { getUrlParams, mergeDeep, notification, Notifications } from "Library";
+import { faSave } from "@fortawesome/fontawesome-free-solid";
 /**
  * STORE REDUCER (separate component data, categories, coures etc.)
  * PARAMS: s - store, a - data object (action, data and so on)
@@ -12,7 +13,15 @@ export const root_store_reducer = (s, a, params = false) => {
 			if (data && data.ID) {
 				return { userdata: data, loginStatus: true, fetched: true };
 			} else {
-				return { fetched: true };
+				return {
+					fetched: true,
+					closed:
+						data &&
+						data.error &&
+						data.error.code === "user_account_is_closed"
+							? true
+							: false,
+				};
 			}
 		}
 
@@ -51,7 +60,15 @@ export const root_store_reducer = (s, a, params = false) => {
 			if (data && data.ID) {
 				return { userdata: data, loginStatus: true, fetched: true };
 			} else {
-				return { fetched: true };
+				return {
+					fetched: true,
+					closed:
+						data &&
+						data.error &&
+						data.error.code === "user_account_is_closed"
+							? true
+							: false,
+				};
 			}
 		}
 
@@ -496,7 +513,6 @@ export const root_store_reducer = (s, a, params = false) => {
 			const index = members.a[page].findIndex((i) => i.ID === ID);
 
 			if (index >= 0) {
-				
 				members.a[page][index] = mergeDeep(
 					members.a[page][index],
 					modify
@@ -539,7 +555,7 @@ export const root_store_reducer = (s, a, params = false) => {
 			const { members } = s;
 			const { page } = getUrlParams("?" + params.params);
 
-         console.log("SDAD", data);
+			console.log("SDAD", data);
 			if (data && data instanceof Array) {
 				members.a[page] = data;
 			} else {

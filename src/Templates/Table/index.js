@@ -47,7 +47,7 @@ const Svg = () => (
 );
 
 export default ({ data, fields, showRow, pagination, onPage, loading }) => {
-   const [p, _p] = useState(1);
+	const [p, _p] = useState(1);
 
 	const paging = pagination.paging
 		? Math.ceil(pagination.paging / pagination.show)
@@ -91,9 +91,9 @@ export default ({ data, fields, showRow, pagination, onPage, loading }) => {
 				)}
 			</div>
 
-			{paging && (
+			{paging >= 0 ? (
 				<div className="paging">
-					{Array.from(Array(paging).keys()).map((pg, px) => {
+					{Array.from(Array(paging || 1).keys()).map((pg, px) => {
 						return (
 							<span
 								key={px}
@@ -110,6 +110,8 @@ export default ({ data, fields, showRow, pagination, onPage, loading }) => {
 						);
 					})}
 				</div>
+			) : (
+				""
 			)}
 		</>
 	);

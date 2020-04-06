@@ -403,17 +403,19 @@ export const root_store_reducer = (s, a, params = false) => {
 			const { markers } = s;
 			const { locale } = getUrlParams("?" + params.params);
 
-			if (!data) return {};
+			if (data >= 0) {
+				if (!markers[locale]) {
+					markers[locale] = {
+						a: {},
+						paging: 0,
+						page: 1,
+					};
+				}
 
-			if (!markers[locale]) {
-				markers[locale] = {
-					a: {},
-					paging: 0,
-					page: 1,
-				};
+				markers[locale].paging = data ? parseInt(data) : 0;
+			} else {
+				return {};
 			}
-
-			markers[locale].paging = data ? parseInt(data) : 0;
 
 			return { markers };
 		}

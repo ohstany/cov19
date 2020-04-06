@@ -45,7 +45,6 @@ const CountrySelect = ({ id, onBlur, controlled = true, value, onUpdate }) => {
 			{controlled ? (
 				<>
 					<option value="all">All</option>
-					<option value="other">Not Set</option>
 				</>
 			) : (
 				<option value="">Select Country</option>
@@ -102,17 +101,17 @@ export default () => {
 	const [refr, _refr] = useState(false);
 	const [popup, _popup] = useState(false);
 	const [uploaded, _uploaded] = useState(false);
-	const [state, _state] = useState(initialState);
+   const [state, _state] = useState(initialState);
 
-	const { a, paging = 0, page = 1 } = markers[byc];
+	const { a = {}, paging = 0, page = 1 } = markers[byc] || {};
 
 	useEffect(() => {
 		getPaging();
-	}, []);
+	}, [byc]);
 
 	useEffect(() => {
 		refreshs();
-	}, [page]);
+	}, [page, byc]);
 
 	const updateState = useCallback((e) => {
 		const {

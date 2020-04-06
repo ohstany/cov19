@@ -2,14 +2,21 @@ import ReactDOM from "react-dom";
 import { memo } from "react";
 import { withTranslation } from "i18n";
 
-export const isObject = item => {
+export const objectValue = (obj, path) => {
+	const parts = path.split(".");
+	if (!obj) return;
+	if (parts.length == 1) return obj[parts[0]];
+	return objectValue(obj[parts[0]], parts.slice(1).join("."));
+};
+
+export const isObject = (item) => {
 	return item && typeof item === "object" && !Array.isArray(item);
 };
 
 export const mergeDeep = (target, source) => {
 	let output = Object.assign({}, target);
 	if (isObject(target) && isObject(source)) {
-		Object.keys(source).forEach(key => {
+		Object.keys(source).forEach((key) => {
 			if (isObject(source[key])) {
 				if (!(key in target))
 					Object.assign(output, { [key]: source[key] });
@@ -77,7 +84,7 @@ export const Notifications = memo(({ t, code }) => {
 		100: t("temporaryBlocked"),
 		101: t("commentModerating"),
 		102: t("cannotCommentCountry"),
-		def: ""
+		def: "",
 	}[code || "def"];
 });
 
@@ -93,19 +100,19 @@ export const CityName = memo(
 	})
 );
 
-export const swapKeyValue = data => {
+export const swapKeyValue = (data) => {
 	return Object.keys(data).reduce(
 		(obj, key) => Object.assign({}, obj, { [data[key]]: key }),
 		{}
 	);
 };
 
-export const numComma = x => {
+export const numComma = (x) => {
 	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 // Momoization of functional component or CLASS method
-export const memoize = fn => {
+export const memoize = (fn) => {
 	return () => {
 		var args = Array.prototype.slice.call(arguments);
 		fn.cache = fn.cache || {};
@@ -126,14 +133,14 @@ export const randomID = (length = 6) => {
 	);
 };
 
-export const make2sideFilter = inpObj => {
+export const make2sideFilter = (inpObj) => {
 	if (!inpObj || !(inpObj instanceof Array)) return { o: {}, f: {} };
 
 	const f = [];
 	const o = inpObj.reduce((p, c) => {
 		f.push({
 			value: "" + c.ID,
-			text: c.title
+			text: c.title,
 		});
 
 		return Object.assign({}, p, { ["" + c.ID]: c.title });
@@ -144,10 +151,10 @@ export const make2sideFilter = inpObj => {
 
 export const debounce = (func, wait, immediate) => {
 	var timeout;
-	return function() {
+	return function () {
 		var context = this,
 			args = arguments;
-		var later = function() {
+		var later = function () {
 			timeout = null;
 			if (!immediate) func.apply(context, args);
 		};
@@ -159,7 +166,7 @@ export const debounce = (func, wait, immediate) => {
 };
 
 export const removeFromArray = (arr, value) => {
-	return arr.filter(function(ele) {
+	return arr.filter(function (ele) {
 		return ele != value;
 	});
 };
@@ -167,24 +174,24 @@ export const removeFromArray = (arr, value) => {
 export const reducer = (state, a) => {
 	// auto state update via KEYS
 	a &&
-		Object.keys(a).map(k => {
+		Object.keys(a).map((k) => {
 			state[k] = a[k];
 			return false;
 		});
 	return { ...state };
 };
 
-export const validateEmail = email => {
+export const validateEmail = (email) => {
 	var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(String(email).toLowerCase());
 };
 
-export const validateNumber = value => {
+export const validateNumber = (value) => {
 	var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 	return re.test(value);
 };
 
-export const getUrlParams = url => {
+export const getUrlParams = (url) => {
 	// get query string from url (optional) or window
 	var queryString = url ? url.split("?")[1] : window.location.search.slice(1);
 

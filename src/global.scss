@@ -1003,15 +1003,7 @@ body.subsc {
 				}
 				.c-avatar {
 					position: absolute;
-					width: 45px;
-					text-align: left;
 					padding-left: 3px;
-					img {
-						margin: 0;
-						width: 30px;
-						border-radius: 50px;
-						overflow: hidden;
-					}
 				}
 				.c-meta {
 					color: #717171;
@@ -1443,6 +1435,31 @@ body.subsc {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
+	}
+}
+
+.c-avatar {
+	width: 45px;
+	text-align: left;
+	img {
+		margin: 0;
+		width: 30px;
+		border-radius: 50px;
+		overflow: hidden;
+	}
+}
+
+.uactive {
+	width: 13px;
+	height: 13px;
+	background: #adadad;
+	display: block;
+	border-radius: 50%;
+	&.act {
+		background: #51c316;
+	}
+	&.non {
+		background: #e24639;
 	}
 }
 

@@ -489,6 +489,80 @@ export const root_store_reducer = (s, a, params = false) => {
 			return { markers };
 		}
 
+		case "MODIFY_MEMBERS": {
+			const { members } = s;
+			const { modify, ID, page } = params.data;
+
+			const index = members.a[page].findIndex((i) => i.ID === ID);
+
+			if (index >= 0) {
+				
+				members.a[page][index] = mergeDeep(
+					members.a[page][index],
+					modify
+				);
+			}
+
+			return {
+				members,
+			};
+		}
+
+		case "DELETE_MEMBERS": {
+			const { members } = s;
+			const { ID, page } = params.data;
+
+			const index = members.a[page].findIndex((i) => i.ID === ID);
+
+			if (index >= 0) {
+				members.a[page].splice(index, 1);
+			}
+
+			return {
+				members,
+			};
+		}
+
+		case "SET_MEMBERS_PAGING": {
+			const { members } = s;
+
+			if (data >= 0) {
+				members.paging = data ? parseInt(data) : 0;
+			} else {
+				return {};
+			}
+
+			return { members };
+		}
+
+		case "SET_MEMBERS_ADMIN": {
+			const { members } = s;
+			const { page } = getUrlParams("?" + params.params);
+
+         console.log("SDAD", data);
+			if (data && data instanceof Array) {
+				members.a[page] = data;
+			} else {
+				return {};
+			}
+
+			return { members };
+		}
+
+		case "RESET_MEMBERS_ADMIN": {
+			const { members } = s;
+
+			if (data && data instanceof Array) {
+				members.a = [];
+				members.page = 1;
+				members.a[1] = data;
+			} else {
+				return {};
+			}
+
+			return { members };
+		}
+
 		case "UPDATE_OPTION": {
 			const { options } = s;
 			const { key, value } = params.data;
@@ -549,5 +623,10 @@ export const root_store_initial_state = {
 			paging: 0,
 			page: 1,
 		},
+	},
+	members: {
+		a: {},
+		paging: 0,
+		page: 1,
 	},
 };

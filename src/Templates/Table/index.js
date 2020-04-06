@@ -1,4 +1,6 @@
 import { useState, memo } from "react";
+import { objectValue } from "Library";
+
 import "./style.scss";
 
 const Svg = () => (
@@ -133,7 +135,7 @@ const Content = memo(
 					{fields.map(({ className, render, path }, fx) => {
 						return (
 							<li key={fx} {...({ className } || {})}>
-								{render(m[path], m, index, fx)}
+								{render(objectValue(m, path), m, index, fx)}
 							</li>
 						);
 					})}

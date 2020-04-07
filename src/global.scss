@@ -1196,6 +1196,27 @@ body.subsc {
 								border: 0;
 							}
 						}
+
+						.reg {
+							margin-right: 6px;
+							display: inline-block;
+							position: relative;
+							padding-left: 10px;
+							&:before {
+								content: "";
+								position: absolute;
+								border: 2px solid #adadad;
+								border-radius: 50px;
+								left: 0;
+								top: 1px;
+								bottom: 0;
+								height: 0;
+								margin: auto;
+							}
+							.city {
+								display: inline-block;
+							}
+						}
 					}
 				}
 			}
@@ -2081,11 +2102,12 @@ span.cond {
 	}
 
 	.amain {
-		position: absolute;
-		// height: 100%;
+		position: fixed;
 		width: 100%;
+		height: 100%;
 		padding-left: 200px;
 		background: whitesmoke;
+		overflow: auto;
 
 		.bbody {
 			padding: 30px;

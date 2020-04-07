@@ -2,6 +2,8 @@ import ReactDOM from "react-dom";
 import { memo } from "react";
 import { withTranslation } from "i18n";
 
+var toStr = Object.prototype.toString;
+
 const isArray =
 	Array.isArray ||
 	function (obj) {

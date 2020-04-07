@@ -12,7 +12,7 @@ import NoContent from "Templates/NoContent";
 import RootContext from "Context";
 import { condition, sources } from "Library/statuses";
 import { CountryList, CityList } from "./CountryList";
-import { numComma } from "Library";
+import { numComma, CityName } from "Library";
 import { withTranslation } from "i18n";
 import InfiniteScroll from "react-infinite-scroll-component";
 import moment from "moment-timezone";
@@ -270,7 +270,17 @@ const Activity = ({ t }) => {
 	};
 
 	const MarkerItem = useCallback(
-		({ a: { ID, condition: cond, type, number, details, date } = {} }) => {
+		({
+			a: {
+				ID,
+				condition: cond,
+				type,
+				number,
+				details,
+				date,
+				region,
+			} = {},
+		}) => {
 			const [cont, _cont] = useState(false);
 
 			const len = details.content ? details.content.length : 0;
@@ -295,6 +305,12 @@ const Activity = ({ t }) => {
 								</b>{" "}
 								{t(condition[cond])}
 							</span>
+						)}
+
+						{regions && regions[region] && (
+							<div className="reg">
+								<CityName value={regions[region].name} />
+							</div>
 						)}
 
 						<time dateTime={date}>
@@ -353,7 +369,7 @@ const Activity = ({ t }) => {
 				t("clickmap")
 			);
 		},
-		[]
+		[regions]
 	);
 
 	return (

@@ -1,29 +1,6 @@
 import { useContext, useEffect, useState, useCallback } from "react";
-import { notification } from "Library";
-import { condition as cond, via as vi } from "Library/statuses";
 import RootContext from "Context";
 import Table from "Templates/Table";
-
-const initialState = {
-	address: "",
-	content: "",
-	lat: "",
-	lng: "",
-	locale: "",
-	region: "",
-	amount: undefined,
-	source: "",
-	source2: "",
-	type: "witness",
-	status: "hidden",
-};
-
-const defV = {
-	k: "",
-	v: "",
-	s: false,
-	d: false,
-};
 
 const show = 20;
 

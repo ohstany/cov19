@@ -2,15 +2,182 @@ import ReactDOM from "react-dom";
 import { memo } from "react";
 import { withTranslation } from "i18n";
 
+const isArray =
+	Array.isArray ||
+	function (obj) {
+		return toStr.call(obj) === "[object Array]";
+	};
+
+const isBoolean = (obj) =>
+	typeof obj === "boolean" || toString(obj) === "[object Boolean]";
+
+export const isObject = (obj) =>
+	typeof obj === "object" && toString(obj) === "[object Object]";
+
+const toString = (type) => toStr.call(type);
+
+const getKey = (key) => {
+	const intKey = parseInt(key);
+	if (intKey.toString() === key) {
+		return intKey;
+	}
+	return key;
+};
+
+const hasOwnProperty = (obj, prop) => {
+	if (obj == null) {
+		return false;
+	}
+	return Object.prototype.hasOwnProperty.call(obj, prop);
+};
+
+const hasShallowProperty = (obj, prop) =>
+	(typeof prop === "number" && Array.isArray(obj)) ||
+	hasOwnProperty(obj, prop);
+
+const getShallowProperty = (obj, prop) => {
+	if (hasShallowProperty(obj, prop)) {
+		return obj[prop];
+	}
+};
+
+const isEmpty = (value) => {
+	if (!value) return true;
+
+	if (isArray(value) && value.length === 0) {
+		return true;
+	} else if (typeof value !== "string") {
+		for (var i in value) {
+			if (hasOwnProperty(value, i)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+};
+
+export const emptyObjectPath = (obj, path) => {
+	if (isEmpty(path)) {
+		return void 0;
+	}
+	if (obj == null) {
+		return void 0;
+	}
+
+	var value, i;
+
+	if (!(value = objectPath.get(obj, path))) {
+		return void 0;
+	}
+
+	if (typeof value === "string") {
+		return setObjectPath(obj, path, "");
+	} else if (isBoolean(value)) {
+		return setObjectPath(obj, path, false);
+	} else if (typeof value === "number") {
+		return setObjectPath(obj, path, 0);
+	} else if (isArray(value)) {
+		value.length = 0;
+	} else if (isObject(value)) {
+		for (i in value) {
+			if (hasShallowProperty(value, i)) {
+				delete value[i];
+			}
+		}
+	} else {
+		return setObjectPath(obj, path, null);
+	}
+};
+
+export const insertObjectPath = (obj, path, value, at) => {
+	var arr = objectValue(obj, path);
+	at = ~~at;
+	if (!isArray(arr)) {
+		arr = [];
+		setObjectPath(obj, path, arr);
+	}
+	arr.splice(at, 0, value);
+};
+
+export const delObjectPath = (obj, path) => {
+	if (typeof path === "number") {
+		path = [path];
+	}
+
+	if (obj == null) {
+		return obj;
+	}
+
+	if (isEmpty(path)) {
+		return obj;
+	}
+	if (typeof path === "string") {
+		return delObjectPath(obj, path.split("."));
+	}
+
+	const currentPath = getKey(path[0]);
+	if (!hasShallowProperty(obj, currentPath)) {
+		return obj;
+	}
+
+	if (path.length === 1) {
+		if (isArray(obj)) {
+			obj.splice(currentPath, 1);
+		} else {
+			delete obj[currentPath];
+		}
+	} else {
+		return delObjectPath(obj[currentPath], path.slice(1));
+	}
+
+	return obj;
+};
+
+export const setObjectPath = (obj, path, value, doNotReplace) => {
+	if (typeof path === "number") {
+		path = [path];
+	}
+
+	if (!path || path.length === 0) {
+		return obj;
+	}
+
+	if (typeof path === "string") {
+		return setObjectPath(
+			obj,
+			path.split(".").map(getKey),
+			value,
+			doNotReplace
+		);
+	}
+
+	const currentPath = path[0];
+	const currentValue = getShallowProperty(obj, currentPath);
+
+	if (path.length === 1) {
+		if (currentValue === void 0 || !doNotReplace) {
+			obj[currentPath] = value;
+		}
+		return currentValue;
+	}
+
+	if (currentValue === void 0) {
+		if (typeof path[1] === "number") {
+			obj[currentPath] = [];
+		} else {
+			obj[currentPath] = {};
+		}
+	}
+
+	return setObjectPath(obj[currentPath], path.slice(1), value, doNotReplace);
+};
+
 export const objectValue = (obj, path) => {
 	const parts = path.split(".");
 	if (!obj) return;
 	if (parts.length == 1) return obj[parts[0]];
 	return objectValue(obj[parts[0]], parts.slice(1).join("."));
-};
-
-export const isObject = (item) => {
-	return item && typeof item === "object" && !Array.isArray(item);
 };
 
 export const mergeDeep = (target, source) => {

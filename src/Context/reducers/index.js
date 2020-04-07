@@ -25,6 +25,16 @@ export const root_store_reducer = (s, a, params = false) => {
 			}
 		}
 
+		case "SET_COUNTRIES": {
+			const { countries } = s;
+
+			if (!data) return {};
+
+			countries.a = data;
+
+			return { countries };
+      }
+
 		case "SET_LIKE": {
 			const { chats } = s;
 			const { c, item, status, type } = getUrlParams("?" + params.params);
@@ -555,7 +565,6 @@ export const root_store_reducer = (s, a, params = false) => {
 			const { members } = s;
 			const { page } = getUrlParams("?" + params.params);
 
-			console.log("SDAD", data);
 			if (data && data instanceof Array) {
 				members.a[page] = data;
 			} else {
@@ -644,5 +653,8 @@ export const root_store_initial_state = {
 		a: {},
 		paging: 0,
 		page: 1,
+	},
+	countries: {
+		a: {},
 	},
 };

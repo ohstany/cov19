@@ -449,13 +449,17 @@ const Activity = ({ t }) => {
 
 							{infections && infections.length
 								? infections.map((a, ax) => {
-										return (
+										return a.locale &&
+											a.region &&
+											a.region !== "other" ? (
 											<MarkerItem
 												nav={nav}
 												key={ax}
 												a={a}
 												ax={ax}
 											/>
+										) : (
+											""
 										);
 								  })
 								: ""}

@@ -17,7 +17,8 @@ export default ({ logout }) => {
 					{ url: `/${url}/subscriptions`, text: "Subscriptions" },
 					{ url: `/${url}/settings`, text: "Settings" },
 					{ url: `/${url}/members`, text: "Members" },
-					{ url: `/${url}/chat`, text: "Chat" }
+               { url: `/${url}/chat`, text: "Chat" },
+               { url: `/${url}/countries`, text: "Countries" }
 				].map((n, nx) => {
 					return (
 						<Link key={nx} href={n.url}>

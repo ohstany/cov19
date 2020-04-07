@@ -1,15 +1,24 @@
 import { useContext, useEffect, useState, useCallback } from "react";
-import { notification } from "Library";
+import { notification, numComma } from "Library";
 import { condition as cond, via as vi } from "Library/statuses";
 import RootContext from "Context";
-import Popup from "Templates/Popup";
-import { numComma } from "Library";
-import countries_a from "Library/countries-array.json";
-import countries_o from "Library/countries-object.json";
-// import iso from "Library/iso-3166-2-object.json";
-import * as iso from "Library/iso-3166-2-object.js";
-import ExelToJson from "Templates/exelToJson";
-import Table from "Templates/Table";
+import dynamic from "next/dynamic";
+const Popup = dynamic(() => import("Templates/Popup"));
+const ExelToJson = dynamic(() => import("Templates/exelToJson"));
+const Table = dynamic(() => import("Templates/Table"));
+
+let iso = null;
+let countries_a = null;
+
+if (!iso) {
+	import("Library/iso-3166-2-object.js").then((i) => (iso = i));
+}
+
+if (!countries_a) {
+	import("Library/countries-array.json").then(
+		(i) => (countries_a = i.default)
+	);
+}
 
 const initialState = {
 	address: "",
@@ -50,7 +59,7 @@ const CountrySelect = ({ id, onBlur, controlled = true, value, onUpdate }) => {
 				<option value="">Select Country</option>
 			)}
 
-			{countries_a.map((c, ci) => {
+			{(countries_a || []).map((c, ci) => {
 				return (
 					<option key={ci} value={c.country_code}>
 						{c.name}
@@ -61,7 +70,7 @@ const CountrySelect = ({ id, onBlur, controlled = true, value, onUpdate }) => {
 	);
 };
 
-const RegionSelect = ({ locale, value, onUpdate }) => {
+const RegionSelect = ({ iso, locale, value, onUpdate }) => {
 	const r =
 		locale && iso[locale] && iso[locale].regions && iso[locale].regions;
 
@@ -102,7 +111,6 @@ export default () => {
 	const [popup, _popup] = useState(false);
 	const [uploaded, _uploaded] = useState(false);
 	const [state, _state] = useState(initialState);
-
 	const { a = {}, paging = 0, page = 1 } = markers[byc] || {};
 
 	useEffect(() => {
@@ -682,7 +690,7 @@ export default () => {
 					type={"markers"}
 					uploaded={uploaded}
 					country_code={byc}
-					cname={byc !== "all" ? countries_o[byc].name : false}
+					cname={byc !== "all" ? iso[byc].name : false}
 					onFinish={() => {
 						_uploaded(true);
 						setTimeout(() => {
@@ -1050,6 +1058,7 @@ export default () => {
 
 					<div className="selinp">
 						<RegionSelect
+							iso={iso}
 							key={state.locale}
 							locale={state.locale}
 							value={state.region}

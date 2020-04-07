@@ -74,6 +74,23 @@
 			width: 85%;
 		}
 	}
+
+	.check {
+		display: inline-block;
+		padding: 0px 5px;
+		color: white;
+		font-size: 12px;
+		margin-bottom: 5px;
+		margin-left: 8px;
+		background: #e01f1f;
+		&.ok {
+			background: #51c316;
+		}
+	}
+	.uactive {
+		display: inline-block;
+		margin-right: 7px;
+	}
 	.cdel {
 		color: #e01f1f;
 		font-weight: bold;

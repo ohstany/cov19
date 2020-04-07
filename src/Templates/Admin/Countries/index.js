@@ -1,11 +1,14 @@
 import { useContext, useEffect, useState, useCallback, memo } from "react";
 import RootContext from "Context";
 import { setObjectPath, objectValue, delObjectPath } from "Library";
+import { LoaderSmall } from "Templates/Loader";
 import "./style.scss";
 
 const Country = memo(
-	({ data, save, createField }) => {
+	({ data, save, createField, checkRss }) => {
 		const path = data.code;
+
+		const [ch, _ch] = useState(false);
 
 		const regions = Object.keys(data.regions);
 
@@ -102,7 +105,41 @@ const Country = memo(
 						return (
 							<div key={px} className="sblock">
 								<div>
+									<span
+										className={
+											"uactive " +
+											(p.check ? "act" : "non")
+										}
+									></span>
 									<span>#{px + 1}</span>
+									<button
+										className={
+											"check" + (p.check ? " ok" : "")
+										}
+										disabled={ch}
+										onClick={() => {
+											if (
+												p.value &&
+												data.parser &&
+												data.parser[0]
+											) {
+												_ch(true);
+												checkRss(
+													`${path}.rss`,
+													px,
+													data.parser[0]
+												).then(() => _ch(false));
+											}
+										}}
+									>
+										{p.check ? "Again" : "Check"}
+									</button>
+									{ch && (
+										<LoaderSmall
+											width="40px"
+											height="40px"
+										/>
+									)}
 									<span
 										className="cdel"
 										onClick={() =>
@@ -140,6 +177,7 @@ const Country = memo(
 							createField(`${path}.rss`, {
 								key: "",
 								value: "",
+								check: false,
 							})
 						}
 					>
@@ -155,7 +193,9 @@ const Country = memo(
 
 								return (
 									<div key={rx} className="rg">
-										<h5>{data.regions[r].name}</h5>
+										<h5>
+											{data.regions[r].name} ({r})
+										</h5>
 										<div className="editv">
 											<b>Latitude</b>
 											<input
@@ -239,15 +279,17 @@ export default () => {
 	}, [usef]);
 
 	const refreshs = () => {
-		actioner({
-			reduce: "SET_COUNTRIES",
-			action: "countries",
-			method: "POST",
-		}).then(({ countries: { a } }) => {
-			if (a) {
-				doFilter(a);
-			}
-		});
+		if (!countries.a.length) {
+			actioner({
+				reduce: "SET_COUNTRIES",
+				action: "countries",
+				method: "POST",
+			}).then(({ countries: { a } }) => {
+				if (a) {
+					doFilter(a);
+				}
+			});
+		}
 	};
 
 	const doFilter = (f) => {
@@ -272,6 +314,40 @@ export default () => {
 		);
 	};
 
+	const checkRss = (sr, ix, parser) => {
+		const src = `${sr}.${ix}`;
+		const sc = objectValue(countries.a, src);
+
+		return api({
+			method: "OPTIONS",
+			action: "countries",
+			params: `action=rssconfirm&rss=${sc.value}&parser=${parser}`,
+		}).then((up) => {
+			const modify = {};
+			setObjectPath(countries.a, `${src}.check`, up.status);
+			setStore({
+				countries,
+			});
+
+			const update = objectValue(countries.a, sr);
+
+			setObjectPath(modify, sr, update);
+
+			console.log("checked", up);
+			if (up) {
+				api({
+					method: "UPDATE",
+					action: "countries",
+					data: {
+						locale: Object.keys(modify)[0],
+						action: "modify",
+						modify,
+					},
+				}).then((up) => console.log("UPDATED", up));
+			}
+		});
+	};
+
 	const saveCountry = useCallback(
 		(e, newPath = false) => {
 			const id = e.target.getAttribute("path");
@@ -292,15 +368,6 @@ export default () => {
 
 			const upValue = newPath ? objectValue(countries.a, newPath) : value;
 			setObjectPath(modify, `${newPath || id}`, upValue);
-
-			// console.log(
-			// 	"SSSS",
-			// 	newPath ? objectValue(countries.a, newPath) : "",
-			// 	id,
-			// 	value,
-			// 	upValue,
-			// 	modify
-			// );
 
 			return api({
 				method: "UPDATE",
@@ -371,6 +438,7 @@ export default () => {
 							data={a[i]}
 							save={saveCountry}
 							createField={createField}
+							checkRss={checkRss}
 						/>
 					);
 				})}

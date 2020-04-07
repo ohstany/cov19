@@ -9,7 +9,6 @@ import React, {
 // import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import markerImg from "./m2.png";
 import styles from "./mapStyling.json";
-import * as locations from "Library/iso-3166-2-object.js";
 import { reducer, numComma, CountryName, CityName } from "Library";
 import RootContext from "Context";
 import {
@@ -21,6 +20,12 @@ import {
 } from "react-google-maps";
 import { condition } from "Library/statuses.js";
 import { withTranslation } from "i18n";
+
+let locations = null;
+
+if (!locations) {
+	import("Library/iso-3166-2-object.js").then((i) => (locations = i));
+}
 
 // const {
 // 	MarkerClusterer

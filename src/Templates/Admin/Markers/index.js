@@ -101,7 +101,7 @@ export default () => {
 	const [refr, _refr] = useState(false);
 	const [popup, _popup] = useState(false);
 	const [uploaded, _uploaded] = useState(false);
-   const [state, _state] = useState(initialState);
+	const [state, _state] = useState(initialState);
 
 	const { a = {}, paging = 0, page = 1 } = markers[byc] || {};
 
@@ -203,7 +203,7 @@ export default () => {
 
 	const deleteMarker = useCallback(
 		(ID, locale) => {
-			actioner({
+			return actioner({
 				reduce: "DELETE_MARKER",
 				method: "DELETE",
 				action: "markers",
@@ -711,6 +711,7 @@ export default () => {
 					}}
 					showRow={(g, visible) => {
 						const [ru, _ru] = useState(defV);
+						const [dis, _dis] = useState(false);
 
 						const {
 							ID,
@@ -998,7 +999,13 @@ export default () => {
 									}`}
 									<button
 										className="mkdel"
-										onClick={() => deleteMarker(ID, locale)}
+										disabled={dis}
+										onClick={() => {
+											_dis(true);
+											deleteMarker(ID, locale).then(() =>
+												_dis(false)
+											);
+										}}
 									>
 										Delete
 									</button>

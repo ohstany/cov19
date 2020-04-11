@@ -440,7 +440,7 @@ export default () => {
 						Clear
 					</button>
 
-					<button
+					{/* <button
 						onClick={() => {
 							api({
 								method: "OPTIONS",
@@ -452,7 +452,7 @@ export default () => {
 						}}
 					>
 						CHECK
-					</button>
+					</button> */}
 				</div>
 			</div>
 

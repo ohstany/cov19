@@ -457,17 +457,21 @@ export default () => {
 			</div>
 
 			<div className={"cn-cnt content"}>
-				{filtered.map((i, ix) => {
-					return (
-						<Country
-							key={i}
-							data={a[i]}
-							save={saveCountry}
-							createField={createField}
-							checkRss={checkRss}
-						/>
-					);
-				})}
+				{filtered.length ? (
+					filtered.map((i, ix) => {
+						return (
+							<Country
+								key={i}
+								data={a[i]}
+								save={saveCountry}
+								createField={createField}
+								checkRss={checkRss}
+							/>
+						);
+					})
+				) : (
+					<LoaderSmall width="40px" height="40px" />
+				)}
 			</div>
 		</>
 	);

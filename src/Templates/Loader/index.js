@@ -1,5 +1,5 @@
 export const LoaderSmall = (height = "60px", width = "60px") => (
-	<div class="sloader" style={{ height, width }}></div>
+	<div className="sloader" style={{ height, width }}></div>
 );
 
 export default (props) => {

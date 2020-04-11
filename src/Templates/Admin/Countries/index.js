@@ -58,7 +58,7 @@ const Country = memo(
 						op="ch"
 						path={`${path}.use`}
 						value={data.use || false}
-						onChange={save}
+						onChange={(e) => save(e, false, { use: true })}
 					/>
 					<br />
 
@@ -333,7 +333,7 @@ export default () => {
 
 			setObjectPath(modify, sr, update);
 
-			console.log("checked", up);
+			console.log("checked", up, sr, update, modify);
 			if (up) {
 				api({
 					method: "UPDATE",
@@ -368,12 +368,24 @@ export default () => {
 
 			const upValue = newPath ? objectValue(countries.a, newPath) : value;
 			setObjectPath(modify, `${newPath || id}`, upValue);
+			const locale = Object.keys(modify)[0];
+			modify[locale].regions = Object.assign({}, modify[locale].regions);
+
+			api({
+				method: "OPTIONS",
+				action: "countries",
+				data: {
+					locale,
+					action: "enable",
+					value,
+				},
+			});
 
 			return api({
 				method: "UPDATE",
 				action: "countries",
 				data: {
-					locale: Object.keys(modify)[0],
+					locale,
 					action: "modify",
 					modify,
 				},
@@ -426,6 +438,20 @@ export default () => {
 						}}
 					>
 						Clear
+					</button>
+
+					<button
+						onClick={() => {
+							api({
+								method: "OPTIONS",
+								action: "countries",
+								params: `action=cron`,
+							}).then((ddd) => {
+								console.log("ddd", ddd);
+							});
+						}}
+					>
+						CHECK
 					</button>
 				</div>
 			</div>

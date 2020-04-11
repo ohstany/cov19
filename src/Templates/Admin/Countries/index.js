@@ -379,7 +379,7 @@ export default () => {
 					action: "enable",
 					value,
 				},
-			});
+			}).then((r) => console.log("RRR", r));
 
 			return api({
 				method: "UPDATE",

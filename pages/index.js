@@ -9,14 +9,15 @@ import GoogleAnalytics from "Templates/GoogleAnalytics";
 import { MainBlock } from "Layouts";
 import { withTranslation } from "i18n";
 import { NextSeo } from "next-seo";
+import NoSsr from "Templates/NoSsr";
 import "global.scss";
 
 const Home = memo(
 	({
 		t,
 		context: {
-			store: { language }
-		}
+			store: { language },
+		},
 	}) => {
 		return (
 			<>
@@ -25,23 +26,28 @@ const Home = memo(
 					description={t("siteDescription")}
 					openGraph={{
 						title: t("siteTitle"),
-						description: t("siteDescription")
+						description: t("siteDescription"),
 					}}
 				/>
 
 				<GoogleAnalytics>
 					<div id="wrapper">
 						<main id="main" className="main">
-							<GoogleMaps language={language || "en"} />
+							<NoSsr>
+								<GoogleMaps language={language || "en"} />
+							</NoSsr>
 
 							<MainBlock>
 								<ActivityArea />
 								<Socials />
 							</MainBlock>
 						</main>
-						<NavMenu />
-						<Subscribe />
-						<ContactUs />
+
+						<NoSsr>
+							<NavMenu />
+							<Subscribe />
+							<ContactUs />
+						</NoSsr>
 					</div>
 				</GoogleAnalytics>
 			</>

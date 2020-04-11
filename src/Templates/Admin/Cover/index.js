@@ -3,13 +3,14 @@ import Access from "Templates/Login";
 import RootContext from "Context";
 import Header from "Templates/Admin/Header";
 import Head from "next/head";
+import NoSsr from "Templates/NoSsr";
 import "global.scss";
 
 export default ({ children }) => {
 	const { logout } = useContext(RootContext);
 
 	return (
-		<>
+		<NoSsr>
 			<Head>
 				<link
 					rel="stylesheet"
@@ -29,6 +30,6 @@ export default ({ children }) => {
 					</div>
 				</div>
 			</Access>
-		</>
+		</NoSsr>
 	);
 };

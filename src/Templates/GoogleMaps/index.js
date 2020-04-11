@@ -180,17 +180,19 @@ const MapCover = withTranslation("common")(
 
 						const cpos = locations[locale];
 						const position =
-							region && cpos.regions[region]
+							region && cpos && cpos.regions[region]
 								? {
 										lat: cpos.regions[region].lat,
 										lng: cpos.regions[region].lng,
 								  }
-								: {
+								: region && cpos
+								? {
 										lat: cpos.lat,
 										lng: cpos.lng,
-								  };
+								  }
+								: {};
 
-						return (
+						return locale ? (
 							<Marker
 								ref={(r) => setRefs(r, mx)}
 								labelClass="labelc"
@@ -277,6 +279,8 @@ const MapCover = withTranslation("common")(
 									</InfoWindow>
 								)}
 							</Marker>
+						) : (
+							""
 						);
 					})}
 				</GoogleMap>

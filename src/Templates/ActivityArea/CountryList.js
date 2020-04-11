@@ -15,12 +15,12 @@ export const CountryList = withTranslation("countries")(
 				}
 				return p;
 			}, [])
-			.map(cc => {
+			.map((cc) => {
 				return {
 					locale: cc,
 					infections: markers
-						.filter(i => i.locale === cc)
-						.reduce((p, n) => (p += n.infected), 0)
+						.filter((i) => i.locale === cc)
+						.reduce((p, n) => (p += n.infected), 0),
 				};
 			})
 			.sort((a, b) => {
@@ -31,12 +31,14 @@ export const CountryList = withTranslation("countries")(
 			<select value={value || ""} onChange={onChange}>
 				><option value="">{t("selectCountry")}</option>
 				{f.map((c, ci) => {
-					return (
+					return c.locale ? (
 						<option key={ci} value={c.locale}>
 							{`${t(countries[c.locale].name)} (${numComma(
 								c.infections
 							)})`}
 						</option>
+					) : (
+						""
 					);
 				})}
 			</select>
@@ -53,7 +55,7 @@ export const CityList = withTranslation("cities")(
 					.map((r, ri) => {
 						r.inf = markers
 							.filter(
-								i =>
+								(i) =>
 									i.locale === country_code &&
 									"" + i.region === "" + r.region_code
 							)

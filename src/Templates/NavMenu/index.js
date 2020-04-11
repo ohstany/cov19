@@ -10,7 +10,6 @@ import {
 import { withTranslation, i18n } from "i18n";
 import langs from "languages.json";
 import Router from "next/router";
-import phone from "../Subscribe/phone.png";
 
 const Svg = () => (
 	<svg

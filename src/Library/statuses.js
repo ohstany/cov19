@@ -3,22 +3,23 @@ export const condition = {
 	suspicion: "Suspicion",
 	infected: "Infected",
 	cured: "Cured",
-	mortal: "Mortal"
+	mortal: "Mortal",
 };
 
 export const sources = {
 	witness: "Witness",
 	osource: "Official Source",
-	source: "Source"
+	source: "Source",
+	news: "News",
 };
 
 export const via = {
 	admin: "Admin",
-	anonim: "Anonimous"
+	anonim: "Anonimous",
 };
 
 export const status = {
 	review: "Review",
 	hidden: "Hidden",
-	published: "Published"
+	published: "Published",
 };

@@ -271,19 +271,22 @@ const Activity = ({ t }) => {
 
 	const MarkerItem = useCallback(
 		({
+			a,
 			a: {
 				ID,
 				condition: cond,
 				type,
+				content,
 				number,
 				details,
 				date,
 				region,
 			} = {},
 		}) => {
+			console.log("aaa", a);
 			const [cont, _cont] = useState(false);
 
-			const len = details.content ? details.content.length : 0;
+			const len = content ? content.length : 0;
 
 			const tm = date
 				? continent_code && continent_code.indexOf("Seoul") === -1
@@ -327,7 +330,7 @@ const Activity = ({ t }) => {
 								}
 								onClick={() => _cont(true)}
 							>
-								{details.content}
+								{content}
 							</div>
 
 							{len > 100 ? (
@@ -424,6 +427,7 @@ const Activity = ({ t }) => {
 
 						<div className="filterNavi tbf">
 							<div className="fitem tbf-c">
+								<h5>{t("Select Country")}</h5>
 								<CountryList
 									markers={mapMarkers}
 									value={country_code}
@@ -435,6 +439,7 @@ const Activity = ({ t }) => {
 							<div className="sep" />
 
 							<div className="fitem tbf-c">
+								<h5>{t("Select Region")}</h5>
 								<CityList
 									markers={mapMarkers}
 									value={region_code}

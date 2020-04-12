@@ -86,5 +86,7 @@
 	"regionUpdate": "Latest updates in the region",
 	"newsUpdate": "Latest news, update every 1 hour",
 	"chat": "Chat",
-	"accBlocked": "Account blocked, please contact administrator."
+	"accBlocked": "Account blocked, please contact administrator.",
+	"Select Country": "Select Country",
+	"Select Region": "Select Region"
 }

@@ -83,8 +83,10 @@
 	"Hide": "Згорнути",
 	"Read More": "Читати статтю",
 	"countryUpdate": "Останні оновлення в країні",
-   "regionUpdate": "Останні оновлення в регіоні",
-   "newsUpdate": "Останні новини, оновлення кожну 1 годину",
+	"regionUpdate": "Останні оновлення в регіоні",
+	"newsUpdate": "Останні новини, оновлення кожну 1 годину",
 	"chat": "Чат",
-	"accBlocked": "Account blocked, please contact administrator."
+	"accBlocked": "Account blocked, please contact administrator.",
+	"Select Country": "Виберіть країну",
+	"Select Region": "Виберіть місто"
 }

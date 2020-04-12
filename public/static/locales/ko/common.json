@@ -83,8 +83,10 @@
 	"Hide": "Hide",
 	"Read More": "Read More",
 	"countryUpdate": "Latest updates in the country",
-   "regionUpdate": "Latest updates in the region",
-   "newsUpdate": "Latest news, update every 1 hour",
+	"regionUpdate": "Latest updates in the region",
+	"newsUpdate": "Latest news, update every 1 hour",
 	"chat": "Chat",
-	"accBlocked": "Account blocked, please contact administrator."
+	"accBlocked": "Account blocked, please contact administrator.",
+	"Select Country": "나라 선택",
+	"Select Region": "도시 선택"
 }

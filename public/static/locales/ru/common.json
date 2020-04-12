@@ -86,5 +86,7 @@
    "regionUpdate": "Последние обновления в регионе",
    "newsUpdate": "Последние новости, обновление каждый 1 час",
 	"chat": "Чат",
-	"accBlocked": "Account blocked, please contact administrator."
+   "accBlocked": "Account blocked, please contact administrator.",
+   "Select Country": "Выберите страну",
+	"Select Region": "Выберите город"
 }

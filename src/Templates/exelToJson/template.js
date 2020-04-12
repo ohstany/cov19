@@ -3,9 +3,14 @@ export const markers = {
 		path: "address",
 		sample: "New York city, USA",
 		defaultValue: ""
+   },
+   Title: {
+		path: "title",
+		sample: "Marker title..",
+		defaultValue: ""
 	},
 	Content: {
-		path: "details.content",
+		path: "content",
 		sample: "Marker contents..",
 		defaultValue: ""
 	},

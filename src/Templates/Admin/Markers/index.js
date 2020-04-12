@@ -334,6 +334,28 @@ export default () => {
 		[markers]
 	);
 
+	const updateMarker = useCallback((update, ID, _u) => {
+		_u((p) => ({ ...p, d: true }));
+
+		if (Object.keys(update)[0] === "") {
+			_u(defV);
+			return false;
+		}
+
+		modifyMarker(ID, { ...update }).then(() => {
+			_u(defV);
+		});
+	});
+
+	const focusOnItem = useCallback((i) => {
+		setTimeout(() => {
+			if (document.getElementById(i)) {
+				document.getElementById(i).focus();
+			}
+		}, 200);
+		return false;
+	}, []);
+
 	const fields = [
 		{
 			title: "ID",
@@ -630,28 +652,6 @@ export default () => {
 		},
 	];
 
-	const updateMarker = useCallback((update, ID, _u) => {
-		_u((p) => ({ ...p, d: true }));
-
-		if (Object.keys(update)[0] === "") {
-			_u(defV);
-			return false;
-		}
-
-		modifyMarker(ID, { ...update }).then(() => {
-			_u(defV);
-		});
-	});
-
-	const focusOnItem = useCallback((i) => {
-		setTimeout(() => {
-			if (document.getElementById(i)) {
-				document.getElementById(i).focus();
-			}
-		}, 200);
-		return false;
-	}, []);
-
 	return (
 		<>
 			<h1>Markers</h1>
@@ -712,18 +712,15 @@ export default () => {
 					}}
 					loading={refr}
 					onPage={pageChange}
-					methods={{
-						modifyMarker,
-						deleteMarker,
-						ffg,
-					}}
 					showRow={(g, visible) => {
 						const [ru, _ru] = useState(defV);
 						const [dis, _dis] = useState(false);
 
 						const {
 							ID,
-							details: { content, source, source2 } = {},
+							title,
+							content,
+							details: { source, source2 } = {},
 							meta_data: { geo = {} } = {},
 							address,
 							locale,
@@ -740,6 +737,60 @@ export default () => {
 						return visible ? (
 							<div className="innerc">
 								<div className="blc">
+									<h5># Title</h5>
+									<div
+										className="editablef"
+										onDoubleClick={() => {
+											_ru((p) => ({
+												...p,
+												k: "title",
+												v: title,
+												s: true,
+											}));
+											focusOnItem(`c${ID}-title`);
+										}}
+									>
+										{ru.k === "title" && ru.s ? (
+											<textarea
+												id={`c${ID}-title`}
+												value={ru.v}
+												disabled={ru.d}
+												onBlur={() =>
+													updateMarker(
+														{
+															[ru.k]: ru.v,
+														},
+														ID,
+														_ru
+													)
+												}
+												onKeyDown={(e) => {
+													if (e.key === "Enter") {
+														updateMarker(
+															{
+																[ru.k]: ru.v,
+															},
+															ID,
+															_ru
+														);
+													}
+												}}
+												onChange={({ target: value }) =>
+													_ru((p) => ({
+														...p,
+														v: value.value,
+													}))
+												}
+											/>
+										) : (
+											<div
+												dangerouslySetInnerHTML={{
+													__html: title || "",
+												}}
+											/>
+										)}
+									</div>
+
 									<h5># Content</h5>
 
 									<div
@@ -762,9 +813,7 @@ export default () => {
 												onBlur={() =>
 													updateMarker(
 														{
-															details: {
-																[ru.k]: ru.v,
-															},
+															[ru.k]: ru.v,
 														},
 														ID,
 														_ru
@@ -774,10 +823,7 @@ export default () => {
 													if (e.key === "Enter") {
 														updateMarker(
 															{
-																details: {
-																	[ru.k]:
-																		ru.v,
-																},
+																[ru.k]: ru.v,
 															},
 															ID,
 															_ru

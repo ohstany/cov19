@@ -33,7 +33,7 @@ export const root_store_reducer = (s, a, params = false) => {
 			countries.a = data;
 
 			return { countries };
-      }
+		}
 
 		case "SET_LIKE": {
 			const { chats } = s;

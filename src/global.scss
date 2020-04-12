@@ -673,15 +673,20 @@ body.subsc {
 		}
 		.fitem {
 			width: 49%;
-			padding: 4px;
-			background: white;
-			border: 1px solid #ccc;
+         h5 {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #828282;
+         }
 			select {
 				width: 100%;
 				border: none;
 				background: none;
 				outline: none;
 				box-shadow: none;
+				background: white;
+				padding: 4px;
+				border: 1px solid #ccc;
 			}
 		}
 	}
@@ -1278,6 +1283,11 @@ body.subsc {
 			padding-right: 25px;
 			a {
 				display: inline-block;
+				max-width: 177px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				vertical-align: bottom;
 			}
 		}
 		.showh {
@@ -1478,6 +1488,9 @@ body.subsc {
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 3;
 	}
+}
+.desc.hd {
+	-webkit-line-clamp: 2;
 }
 
 .c-avatar {

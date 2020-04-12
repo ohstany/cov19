@@ -81,6 +81,7 @@ const Country = memo(
 										Delete
 									</span>
 								</div>
+
 								<input
 									path={`${path}.parser.${px}`}
 									placeholder="Url"
@@ -257,11 +258,14 @@ export default () => {
 		api,
 		setStore,
 		actioner,
-		store: { countries },
+		store: {
+			userdata: { ID },
+			countries,
+		},
 	} = useContext(RootContext);
 
 	const { a } = countries;
-	// console.log("countries", a);
+	// console.log("countries", store);
 
 	const [fil, _fil] = useState("");
 	const [usef, _usef] = useState(false);
@@ -349,7 +353,7 @@ export default () => {
 	};
 
 	const saveCountry = useCallback(
-		(e, newPath = false) => {
+		(e, newPath = false, obj = false) => {
 			const id = e.target.getAttribute("path");
 			const op = e.target.getAttribute("op");
 			const value =
@@ -371,15 +375,17 @@ export default () => {
 			const locale = Object.keys(modify)[0];
 			modify[locale].regions = Object.assign({}, modify[locale].regions);
 
-			api({
-				method: "OPTIONS",
-				action: "countries",
-				data: {
-					locale,
-					action: "enable",
-					value,
-				},
-			}).then((r) => console.log("RRR", r));
+			if (obj && obj.use) {
+				api({
+					method: "OPTIONS",
+					action: "countries",
+					data: {
+						locale,
+						action: "enable",
+						value,
+					},
+				}).then((r) => console.log("RRR", r));
+			}
 
 			return api({
 				method: "UPDATE",
@@ -407,6 +413,26 @@ export default () => {
 			setObjectPath(countries.a, `${path}.${index}`, value);
 		} else if (action === "delete") {
 			delObjectPath(countries.a, `${path}`);
+
+			const ps = path.split(".");
+			const locale = ps[0];
+			ps.splice(0, 1);
+
+			if (!isNaN(ps[1])) {
+				ps[1] = `[${ps[1]}]`;
+			}
+
+			api({
+				method: "OPTIONS",
+				action: "countries",
+				data: {
+					locale,
+					action: "deletepath",
+					path: ps.join(""),
+				},
+			}).then((up) => {
+				console.log("deleted", up);
+			});
 		}
 
 		setStore({
@@ -440,19 +466,37 @@ export default () => {
 						Clear
 					</button>
 
-					{/* <button
-						onClick={() => {
-							api({
-								method: "OPTIONS",
-								action: "countries",
-								params: `action=cron`,
-							}).then((ddd) => {
-								console.log("ddd", ddd);
-							});
-						}}
-					>
-						CHECK
-					</button> */}
+					{ID && ID === 1 && (
+						<>
+							<button
+								onClick={() => {
+									api({
+										method: "OPTIONS",
+										action: "countries",
+										params: `action=parser`,
+									}).then((ddd) => {
+										console.log("ddd", ddd);
+									});
+								}}
+							>
+								TEST CODE
+							</button>
+
+							<button
+								onClick={() => {
+									api({
+										method: "OPTIONS",
+										action: "countries",
+										params: `action=backup`,
+									}).then((backup) => {
+										console.log("backup", backup);
+									});
+								}}
+							>
+								BACKUP SCRIPT
+							</button>
+						</>
+					)}
 				</div>
 			</div>
 

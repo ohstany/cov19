@@ -51,7 +51,7 @@ const MapCover = withTranslation("common")(
 				actioner,
 				store: { cpos, country_code, region_code, mapMarkers, index },
 				setStore,
-			} = useContext(RootContext) || {};
+         } = useContext(RootContext) || {};
 
 			const [state, _state] = useReducer(reducer, {
 				lat: 50.167003,

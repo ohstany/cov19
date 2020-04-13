@@ -673,11 +673,11 @@ body.subsc {
 		}
 		.fitem {
 			width: 49%;
-         h5 {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #828282;
-         }
+			h5 {
+				margin: 0;
+				margin-bottom: 5px;
+				color: #828282;
+			}
 			select {
 				width: 100%;
 				border: none;
@@ -767,6 +767,10 @@ body.subsc {
 				text-transform: uppercase;
 				font-weight: 500;
 				background: white;
+				&.active {
+					background: #e64234;
+					color: white;
+				}
 				&.act {
 					object,
 					svg,

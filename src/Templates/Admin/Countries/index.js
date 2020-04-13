@@ -119,6 +119,7 @@ const Country = memo(
 										}
 										disabled={ch}
 										onClick={() => {
+                                 console.log("SSS", p, data);
 											if (
 												p.value &&
 												data.parser &&
@@ -327,6 +328,7 @@ export default () => {
 			action: "countries",
 			params: `action=rssconfirm&rss=${sc.value}&parser=${parser}`,
 		}).then((up) => {
+			// console.log("rssconfirm", up);
 			const modify = {};
 			setObjectPath(countries.a, `${src}.check`, up.status);
 			setStore({
@@ -337,7 +339,8 @@ export default () => {
 
 			setObjectPath(modify, sr, update);
 
-			console.log("checked", up, sr, update, modify);
+         console.log("checked", up, sr, update, modify);
+         
 			if (up) {
 				api({
 					method: "UPDATE",

@@ -18,6 +18,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import moment from "moment-timezone";
 import Chat from "./Chat";
 import News from "./News";
+import NoSsr from "Templates/NoSsr";
 
 const caseDef = {
 	infections: 0,
@@ -375,143 +376,146 @@ const Activity = ({ t }) => {
 	);
 
 	return (
-		<div id="activityArea" className={"block activityArea " + nav}>
-			<Chat visible={ch} toggle={() => _ch((p) => !p)} />
+		<NoSsr>
+			<div id="activityArea" className={"block activityArea " + nav}>
+				<Chat visible={ch} toggle={() => _ch((p) => !p)} />
 
-			<div className="hidden">
-				<nav>
-					<ol>
-						{[
-							{
-								id: "chat",
-								className: "pin",
-								title: (
-									<>
-										<span className="chatlive" />
-										{t("chat")}
-									</>
-								),
-							},
-							{ id: "acts", title: t("infections") },
-							{ id: "news", title: t("news") },
-						].map((m, mx) => {
-							return (
-								<li
-									key={mx}
-									className={
-										"navi " +
-										(m.className || "") +
-										(m.id === nav || (m.id == "chat" && ch)
-											? " active"
-											: "")
-									}
-									onClick={() => {
-										if (m.id === "chat") {
-											_ch((p) => !p);
-										} else {
-											navigation(m.id);
+				<div className="hidden">
+					<nav>
+						<ol>
+							{[
+								{
+									id: "chat",
+									className: "pin",
+									title: (
+										<>
+											<span className="chatlive" />
+											{t("chat")}
+										</>
+									),
+								},
+								{ id: "acts", title: t("infections") },
+								{ id: "news", title: t("news") },
+							].map((m, mx) => {
+								return (
+									<li
+										key={mx}
+										className={
+											"navi " +
+											(m.className || "") +
+											(m.id === nav ||
+											(m.id == "chat" && ch)
+												? " active"
+												: "")
 										}
-									}}
-								>
-									{m.title}
-								</li>
-							);
-						})}
-					</ol>
-				</nav>
+										onClick={() => {
+											if (m.id === "chat") {
+												_ch((p) => !p);
+											} else {
+												navigation(m.id);
+											}
+										}}
+									>
+										{m.title}
+									</li>
+								);
+							})}
+						</ol>
+					</nav>
 
-				<div className={"activity"}>
-					<div id="sc-markers" className="bb b1">
-						<MakeMark />
+					<div className={"activity"}>
+						<div id="sc-markers" className="bb b1">
+							<MakeMark />
 
-						<div className="filterNavi tbf">
-							<div className="fitem tbf-c">
-								<h5>{t("Select Country")}</h5>
-								<CountryList
-									markers={mapMarkers}
-									value={country_code}
-									onChange={setCountry}
-									usersCc={usersCc}
-								/>
+							<div className="filterNavi tbf">
+								<div className="fitem tbf-c">
+									<h5>{t("Select Country")}</h5>
+									<CountryList
+										markers={mapMarkers}
+										value={country_code}
+										onChange={setCountry}
+										usersCc={usersCc}
+									/>
+								</div>
+
+								<div className="sep" />
+
+								<div className="fitem tbf-c">
+									<h5>{t("Select Region")}</h5>
+									<CityList
+										markers={mapMarkers}
+										value={region_code}
+										country_code={country_code}
+										onChange={setCity}
+										regions={builtRegions}
+									/>
+								</div>
 							</div>
 
-							<div className="sep" />
+							<InfiniteScroll
+								dataLength={infections ? infections.length : 0}
+								next={fetchMarkers}
+								hasMore={!activityLimited}
+								loader={<Skeleton1 row={5} />}
+								endMessage={<NoContent text={t("nodata")} />}
+								scrollableTarget="sc-markers"
+							>
+								{country_code && region_code ? (
+									<h4>{t("regionUpdate")}</h4>
+								) : country_code ? (
+									<h4>{t("countryUpdate")}</h4>
+								) : (
+									""
+								)}
 
-							<div className="fitem tbf-c">
-								<h5>{t("Select Region")}</h5>
-								<CityList
-									markers={mapMarkers}
-									value={region_code}
-									country_code={country_code}
-									onChange={setCity}
-									regions={builtRegions}
-								/>
-							</div>
+								<GetInfo />
+
+								{infections && infections.length
+									? infections.map((a, ax) => {
+											return a.locale &&
+												a.region &&
+												a.region !== "other" ? (
+												<MarkerItem
+													nav={nav}
+													key={ax}
+													a={a}
+													ax={ax}
+												/>
+											) : (
+												""
+											);
+									  })
+									: ""}
+							</InfiniteScroll>
 						</div>
 
-						<InfiniteScroll
-							dataLength={infections ? infections.length : 0}
-							next={fetchMarkers}
-							hasMore={!activityLimited}
-							loader={<Skeleton1 row={5} />}
-							endMessage={<NoContent text={t("nodata")} />}
-							scrollableTarget="sc-markers"
-						>
-							{country_code && region_code ? (
-								<h4>{t("regionUpdate")}</h4>
-							) : country_code ? (
-								<h4>{t("countryUpdate")}</h4>
-							) : (
-								""
-							)}
+						<div id="sc-news" className="bb b2">
+							<h4>{t("newsUpdate")}</h4>
 
-							<GetInfo />
-
-							{infections && infections.length
-								? infections.map((a, ax) => {
-										return a.locale &&
-											a.region &&
-											a.region !== "other" ? (
-											<MarkerItem
-												nav={nav}
-												key={ax}
-												a={a}
-												ax={ax}
-											/>
-										) : (
-											""
-										);
-								  })
-								: ""}
-						</InfiniteScroll>
-					</div>
-
-					<div id="sc-news" className="bb b2">
-						<h4>{t("newsUpdate")}</h4>
-
-						<InfiniteScroll
-							dataLength={newsData.length}
-							next={fetchNews}
-							hasMore={!newsLimited}
-							loader={<Skeleton1 row={5} />}
-							endMessage={<NoContent />}
-							scrollableTarget="sc-news"
-						>
-							{newsData.map((a, ax) => (
-								<News
-									key={ax}
-									data={a}
-									ax={ax}
-									t={t}
-									continent_code={continent_code}
-									language={language}
-								/>
-							))}
-						</InfiniteScroll>
+							<InfiniteScroll
+								dataLength={newsData.length}
+								next={fetchNews}
+								hasMore={!newsLimited}
+								loader={<Skeleton1 row={5} />}
+								endMessage={<NoContent />}
+								scrollableTarget="sc-news"
+							>
+								{newsData.map((a, ax) => (
+									<News
+										key={ax}
+										data={a}
+										ax={ax}
+										t={t}
+										continent_code={continent_code}
+										language={language}
+									/>
+								))}
+							</InfiniteScroll>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</NoSsr>
 	);
 };
 

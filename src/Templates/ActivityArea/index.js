@@ -229,7 +229,7 @@ const Activity = ({ t }) => {
 
 			const offset =
 				activity[markerKey] && activity[markerKey].length
-					? activity[markerKey][activity[markerKey].length - 1].ID
+					? activity[markerKey][activity[markerKey].length - 1].date
 					: 0;
 
 			setTimeout(() => {
@@ -283,7 +283,6 @@ const Activity = ({ t }) => {
 				region,
 			} = {},
 		}) => {
-			console.log("aaa", a);
 			const [cont, _cont] = useState(false);
 
 			const len = content ? content.length : 0;

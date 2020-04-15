@@ -396,15 +396,15 @@ export default memo(
 				const [cont, _cont] = useState(false);
 
 				const len = c.content.length;
-				const tm = c.date
-					? continent_code && continent_code.indexOf("Seoul") === -1
-						? moment(
-								moment(c.date)
-									.tz(continent_code)
-									.format("YYYY-MM-DD HH:mm:ss")
-						  )
-						: moment(c.date)
-					: "";
+
+				const tm = continent_code
+					? moment(c.date)
+							.lang(language || "en")
+							.tz(continent_code)
+							.format("DD MMM (dddd), YYYY")
+					: moment(c.date)
+							.lang(language || "en")
+							.format("DD MMM (dddd), YYYY");
 
 				return (
 					<div className="comment">
@@ -416,11 +416,7 @@ export default memo(
 								<span className="c-name">
 									<UserName value={c.name} />
 								</span>
-								<span className="c-when">
-									{tm
-										? tm.lang(language || "en").fromNow()
-										: ""}
-								</span>
+								<span className="c-when">{tm}</span>
 							</div>
 
 							<div

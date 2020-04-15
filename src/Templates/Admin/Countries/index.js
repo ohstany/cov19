@@ -10,7 +10,7 @@ const Country = memo(
 
 		const [ch, _ch] = useState(false);
 
-		const regions = Object.keys(data.regions);
+		const regions = data.regions ? Object.keys(data.regions) : false;
 
 		return (
 			<div className="cn-block">
@@ -119,7 +119,7 @@ const Country = memo(
 										}
 										disabled={ch}
 										onClick={() => {
-                                 console.log("SSS", p, data);
+											console.log("SSS", p, data);
 											if (
 												p.value &&
 												data.parser &&
@@ -188,7 +188,12 @@ const Country = memo(
 				</div>
 
 				<div className="regions">
-					<h4>Regions ({regions.length})</h4>
+					{regions && regions.length ? (
+						<h4>Regions ({regions.length})</h4>
+					) : (
+						""
+					)}
+
 					{data.regions
 						? regions.map((r, rx) => {
 								const spath = `.regions.${r}`;
@@ -303,16 +308,9 @@ export default () => {
 				return ((usef === true &&
 					(fil.indexOf(i) >= 0 || f[i].name.search(fil) >= 0)) ||
 					usef === false) &&
-					[
-						"EARTH",
-						"ASI",
-						"AFR",
-						"ANT",
-						"AUS",
-						"EUR",
-						"NAM",
-						"SAM",
-					].indexOf(i) === -1
+					["ASI", "AFR", "ANT", "AUS", "EUR", "NAM", "SAM"].indexOf(
+						i
+					) === -1
 					? true
 					: false;
 			})
@@ -328,7 +326,7 @@ export default () => {
 			action: "countries",
 			params: `action=rssconfirm&rss=${sc.value}&parser=${parser}`,
 		}).then((up) => {
-			// console.log("rssconfirm", up);
+			console.log("rssconfirm", up);
 			const modify = {};
 			setObjectPath(countries.a, `${src}.check`, up.status);
 			setStore({
@@ -339,8 +337,8 @@ export default () => {
 
 			setObjectPath(modify, sr, update);
 
-         console.log("checked", up, sr, update, modify);
-         
+			console.log("checked", up, sr, update, modify);
+
 			if (up) {
 				api({
 					method: "UPDATE",

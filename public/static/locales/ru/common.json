@@ -83,10 +83,11 @@
 	"Hide": "Свернуть",
 	"Read More": "Читать статью",
 	"countryUpdate": "Последние обновления в стране",
-   "regionUpdate": "Последние обновления в регионе",
-   "newsUpdate": "Последние новости, обновление каждый 1 час",
+	"regionUpdate": "Последние обновления в регионе",
+	"newsUpdate": "Последние новости, обновление каждый 1 час",
 	"chat": "Чат",
-   "accBlocked": "Account blocked, please contact administrator.",
-   "Select Country": "Выберите страну",
-	"Select Region": "Выберите город"
+	"accBlocked": "Account blocked, please contact administrator.",
+	"Select Country": "Выберите страну",
+	"Select Region": "Выберите город",
+	"sourceType": "Тип источника"
 }

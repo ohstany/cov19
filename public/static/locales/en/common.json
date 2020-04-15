@@ -88,5 +88,6 @@
 	"chat": "Chat",
 	"accBlocked": "Account blocked, please contact administrator.",
 	"Select Country": "Select Country",
-	"Select Region": "Select Region"
+	"Select Region": "Select Region",
+	"sourceType": "Source type"
 }

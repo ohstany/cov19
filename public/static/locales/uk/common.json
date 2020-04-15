@@ -88,5 +88,6 @@
 	"chat": "Чат",
 	"accBlocked": "Account blocked, please contact administrator.",
 	"Select Country": "Виберіть країну",
-	"Select Region": "Виберіть місто"
+	"Select Region": "Виберіть місто",
+	"sourceType": "Тип джерела"
 }

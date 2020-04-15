@@ -88,5 +88,6 @@
 	"chat": "Chat",
 	"accBlocked": "Account blocked, please contact administrator.",
 	"Select Country": "나라 선택",
-	"Select Region": "도시 선택"
+	"Select Region": "도시 선택",
+	"sourceType": "Source type"
 }

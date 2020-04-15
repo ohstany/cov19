@@ -17,14 +17,15 @@ export default memo(
 		} = {},
 	}) => {
 		const [sh, _sh] = useState(false);
-		const tm =
-			continent_code && continent_code.indexOf("Seoul") === -1
-				? moment(
-						moment(create_date)
-							.tz(continent_code)
-							.format("YYYY-MM-DD HH:mm:ss")
-				  )
-				: moment(create_date);
+
+		const tm = continent_code
+			? moment(create_date)
+					.lang(language || "en")
+					.tz(continent_code)
+					.format("DD MMM (dddd), YYYY")
+			: moment(create_date)
+					.lang(language || "en")
+					.format("DD MMM (dddd), YYYY");
 
 		return (
 			<div className={"author" + (sh ? " shown" : "")}>
@@ -78,9 +79,7 @@ export default memo(
 					</div>
 				)}
 
-				<time dateTime={create_date}>
-					{tm.lang(language || "en").fromNow()}
-				</time>
+				<time dateTime={tm}>{tm}</time>
 			</div>
 		);
 	},

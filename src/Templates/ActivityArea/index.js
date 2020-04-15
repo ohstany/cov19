@@ -31,7 +31,7 @@ const caseDef = {
 const RenderSource = memo(({ title = "Source", s }) => {
 	return (
 		<div className="src">
-			{title + ": "}
+			{"#" + title + ": "}
 			{s.indexOf("youtube") >= 0 && s.indexOf("iframe") >= 0 ? (
 				<div
 					dangerouslySetInnerHTML={{
@@ -67,6 +67,7 @@ const Activity = ({ t }) => {
 		setStore,
 	} = useContext(RootContext) || {};
 
+	const [m, _m] = useState(0);
 	const usersCc = geo ? geo.country_code : false;
 	const mType =
 		country_code && region_code
@@ -87,7 +88,10 @@ const Activity = ({ t }) => {
 	const { regions = false } = cpos || {};
 
 	const newsData = useMemo(
-		() => (country_code && news[country_code] ? news[country_code] : []),
+		() =>
+			country_code && news[country_code]
+				? news[country_code]
+				: news["EARTH"] || [],
 		[country_code, fetchingNews]
 	);
 
@@ -95,7 +99,7 @@ const Activity = ({ t }) => {
 		() =>
 			country_code && newsLimit[country_code]
 				? newsLimit[country_code]
-				: false,
+				: newsLimit["EARTH"] || false,
 		[country_code, fetchingNews]
 	);
 
@@ -164,7 +168,8 @@ const Activity = ({ t }) => {
 	}, [f]);
 
 	useEffect(() => {
-		if (country_code) {
+		_m((p) => p + 1);
+		if (country_code || m === 1) {
 			fetchNews();
 		}
 	}, [country_code]);
@@ -250,11 +255,11 @@ const Activity = ({ t }) => {
 	const fetchNews = () => {
 		if (fetchingNews === false) {
 			_fetchingNews(true);
+			const kk = country_code || "EARTH";
 
 			const offset =
-				news[country_code] && news[country_code].length
-					? news[country_code][news[country_code].length - 1]
-							.create_date
+				news[kk] && news[kk].length
+					? news[kk][news[kk].length - 1].create_date
 					: 0;
 
 			setTimeout(() => {
@@ -272,7 +277,6 @@ const Activity = ({ t }) => {
 
 	const MarkerItem = useCallback(
 		({
-			a,
 			a: {
 				ID,
 				condition: cond,
@@ -288,15 +292,14 @@ const Activity = ({ t }) => {
 
 			const len = content ? content.length : 0;
 
-			const tm = date
-				? continent_code && continent_code.indexOf("Seoul") === -1
-					? moment(
-							moment(date)
-								.tz(continent_code)
-								.format("YYYY-MM-DD HH:mm:ss")
-					  )
-					: moment(date)
-				: "";
+			const tm = continent_code
+				? moment(date)
+						.lang(language || "en")
+						.tz(continent_code)
+						.format("DD MMM (dddd), YYYY")
+				: moment(date)
+						.lang(language || "en")
+						.format("DD MMM (dddd), YYYY");
 
 			return ID ? (
 				<div className={"author " + type}>
@@ -312,13 +315,12 @@ const Activity = ({ t }) => {
 
 						{regions && regions[region] && (
 							<div className="reg">
+								<img src="/mp.png" alt="" />
 								<CityName value={regions[region].name} />
 							</div>
 						)}
 
-						<time dateTime={date}>
-							{tm ? tm.lang(language || "en").fromNow() : ""}
-						</time>
+						<time dateTime={tm}>{tm}</time>
 					</div>
 
 					{len ? (
@@ -349,7 +351,7 @@ const Activity = ({ t }) => {
 					)}
 
 					<div className={"atitle " + type}>
-						{`#${t(sources[type])}`}
+						{`#${t("sourceType")}: ${t(sources[type])}`}
 					</div>
 
 					<div className="resource">

@@ -339,10 +339,10 @@ export default memo(
 		const DoLogin = useCallback(() => {
 			return (
 				<div className="c-login">
+					{t("toLeaveComment") + " "}
 					<span className="do" onClick={() => _popup((p) => !p)}>
 						{t("Login")}
-					</span>{" "}
-					{t("toLeaveComment")}
+					</span>
 				</div>
 			);
 		}, []);

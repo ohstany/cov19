@@ -67,7 +67,6 @@ const Activity = ({ t }) => {
 		setStore,
 	} = useContext(RootContext) || {};
 
-	const [m, _m] = useState(0);
 	const usersCc = geo ? geo.country_code : false;
 	const mType =
 		country_code && region_code
@@ -88,10 +87,7 @@ const Activity = ({ t }) => {
 	const { regions = false } = cpos || {};
 
 	const newsData = useMemo(
-		() =>
-			country_code && news[country_code]
-				? news[country_code]
-				: news["EARTH"] || [],
+		() => (country_code && news[country_code] ? news[country_code] : []),
 		[country_code, fetchingNews]
 	);
 
@@ -99,7 +95,7 @@ const Activity = ({ t }) => {
 		() =>
 			country_code && newsLimit[country_code]
 				? newsLimit[country_code]
-				: newsLimit["EARTH"] || false,
+				: false,
 		[country_code, fetchingNews]
 	);
 
@@ -168,8 +164,7 @@ const Activity = ({ t }) => {
 	}, [f]);
 
 	useEffect(() => {
-		_m((p) => p + 1);
-		if (country_code || m === 1) {
+		if (country_code) {
 			fetchNews();
 		}
 	}, [country_code]);
@@ -255,11 +250,11 @@ const Activity = ({ t }) => {
 	const fetchNews = () => {
 		if (fetchingNews === false) {
 			_fetchingNews(true);
-			const kk = country_code || "EARTH";
 
 			const offset =
-				news[kk] && news[kk].length
-					? news[kk][news[kk].length - 1].create_date
+				news[country_code] && news[country_code].length
+					? news[country_code][news[country_code].length - 1]
+							.create_date
 					: 0;
 
 			setTimeout(() => {

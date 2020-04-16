@@ -81,22 +81,27 @@ const Activity = ({ t }) => {
 			: `${country_code}_${rkey}`;
 	const [nav, _nav] = useState("acts");
 	const [ch, _ch] = useState(false);
+	const [floaded, _floaded] = useState(false);
 	const [f, _f] = useState(false);
 	const [fetchingNews, _fetchingNews] = useState(false);
 	const [fetchingMarkers, _fetchingMarkers] = useState(false);
 	const { regions = false } = cpos || {};
 
-	const newsData = useMemo(
-		() => (country_code && news[country_code] ? news[country_code] : []),
-		[country_code, fetchingNews]
-	);
+	const kkey = useMemo(() => {
+		return floaded &&
+			country_code &&
+			news[country_code] &&
+			news[country_code].length === 0
+			? "EARTH"
+			: country_code;
+	}, [floaded, country_code]);
 
-	const newsLimited = useMemo(
-		() =>
-			country_code && newsLimit[country_code]
-				? newsLimit[country_code]
-				: false,
-		[country_code, fetchingNews]
+	const { newsData, newsLimited } = useMemo(
+		() => ({
+			newsData: news[kkey] || [],
+			newsLimited: newsLimit[kkey] || false,
+		}),
+		[kkey, fetchingNews]
 	);
 
 	const activityLimited = useMemo(
@@ -165,47 +170,22 @@ const Activity = ({ t }) => {
 
 	useEffect(() => {
 		if (country_code) {
+			_floaded(false);
 			fetchNews();
 		}
 	}, [country_code]);
+
+	useEffect(() => {
+		if (floaded && kkey === "EARTH" && newsData.length === 0) {
+			fetchNews();
+		}
+	}, [floaded]);
 
 	useEffect(() => {
 		if (index >= 0) {
 			navigation("local");
 		}
 	}, [index]);
-
-	const GetInfo = useCallback(() => {
-		return (
-			<div className="ininfo">
-				<li className="infobox">
-					<div className="innr">
-						<span className={`cnt cond all`}>
-							{numComma(cases.infections)}
-						</span>
-						<span className={`ttl`}>{" " + t("allcases")}</span>
-					</div>
-				</li>
-
-				{["infected", "cured", "mortal"].map((k, ki) => {
-					return k !== "none" ? (
-						<li className="infobox" key={ki}>
-							<div className="innr">
-								<span className={`cnt cond ${k}`}>
-									{numComma(cases[k])}
-								</span>
-								<span className={`ttl`}>
-									{" " + t(condition[k])}
-								</span>
-							</div>
-						</li>
-					) : (
-						""
-					);
-				})}
-			</div>
-		);
-	}, [mapMarkers, country_code, region_code]);
 
 	const navigation = useCallback((key) => {
 		_nav(key);
@@ -252,23 +232,55 @@ const Activity = ({ t }) => {
 			_fetchingNews(true);
 
 			const offset =
-				news[country_code] && news[country_code].length
-					? news[country_code][news[country_code].length - 1]
-							.create_date
+				news[kkey] && news[kkey].length
+					? news[kkey][news[kkey].length - 1].create_date
 					: 0;
 
 			setTimeout(() => {
 				actioner({
 					method: "GET",
 					action: "news",
-					params: `locale=${country_code}&limit=10&offset=${offset}`,
+					params: `locale=${kkey}&limit=10&offset=${offset}`,
 					reduce: "SET_NEWS",
 				}).then(() => {
 					_fetchingNews(false);
+					_floaded(true);
 				});
 			}, 200);
 		}
 	};
+
+	const GetInfo = useCallback(() => {
+		return (
+			<div className="ininfo">
+				<li className="infobox">
+					<div className="innr">
+						<span className={`cnt cond all`}>
+							{numComma(cases.infections)}
+						</span>
+						<span className={`ttl`}>{" " + t("allcases")}</span>
+					</div>
+				</li>
+
+				{["infected", "cured", "mortal"].map((k, ki) => {
+					return k !== "none" ? (
+						<li className="infobox" key={ki}>
+							<div className="innr">
+								<span className={`cnt cond ${k}`}>
+									{numComma(cases[k])}
+								</span>
+								<span className={`ttl`}>
+									{" " + t(condition[k])}
+								</span>
+							</div>
+						</li>
+					) : (
+						""
+					);
+				})}
+			</div>
+		);
+	}, [mapMarkers, country_code, region_code]);
 
 	const MarkerItem = useCallback(
 		({

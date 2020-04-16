@@ -638,8 +638,10 @@ export const root_store_initial_state = {
 	settings: {},
 	activityLimit: {},
 	activity: { regional: [] },
-	newsLimit: {},
-	news: {},
+	newsLimit: { EARTH: false },
+	news: {
+		EARTH: [],
+	},
 	mk: [],
 	mapMarkers: [],
 	markers: {

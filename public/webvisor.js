@@ -17,5 +17,6 @@ try {
 		clickmap: true,
 		trackLinks: true,
 		accurateTrackBounce: true,
+		webvisor: true,
 	});
 } catch (error) {}

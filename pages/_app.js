@@ -54,7 +54,7 @@ const AddToHead = memoize(
 						<script
 							type="text/javascript"
 							charset="UTF-8"
-							src="/webvisor.js"
+							src="/webvisor.js?ver=1"
 						/>
 					)}
 

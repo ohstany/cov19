@@ -29,19 +29,28 @@ export default memo(
 
 		return (
 			<div className={"author" + (sh ? " shown" : "")}>
-				<h3 className={"atitle clickable"}>
-					<a
-						href="#"
-						target="_blank"
-						onClick={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							_sh((e) => !e);
-						}}
-					>
-						{title}
-					</a>
-				</h3>
+				<div className="nimg">
+					{image && !sh && (
+						<div
+							className="simg"
+							style={{ backgroundImage: `url(${image})` }}
+							alt=""
+						/>
+					)}
+					<h3 className={"atitle clickable"}>
+						<a
+							href="#"
+							target="_blank"
+							onClick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								_sh((e) => !e);
+							}}
+						>
+							{title}
+						</a>
+					</h3>
+				</div>
 
 				{sh && (
 					<div className={"desc" + (sh ? " act" : "")}>

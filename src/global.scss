@@ -1263,7 +1263,7 @@ body.subsc {
 
 		.imgb {
 			img {
-				width: 35%;
+				width: 45%;
 				float: left;
 				margin-right: 10px;
 			}
@@ -1531,6 +1531,24 @@ body.subsc {
 .author {
 	.moreLess {
 		margin-top: -9px;
+	}
+	.nimg {
+		display: inline-block;
+		width: 100%;
+		margin-bottom: 7px;
+		.simg {
+			margin: 0;
+			width: 85px;
+			height: 75px;
+			background-size: cover;
+			background-position: center;
+			float: left;
+			margin-right: 10px;
+		}
+		h3.atitle {
+			display: inline;
+			vertical-align: top;
+		}
 	}
 }
 

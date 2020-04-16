@@ -26,7 +26,7 @@ import { appWithTranslation, withTranslation, i18n } from "i18n";
 const siteMeta = {
 	title: "Коронавирус",
 	description: "",
-	icon: "coronavirus2.png"
+	icon: "coronavirus2.png",
 };
 
 const AddToHead = memoize(
@@ -46,7 +46,17 @@ const AddToHead = memoize(
 
 				<link
 					href="https://fonts.googleapis.com/css?family=Lato&display=swap"
-					rel="stylesheet"></link>
+					rel="stylesheet"
+				></link>
+
+				{typeof window !== "undefined" &&
+					window.location.protocol === "https:" && (
+						<script
+							type="text/javascript"
+							charset="UTF-8"
+							src="/webvisor.js"
+						/>
+					)}
 
 				<title>{t("siteTitle")}</title>
 			</Head>
@@ -80,7 +90,7 @@ class MyApp extends App {
 			isProduction,
 			headers: ctx.req ? ctx.req.headers : {},
 			pageProps,
-			presets
+			presets,
 		};
 	}
 
@@ -91,7 +101,7 @@ class MyApp extends App {
 			pageProps,
 			router,
 			headers,
-			presets
+			presets,
 		} = this.props;
 
 		return (
@@ -100,9 +110,10 @@ class MyApp extends App {
 				presets={presets}
 				headers={headers}
 				siteMeta={siteMeta}
-				router={router}>
+				router={router}
+			>
 				<RootContext.Consumer>
-					{context => (
+					{(context) => (
 						<>
 							<AddToHead />
 							<Component {...pageProps} context={context} />

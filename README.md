@@ -7,6 +7,8 @@
     Rest API backend, to set it up open `package.json` and configure scripts config fields like `API_HOST={your_api_domain}`
 5.  At this point you can run `npm run build` to get into production,  
     or `npm run dev` to use development environment to see changes in runtime
+    
+    Service running at https://cov19.online
 
 Now you're ready to rumble!
 
